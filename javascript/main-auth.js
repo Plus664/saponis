@@ -1,7 +1,5 @@
 // --- [START_NETLIFY_SECRET] ---
-// この行と
 // --- [END_NETLIFY_SECRET] ---
-
 
 function checkPassword() {
   const input = document.getElementById("password-input").value;
