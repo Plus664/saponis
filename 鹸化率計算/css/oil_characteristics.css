@@ -1,0 +1,42 @@
+#oil_characteristics_sheet-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 210px;
+    width: 100%;
+}
+
+#oil_characteristics_sheet_label {
+    justify-self: center;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+#oil_infos-container {
+    display: flex;
+    flex-flow: column;
+    /*margin-top: 20px;*/
+    margin-left: 10px;
+    font-size: 22px;
+    width: 300px;
+}
+
+p.description {
+    overflow-wrap: break-word;
+    font-size: 20px;
+    margin-top: 6px;
+    margin-left: 15px;
+}
+
+@media (min-width: 1024px){
+    #oil_characteristics_sheet-container {
+        margin-top: 260px;
+        margin-left: auto;
+        margin-right: auto;
+        place-items: center;
+    }
+
+    #oil_infos-container {
+        width: 60%;
+    }
+}

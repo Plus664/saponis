@@ -1,0 +1,155 @@
+#column_sheet-container {
+    margin-top: 210px;
+    margin-bottom: 50px;
+    font-family: "M PLUS 1p", sans-serif;
+}
+
+#column_sheet_label {
+    justify-self: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+#glossary-modal {
+    margin: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fffdfd;
+    border: 2px solid #888;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    padding: 1.5em;
+    z-index: 999;
+    width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: none;
+}
+
+#glossary-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+    display: none;
+}
+
+#glossary-title {
+    font-size: 24px;
+}
+
+#glossary-content {
+    margin-top: 1em;
+    font-size: 20px;
+}
+
+#glossary-img {
+    margin: 5px auto;
+    max-width: 90%;
+    height: auto;
+}
+
+#glossary-close {
+    margin-top: 1em;
+    display: block;
+    text-align: right;
+    cursor: pointer;
+    color: #555;
+}
+
+.accordion {
+    margin-bottom: 10px;
+    justify-self: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 95%;
+    overflow: hidden;
+}
+
+.accordion-header {
+    background-color: white;
+    color: rgba(148, 170, 255, 1);
+    padding: 6px;
+    width: 100%;
+    text-align: left;
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.accordion-header:hover {
+    color: white;
+    background-color: rgba(148, 170, 255, 1);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 1em;
+    background-color: #fff;
+}
+
+.accordion-content p {
+    line-height: 1.8;
+    font-size: 18px;
+    color: #222;
+}
+
+.accordion-content strong {
+    color: #006699;
+}
+
+.accordion-content ul {
+    padding-left: 1.2em;
+    margin-top: 0.5em;
+}
+
+.accordion li {
+    margin-bottom: 0.3em;
+    font-size: 18px;
+}
+
+.accordion-content pre {
+    background: #f3f3f3;
+    padding: 0.5em;
+    font-size: 16px;
+    border-left: 4px solif #ccc;
+    overflow-x: auto;
+}
+
+.accordion.open .accordion-content {
+    padding: 1em;
+    max-height: 5000px;
+}
+
+.glossary {
+    color: #3a6ea5;
+    text-decoration: underline solid;
+    cursor: pointer;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.glossary:hover {
+    color: #2a3d75;
+    text-decoration-color: #2a4d75;
+}
+
+@media (min-width: 1024px) {
+    #column_sheet-container {
+        margin-top: 260px;
+    }
+
+    .accordion {
+        max-width: 60%;
+    }
+}

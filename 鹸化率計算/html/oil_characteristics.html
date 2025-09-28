@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang = "ja">  
+    <head>
+        <meta charset = "UTF-8">
+
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+
+        <title>アルカリ計算機</title>
+
+        <link href="../css/style.css" rel="stylesheet" type="text/css">
+        <link href="../css/oil_characteristics.css" rel="stylesheet" type="text/css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <script src="../javascript/oil_characteristics.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <h2 class="title">アルカリ計算</h2>
+
+            <nav class="menu">
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul>
+                    <li class="li"><a href="../index.html">ホーム</a></li>
+                    <li class="li"><a href="../html/list.html">保存したレシピ</a></li>
+                    <li class="li"><a href="../html/original.html">オリジナルのレシピ作り</a></li>
+                    <li class="li"><a href="../html/recommend.html">特徴別のレシピ</a></li>
+                    <li class="li"><a href="../html/oil_characteristics.html">各オイルの特徴</a></li>
+                    <li class="li"><a href="../html/column.html">コラム</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="loader-wrapper" id="loader">
+            <div class="soap-spinner"></div>
+            <div class="loader-message">LOADING...</div>
+        </div>
+
+        <main>
+            <img src="../assets/image/logo.png" class="logo">
+
+            <div id = "oil_characteristics_sheet-container">
+                <p id = "oil_characteristics_sheet_label">オイルの特徴</p>
+
+                <div id = "oil_infos-container"></div>
+            </div>
+        </main>
+
+        <footer>
+
+        </footer>
+    </body>
+</html>
