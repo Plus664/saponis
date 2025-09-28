@@ -25,10 +25,12 @@ function createLoginOverlay() {
   const overlayHTML = `
     <div id="overlay-lock">
       <div id="login-form-box">
-        <p>グループ会員限定コンテンツです</p>
-        <p>アクセスコードを入力してください</p>
-        <input type="password" id="password-input" placeholder="アクセスコード">
-        <button onclick="checkPassword()">ログイン</button>
+        <form onsubmit="checkPassword(); return false;">
+          <p>グループ会員限定コンテンツです</p>
+          <p>アクセスコードを入力してください</p>
+          <input type="password" id="password-input" placeholder="アクセスコード">
+          <button type="submit">ログイン</button>
+        </form>
       </div>
     </div>
 
@@ -48,7 +50,7 @@ function createLoginOverlay() {
 
       #login-form-box {
         background-color: white;
-        pading: 40px;
+        padding: 40px;
         border-radius: 10px;
         text-align: center;
         font-size: 22px;
