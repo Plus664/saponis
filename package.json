@@ -1,0 +1,5 @@
+{
+  "script": {
+    "build": "node javascript/create-auth-file.js"
+  }
+}

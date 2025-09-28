@@ -1,0 +1,113 @@
+#input_form-container {
+    display: none;
+    position: fixed;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    height: 220px;
+    background-color: white;
+    z-index: 20;
+}
+
+#input_form_label {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#close_button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 40px;
+    border: none;
+    color: black;
+    background-color: white;
+}
+
+#input_form {
+    position: absolute;
+    width: 100px;
+    height: 30px;
+    font-size: 22px;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#input_form_button {
+    position: absolute;
+    width: 60px;
+    height: 28px;
+    font-size: 20px;
+    top: 160px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: none;
+    background-color: rgba(148, 170, 255, 1);
+}
+
+#cover {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 19;
+}
+
+#recipe-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 220px;
+    width: 100%;
+}
+
+#recommend_sheet_label {
+    margin-bottom: 20px;
+    justify-self: center;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+input.button {
+    justify-self: center;
+    width: 300px;
+    font-size: 24px;
+    color: rgba(148, 170, 255, 1);
+    background-color: white;
+    padding: 10px 0;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
+    cursor: pointer;
+}
+
+input.button:hover {
+  color: white;
+  background-color: rgba(148, 170, 255, 1);
+  box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+input.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
+  background-color: rgba(120, 140, 230, 1); /* 少し濃いめで押した感 */
+}
+
+@media (min-width: 1024px){
+    #recipe-container {
+        margin-top: 260px;
+    }
+
+    input.button {
+        width: 400px;
+    }
+}
