@@ -28,7 +28,7 @@ function createLoginOverlay() {
         <form onsubmit="checkPassword(); return false;">
           <p>グループ会員限定コンテンツです</p>
           <p>アクセスコードを入力してください</p>
-          <input type="password" id="password-input" placeholder="アクセスコード" autocomplete="off" autofocus>
+          <input type="password" id="password-input" placeholder="アクセスコード" autocomplete="current-password" autofocus>
           <button type="submit">ログイン</button>
         </form>
       </div>
