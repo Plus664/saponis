@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const password = process.env.ACCESS_PASSWORD;
-const filePath = "./javascript/main-auth.js";
+const filePath = "./javascript/utility-handler.js";
 
 const newSecretBlock = `const ACCESS_PASSWORD = "${password}";`;
 
