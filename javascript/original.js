@@ -416,11 +416,11 @@ const calc_result = () => {
     sessionStorage.setItem("alkali", "★アルカリ: " + alkali + "g");
     sessionStorage.setItem("oilAmountSum", "★油脂の合計量: " + total + "g");
     sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
-    sessionStorage.setItem("optionNames", option_names.toString());
+    sessionStorage.setItem("optionNames", JSON.stringify(option_names));
     sessionStorage.setItem("waterAmount", "★水の量: " + water + "g");
-    sessionStorage.setItem("additionalInfos", features.toString());
-    sessionStorage.setItem("conditions", conditions.toString());
-    sessionStorage.setItem("memo", memo.toString());
+    sessionStorage.setItem("additionalInfos", JSON.stringify(features));
+    sessionStorage.setItem("conditions", JSON.stringify(conditions));
+    sessionStorage.setItem("memo", memo || "");
     sessionStorage.setItem("img", "");
 
     location.href = "../html/result.html";

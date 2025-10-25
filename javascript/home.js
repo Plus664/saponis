@@ -587,7 +587,7 @@ function calc_result(){
     sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
 
     const option_names = [option1, option2, option3, option4];
-    sessionStorage.setItem("optionNames", option_names.toString());
+    sessionStorage.setItem("optionNames", JSON.stringify(option_names));
 
     const alcohol_text = "★アルコールの量: " + alcohol + "g";
     sessionStorage.setItem("alcoholAmount", alcohol_text);
@@ -596,12 +596,12 @@ function calc_result(){
     sessionStorage.setItem("waterAmount", water_amount_text);
 
     const additional_infos = [skin, clean, foam, hard, collapse, stability];
-    sessionStorage.setItem("additionalInfos", additional_infos.toString());
+    sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));
 
     const conditions = [mix_temp, cure_temp, cure_humidity, final_ph];
-    sessionStorage.setItem("conditions", conditions.toString());
+    sessionStorage.setItem("conditions", JSON.stringify(conditions));
 
-    sessionStorage.setItem("memo", memo.toString());
+    sessionStorage.setItem("memo", memo || "");
 
     sessionStorage.setItem("img", "");
 

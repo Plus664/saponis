@@ -118,7 +118,7 @@ function display_pres(id){
     sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
 
     const option_names = [recipe.option1, recipe.option2, recipe.option3, recipe.option4];
-    sessionStorage.setItem("optionNames", option_names);
+    sessionStorage.setItem("optionNames", JSON.stringify(option_names));
 
     sessionStorage.setItem("waterAmount", recipe.water_amount);
 
@@ -130,15 +130,15 @@ function display_pres(id){
                               recipe.hard, 
                               recipe.collapse,
                               recipe.stability];
-    sessionStorage.setItem("additionalInfos", additional_infos.toString());
+    sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));
 
     const conditions = [recipe.mix_temp,
                         recipe.cure_temp,
                         recipe.cure_humidity,
                         recipe.final_ph];
-    sessionStorage.setItem("conditions", conditions.toString());
+    sessionStorage.setItem("conditions", JSON.stringify(conditions));
 
-    sessionStorage.setItem("memo", recipe.memo.toString());
+    sessionStorage.setItem("memo", recipe.memo || "");
 
     location.href = "../html/result.html";
 };

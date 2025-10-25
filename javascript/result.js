@@ -385,10 +385,10 @@ const display_oils = () => {
 }
 
 const display_options = () => {
-    const optionNames = sessionStorage.getItem("optionNames");
+    const optionNames = JSON.parse(sessionStorage.getItem("optionNames"));
     if(!optionNames) return;
 
-    const options = optionNames.split(",");
+    const options = optionNames;
     for(let i = 1; i <= 4; i++){
         const option_text = document.getElementById(`option_amount_result${i}`);
         if(options[i-1] && options[i-1] != "") {
@@ -404,7 +404,7 @@ const display_features = () => {
     const features_label = document.getElementById("features");
     features_label.textContent = "★せっけんの特徴";
 
-    const additional_infos = sessionStorage.getItem("additionalInfos").split(",");
+    const additional_infos = JSON.parse(sessionStorage.getItem("additionalInfos"));
 
     const skin = additional_infos[0];
     const skin_result = document.getElementById("skin_result");
@@ -501,7 +501,7 @@ const create_chart = (sk, cl, fo, ha, co, st) => {
 }
 
 const display_conditions = () => {
-    const conditions = sessionStorage.getItem("conditions").split(",");
+    const conditions = JSON.parse(sessionStorage.getItem("conditions"));
 
     const mix_temp = conditions[0];
     const cure_temp = conditions[1];
@@ -532,7 +532,8 @@ const loadImage = (id) => {
 
 const display_memo = () => {
     const memo_result = document.getElementById("memo_result");
-    const memo = sessionStorage.getItem("memo");
+    const raw = sessionStorage.getItem("memo")
+    const memo = raw || "";
 
     memo_result.textContent = memo;
 }
@@ -711,7 +712,7 @@ const print_result = () => {
 // 共有されたレシピの表示
 function renderRecipe(recipe, editable = false) {
   if (!recipe) return;
-alert("成功")
+
   // 名前（なければ生成）
   const name_result = document.getElementById("name_result");
   const name = recipe.name || (() => {
@@ -745,12 +746,18 @@ alert("成功")
     alcohol_amount_result.style.display = "none";
   }
 
+  sessionStorage.setItem("oilNames", JSON.stringify(recipe.oils));
+  sessionStorage.setItem("optionNames", JSON.stringify(recipe.options));
+  sessionStorage.setItem("additionalInfos", JSON.stringify(recipe.features));
+  sessionStorage.setItem("conditions", JSON.stringify(recipe.conditions));
+  sessionStorage.setItem("memo", JSON.stringify(recipe.memo || ""));
+
   // オイル・オプション・特徴・条件・メモなど
-  display_oils(recipe.oils);
-  display_options(recipe.options);
-  display_features(recipe.features);
-  display_conditions(recipe.conditions);
-  display_memo(recipe.memo);
+  display_oils();
+  display_options();
+  display_features();
+  display_conditions();
+  display_memo();
 
   // UI切り替え（QR共有は result モード）
   pres_button.style.display = "block";
