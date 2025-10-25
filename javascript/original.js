@@ -196,8 +196,8 @@ const calc_water = (total, alkali) => {
 const get_oil_names = (oils, total, ratios) => {
     let oil_names = [];
     for(let i = 0; i < oils.length; i++){
-        //oil_names.push(`・${oils[i]} ${Math.round(total * ratios[i])}g (${Math.round(ratios[i] * 100)}%)`);
-        oil_names.push(`・${oils[i]}`);
+        oil_names.push(`・${oils[i]} ${Math.round(total * ratios[i])}g (${Math.round(ratios[i] * 100)}%)`);
+        //oil_names.push(`・${oils[i]}`);
     }
     while(oil_names.length < 10){
         oil_names.push("・ 0g (0%)");

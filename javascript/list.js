@@ -114,28 +114,54 @@ function display_pres(id){
 
     sessionStorage.setItem("oilAmountSum", recipe.oil_amount_sum);
 
-    const oil_names = [recipe.oil1, recipe.oil2, recipe.oil3, recipe.oil4, recipe.oil5, recipe.oil6, recipe.oil7, recipe.oil8, recipe.oil9, recipe.oil10];
-    sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
+    const presOils = recipe.oils || [];
+    const oilList = [];
+    if(Array.isArray(presOils)) {
+        for(let i = 0; i < 10; i++) {
+            const oil = presOils[i];
+            if(oil && oil.name && oil.amount) oilList.push(`${oil.amount}`);
+            else oilList.push("・ 0g (0%)");
+        }
+    } else {
+        for (let i = 0; i < 10; i++) {
+            oilList.push("・ 0g (0%)");
+        }
+    }
+    sessionStorage.setItem("oilNames", JSON.stringify(oilList));
 
-    const option_names = [recipe.option1, recipe.option2, recipe.option3, recipe.option4];
-    sessionStorage.setItem("optionNames", JSON.stringify(option_names));
+    const presOptions = recipe.options || [];
+    const optionList = [];
+    if(Array.isArray(presOptions)) {
+        for(let i = 0; i < 4; i++) {
+            const option = presOptions[i];
+            if(option && option.name && option.amount) optionList.push(`${option.amount}`);
+            else optionList.push("");
+        }
+    } else {
+        for(let i = 0; i < 4; i++) {
+            optionList.push("");
+        }
+    }
+    sessionStorage.setItem("optionNames", JSON.stringify(optionList));
 
     sessionStorage.setItem("waterAmount", recipe.water_amount);
 
     sessionStorage.setItem("alcoholAmount", recipe.alcohol);
 
-    const additional_infos = [recipe.skin, 
-                              recipe.clean, 
-                              recipe.foam, 
-                              recipe.hard, 
-                              recipe.collapse,
-                              recipe.stability];
+    const presFeatures = recipe.features;
+    const additional_infos = [presFeatures[0].value, 
+                              presFeatures[1].value, 
+                              presFeatures[2].value,
+                              presFeatures[3].value,
+                              presFeatures[4].value,
+                              presFeatures[5].value];
     sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));
 
-    const conditions = [recipe.mix_temp,
-                        recipe.cure_temp,
-                        recipe.cure_humidity,
-                        recipe.final_ph];
+    const presConditions = recipe.conditions;
+    const conditions = [presConditions[0].value,
+                        presConditions[1].value,
+                        presConditions[2].value,
+                        presConditions[3].value];
     sessionStorage.setItem("conditions", JSON.stringify(conditions));
 
     sessionStorage.setItem("memo", recipe.memo || "");
@@ -382,7 +408,6 @@ $(function() {
 });
 
 window.onload = () => {
-//indexedDB.deleteDatabase("SoapRecipeDB");
     if(shouldShowLoader()) {
         showLoader();
     }
@@ -431,18 +456,7 @@ window.onload = () => {
             }
         });
     });
-/*
-    document.querySelectorAll(".favorite-icon").forEach(icon => {
-        icon.addEventListener("click", () => {
-            icon.classList.remove("hop");
-            void icon.offsetWidth;
-            icon.classList.add("hop");
-            setTimeout(() => {
-                icon.classList.remove("hop");
-            }, 400);
-        });
-    });
-*/
+
     document.addEventListener("click", () => {
         const menu = document.getElementById("context-menu");
         if(menu) menu.remove();

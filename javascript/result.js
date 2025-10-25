@@ -614,66 +614,50 @@ function pres_result(){
     const type = document.getElementById("type_result").textContent;
     const alkali = document.getElementById("alkali_result").textContent;
     const oil_amount_sum = document.getElementById("oil_amount_sum_result").textContent;
-    const oil1 = document.getElementById("oil_amount_result1").textContent;
-    const oil2 = document.getElementById("oil_amount_result2").textContent;
-    const oil3 = document.getElementById("oil_amount_result3").textContent;
-    const oil4 = document.getElementById("oil_amount_result4").textContent;
-    const oil5 = document.getElementById("oil_amount_result5").textContent;
-    const oil6 = document.getElementById("oil_amount_result6").textContent;
-    const oil7 = document.getElementById("oil_amount_result7").textContent;
-    const oil8 = document.getElementById("oil_amount_result8").textContent;
-    const oil9 = document.getElementById("oil_amount_result9").textContent;
-    const oil10 = document.getElementById("oil_amount_result10").textContent;
-    const option1 = document.getElementById("option_amount_result1").textContent;
-    const option2 = document.getElementById("option_amount_result2").textContent;
-    const option3 = document.getElementById("option_amount_result3").textContent;
-    const option4 = document.getElementById("option_amount_result4").textContent;
     const water_amount = document.getElementById("water_amount_result").textContent;
     const alcohol_amount = document.getElementById("alcohol_amount_result").textContent;
-    const skin = document.getElementById("skin_result").textContent;
-    const clean = document.getElementById("clean_result").textContent;
-    const foam = document.getElementById("foam_result").textContent;
-    const hard = document.getElementById("hard_result").textContent;
-    const collapse = document.getElementById("collapse_result").textContent;
-    const stability = document.getElementById("stability_result").textContent;
-    const mix_temp = document.getElementById("mix_temp_text").textContent;
-    const cure_temp = document.getElementById("cure_temp_text").textContent;
-    const cure_humidity = document.getElementById("cure_humidity_text").textContent;
-    const final_ph = document.getElementById("final_ph_text").textContent;
     const memo = sessionStorage.getItem("memo") || "";
+
+    const oils = [];
+    for (let i = 1; i <= 10; i++) {
+        const amount = document.getElementById(`oil_amount_result${i}`).textContent;
+        if (amount) oils.push({ name: `oil${i}`, amount });
+    }
+
+    const options = [];
+    for (let i = 1; i <= 4; i++) {
+        const amount = document.getElementById(`option_amount_result${i}`).textContent;
+        if (amount) options.push({ name: `option${i}`, amount });
+    }
+
+    const features = [
+        { type: "skin", value: document.getElementById("skin_result").textContent },
+        { type: "clean", value: document.getElementById("clean_result").textContent },
+        { type: "foam", value: document.getElementById("foam_result").textContent },
+        { type: "hard", value: document.getElementById("hard_result").textContent },
+        { type: "collapse", value: document.getElementById("collapse_result").textContent },
+        { type: "stability", value: document.getElementById("stability_result").textContent },
+    ];
+
+    const conditions = [
+        { key: "mix_temp", value: document.getElementById("mix_temp_text").textContent },
+        { key: "cure_temp", value: document.getElementById("cure_temp_text").textContent },
+        { key: "cure_humidity", value: document.getElementById("cure_humidity_text").textContent },
+        { key: "final_ph", value: document.getElementById("final_ph_text").textContent },
+    ];
 
     const pres_infos = {
         recipe_name,
         type,
         alkali,
         oil_amount_sum,
-        oil1,
-        oil2,
-        oil3,
-        oil4,
-        oil5,
-        oil6,
-        oil7,
-        oil8,
-        oil9,
-        oil10,
-        option1,
-        option2,
-        option3,
-        option4,
+        oils,
+        options,
         alcohol,
         water_amount,
         alcohol_amount,
-        skin,
-        clean,
-        foam,
-        hard,
-        collapse,
-        stability,
-        mix_temp,
-        cure_temp,
-        cure_humidity,
-        final_ph,
+        features,
+        conditions,
         memo,
         isFavorite: false,
         created_at: new Date().toISOString(),
@@ -746,11 +730,53 @@ function renderRecipe(recipe, editable = false) {
     alcohol_amount_result.style.display = "none";
   }
 
-  sessionStorage.setItem("oilNames", JSON.stringify(recipe.oils));
-  sessionStorage.setItem("optionNames", JSON.stringify(recipe.options));
-  sessionStorage.setItem("additionalInfos", JSON.stringify(recipe.features));
-  sessionStorage.setItem("conditions", JSON.stringify(recipe.conditions));
-  sessionStorage.setItem("memo", JSON.stringify(recipe.memo || ""));
+  const presOils = recipe.oils || [];
+  const oilList = [];
+  if(Array.isArray(presOils)) {
+    for(let i = 0; i < 10; i++) {
+      const oil = presOils[i];
+      if(oil && oil.name && oil.amount) oilList.push(`${oil.amount}`);
+      else oilList.push("・ 0g (0%)");
+    }
+  } else {
+    for (let i = 0; i < 10; i++) {
+      oilList.push("・ 0g (0%)");
+    }
+  }
+  sessionStorage.setItem("oilNames", JSON.stringify(oilList));
+
+  const presOptions = recipe.options || [];
+  const optionList = [];
+  if(Array.isArray(presOptions)) {
+    for(let i = 0; i < 4; i++) {
+      const option = presOptions[i];
+      if(option && option.name && option.amount) optionList.push(`${option.amount}`);
+      else optionList.push("");
+    }
+  } else {
+    for(let i = 0; i < 4; i++) {
+      optionList.push("");
+    }
+  }
+  sessionStorage.setItem("optionNames", JSON.stringify(optionList));
+
+  const presFeatures = recipe.features;
+  const additional_infos = [presFeatures[0].value, 
+                            presFeatures[1].value, 
+                            presFeatures[2].value,
+                            presFeatures[3].value,
+                            presFeatures[4].value,
+                            presFeatures[5].value];
+  sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));
+
+  const presConditions = recipe.conditions;
+  const conditions = [presConditions[0].value,
+                      presConditions[1].value,
+                      presConditions[2].value,
+                      presConditions[3].value];
+  sessionStorage.setItem("conditions", JSON.stringify(conditions));
+
+  sessionStorage.setItem("memo", recipe.memo || "");
 
   // オイル・オプション・特徴・条件・メモなど
   display_oils();

@@ -15,7 +15,7 @@ var water_amount_result;
 var result_arr;
 var soda;
 
-async function verifyPassword() {
+/*async function verifyPassword() {
     if (sessionStorage.getItem("access_granted") === "true") {
         init();
         return;
@@ -53,7 +53,7 @@ async function verifyPassword() {
         verifyPassword(); // 再試行
     }
 }
-
+*/
 onload = function(){
     setTimeout(() => {
         window.scrollTo({
@@ -62,7 +62,7 @@ onload = function(){
             behavior: "smooth"
         });
     }, 0);
-alert("レシピの共有。絶対パスor相対パス。サイトのスキャナから飛べるか確認。editable,qrRecipeの中身確認。renderRecipeも。Netlifyの更新");
+
     //verifyPassword();
     init();
 }
