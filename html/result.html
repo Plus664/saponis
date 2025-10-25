@@ -12,7 +12,9 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
 
+        <script src="../javascript/global.js" defer></script>
         <script src="../javascript/home.js" defer></script>
         <script src="../javascript/result.js" defer></script>
     </head>
@@ -31,9 +33,10 @@
                     <li class="li"><a href="../index.html">ホーム</a></li>
                     <li class="li"><a href="../html/list.html">保存したレシピ</a></li>
                     <li class="li"><a href="../html/original.html">オリジナルのレシピ作り</a></li>
-                    <li class="li"><a href="../html/recommend.html">特徴別のレシピ</a></li>
+                    <li class="li"><a href="../html/recommend.html">特長別のレシピ</a></li>
                     <li class="li"><a href="../html/oil_characteristics.html">各オイルの特徴</a></li>
                     <li class="li"><a href="../html/column.html">コラム</a></li>
+                    <li class="li"><a href="../html/other.html">その他</a></li>
                 </ul>
             </nav>
         </header>
@@ -42,6 +45,15 @@
             <div class="soap-spinner"></div>
             <div class="loader-message">LOADING...</div>
         </div>
+
+        <div id="warningOverlay" class="overlay hidden">
+            <div class="overlay-content">
+                <button id="closeWarning">×</button>
+                <h3>⚠️ 注意 ⚠️</h3>
+                <ul id="warningList"></ul>
+            </div>
+        </div>
+        <button id="warningToggle" class="warning-button hidden">❗</button>
 
         <main>
             <img src="../assets/image/logo.png" class="logo">
@@ -82,10 +94,8 @@
                     <p id = "option_amount_result4" class = "option_amount_results"></p>
                 </div>
     
-                <div id = "alcohol_result-container">
-                    <p id = "water_amount_result" style = "display: inline"></p>
-                    <p id = "alcohol_amount_result" style = "display: inline;"></p>
-                </div>
+                <p id = "water_amount_result" style = "display: inline"></p>
+                <p id = "alcohol_amount_result" style = "display: inline;"></p>
         
                 <p id = "features"></p>
                 <div id = "additional_info-container">
@@ -124,8 +134,8 @@
         </main>
 
         <footer>
-            <input type="button" value="保存" class="pres-btn" onclick="pres_result()">
-            <input type="button" value="印刷" class="print-btn" onclick="print_result()">
+            <input type="button" value="保存" id="pres-btn" onclick="pres_result()">
+            <input type="button" value="印刷" id="print-btn" onclick="print_result()">
         </footer>
     </body>
 </html>
