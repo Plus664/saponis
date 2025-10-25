@@ -538,7 +538,7 @@ const display_memo = () => {
     memo_result.textContent = memo;
 }
 
-const openIndexedDB = () => {
+const openIndexedDB = (share) => {
     scene = sessionStorage.getItem("scene") || "result";
 
     const request = indexedDB.open("SoapRecipeDB", 2);
@@ -582,15 +582,17 @@ const openIndexedDB = () => {
                     }
                 }
 
-                display_result();
+                if(share !== true) {
+                    display_result();
 
-                let warnings = collectWarnings();
-                const selectedOilNames = getSelectedOilNames();
-                const oilWarnings = evaluateOilGroups(selectedOilNames);
-                warnings.push(...oilWarnings);
+                    let warnings = collectWarnings();
+                    const selectedOilNames = getSelectedOilNames();
+                    const oilWarnings = evaluateOilGroups(selectedOilNames);
+                    warnings.push(...oilWarnings);
 
-                if(warnings.length > 0) {
-                    showAlert(warnings);
+                    if(warnings.length > 0) {
+                        showAlert(warnings);
+                    }
                 }
             };
         };
@@ -696,6 +698,8 @@ const print_result = () => {
 // 共有されたレシピの表示
 function renderRecipe(recipe, editable = false) {
   if (!recipe) return;
+
+  sessionStorage.setItem("scene", "result");
 
   // 名前（なければ生成）
   const name_result = document.getElementById("name_result");
@@ -811,9 +815,11 @@ window.onload = () => {
     if(compressed) {
         try {
             const qrRecipe = JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
+            const share = true;
 
             renderRecipe(qrRecipe, editable);
             fadeOutLoader_result();
+            openIndexedDB(share);
         } catch(e) {
             alert(e.message)
             alert("表示に失敗しました");
@@ -821,10 +827,9 @@ window.onload = () => {
         }
         return;
     } else {
-        openIndexedDB();
+        const share = false;
+        openIndexedDB(share);
     }
-
-    //openIndexedDB();
 
     fadeOutLoader_result();
 }
