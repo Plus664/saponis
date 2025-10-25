@@ -762,7 +762,7 @@ window.onload = () => {
     if(shouldShowLoader_result()) {
         showLoader_result();
     }
-alert("hi")
+
     setTimeout(() => {
         window.scrollTo({
             top: 0,
@@ -775,18 +775,19 @@ alert("hi")
     const compressed = params.get("data");
     const editable = params.get("editable") === "true";
 
-    if(compressed) {alert("compressed")
+    if(compressed) {
         try {
             const qrRecipe = JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
-alert(editable);
+
             renderRecipe(qrRecipe, editable);
             fadeOutLoader_result();
         } catch(e) {
+            alert(e.message)
             alert("表示に失敗しました");
             location.href = "../html/list.html";
         }
         return;
-    } else {alert("else")
+    } else {
         openIndexedDB();
     }
 
