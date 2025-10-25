@@ -1,5 +1,8 @@
 let count = 0;
 let add_button, remove_button;
+let sap_ratio_global = 0;
+let alkali_ratio_global = 0;
+let alcohol_ratio_global = 0;
 
 const oilRecommendations = {
     "特長を選択": ["オイル1", "オイル2", "オイル3"],
@@ -174,6 +177,8 @@ const calc_alkali = (oils, total, ratios) => {
 
     // 固形せっけん固定
     const alkali = calc_soda(oils, total, ratios, discount, alkali_rate);
+    sap_ratio_global = discount;
+    alkali_ratio_global = alkali_rate;
 
     return alkali;
 };
@@ -401,14 +406,16 @@ const calc_result = () => {
     const final_ph      = `・完成品のpH値予想: ${condition.estimated_pH_final}`;
     const conditions = [mix_temp, cure_temp, cure_humidity, final_ph];
     const memo = document.getElementById("memo").value;
-
     
     sessionStorage.setItem("scene", "result");
     sessionStorage.setItem("name", name.toString());
     sessionStorage.setItem("type", type.toString());
+    sessionStorage.setItem("sapRatio", sap_ratio_global.toString());
+    sessionStorage.setItem("alkaliRatio", alkali_ratio_global.toString());
+    sessionStorage.setItem("alcoholRatio", alcohol_ratio_global.toString());
     sessionStorage.setItem("alkali", "★アルカリ: " + alkali + "g");
     sessionStorage.setItem("oilAmountSum", "★油脂の合計量: " + total + "g");
-    sessionStorage.setItem("oilNames", oil_names.toString());
+    sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
     sessionStorage.setItem("optionNames", option_names.toString());
     sessionStorage.setItem("waterAmount", "★水の量: " + water + "g");
     sessionStorage.setItem("additionalInfos", features.toString());
@@ -554,7 +561,7 @@ window.addEventListener("pageshow", () => {
     if(shouldShowLoader()) {
         showLoader();
     }
-
+/*
     setTimeout(() => {
         window.scrollTo({
             top: 0,
@@ -562,6 +569,7 @@ window.addEventListener("pageshow", () => {
             behavior: "smooth"
         });
     }, 0);
+*/
     initPage();
 
     fadeOutLoader();

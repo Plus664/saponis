@@ -5,14 +5,14 @@ let db;
 let preserved_recipes = [];        // 保存したレシピの配列
 let preserved_images = [];         // 保存した画像の配列
 
-const pres_button = document.getElementsByClassName("pres-btn");
-const print_button = document.getElementsByClassName("print-btn");
+const pres_button = document.getElementById("pres-btn");
+const print_button = document.getElementById("print-btn");
 const imgContainer = document.getElementById("image-container");
 const imgFile = document.getElementById("img_file");
 const imgPreview = document.getElementById("preview");
 
+//結果を表示
 const display_result = () => {
-    //結果を表示
     let name = sessionStorage.getItem("name");
     if(!name){
         const now = new Date();
@@ -61,13 +61,13 @@ const display_result = () => {
     display_conditions();
 
     if(scene == "result"){
-        pres_button[0].style.display = "block";
-        print_button[0].style.display = "none";
+        pres_button.style.display = "block";
+        print_button.style.display = "none";
         imgContainer.style.display = "none";
     }
     else if(scene == "preserve"){
-        pres_button[0].style.display = "none";
-        print_button[0].style.display = "block";
+        pres_button.style.display = "none";
+        print_button.style.display = "block";
         imgContainer.style.display = "block";
 
         if(preserved_recipes.length > 0) {
@@ -139,8 +139,140 @@ const display_result = () => {
 
 }
 
+// 各数値の確認
+function collectWarnings() {
+  const warnings = [];
+  const waterAmount = parseFloat(sessionStorage.getItem("waterAmount").replace(/[^\d.]/g, "")) || 0;
+  const oilSum = parseFloat(sessionStorage.getItem("oilAmountSum").replace(/[^\d.]/g, "")) || 0;
+  const alcoholPurity = Number(sessionStorage.getItem("alcoholRatio")) || 0;
+  const sapRatio = Number(sessionStorage.getItem("sapRatio")) || 0;
+  const alkaliPurity = Number(sessionStorage.getItem("alkaliRatio")) || 0;
+  const conditions = sessionStorage.getItem("conditions").split(",");
+  const pH = Number(conditions[3]);
+
+  const waterRatio = Math.floor(Number(waterAmount) / Number(oilSum) * 100);
+
+  if(type === "soda" && waterRatio && (waterRatio < 25 || waterRatio > 45)) {
+    warnings.push("水分量が不安定です (推奨25～45%)");
+  }
+  if(oilSum < 50 || oilSum > 1500) {
+    warnings.push("油脂量が極端です (推奨50～1500g)");
+  }
+  if(type === "potash" && alcoholPurity < 0.9) {
+    warnings.push("アルコールの純度が低すぎます (推奨90%以上)");
+  }
+  if(type === "soda" && (sapRatio < 0.8 || sapRatio > 1.0)) {
+    warnings.push("鹸化率が不安定です (固形せっけんの場合は80～100%)");
+  }
+  if(type === "potash" && (sapRatio < 0.95 || sapRatio > 1.1)) {
+    warnings.push("鹸化率が不安定です (液体せっけんの場合は95～110%)");
+  }
+  if(alkaliPurity < 0.85) {
+    warnings.push("アルカリの純度が低すぎます (推奨85%以上)");
+  }
+  if (pH > 10.5) {
+    warnings.push("pHが高すぎます（刺激が強くなる可能性があります）");
+  } else if (pH < 8.0) {
+    warnings.push("pHが低すぎます（鹸化が不十分になる可能性があります）");
+  }
+
+  return warnings;
+}
+
+// 選択された油脂の抽出
+function getSelectedOilNames() {
+    const rawList = JSON.parse(sessionStorage.getItem("oilNames") || "[]");
+
+    return rawList
+        .map(str => {
+            // 「・油脂名 数字g (%)」から油脂名だけ抽出
+            const match = str.match(/^・(.+?)\s\d+g\s\(\d+%?\)$/);
+            return match ? match[1].trim() : null;
+        })
+        .filter(name => name && name !== "0g"); // nullや空文字を除外
+}
+
+function normalizeOilName(name) {
+    return name
+        .replace(/・/g, "")         // 頭の・を除去
+        .replace(/\s/g, "")         // 全角・半角スペース除去
+        .replace(/[［\[]/, "[")     // 全角 [
+        .replace(/[］\]]/, "]");    // 全角 ]
+}
+
+// 油脂の組み合わせに関する確認
+function evaluateOilGroups(oilNames) {
+    const groupCount = {
+        saturated: 0,
+        mono: 0,
+        poly: 0,
+        special: 0,
+        neutral: 0
+    };
+
+    oilNames.forEach(name => {
+        const normalized = normalizeOilName(name);
+        for (const group in window.OilGroups) {
+            if (window.OilGroups[group].includes(normalized)) {
+                groupCount[group]++;
+                break;
+            }
+        }
+    });
+
+    const warnings = [];
+
+    // 不飽和脂肪酸が多く、飽和脂肪酸がゼロ
+    if (groupCount.poly >= 3 && groupCount.saturated === 0) {
+        warnings.push("不飽和脂肪酸が多く、酸化しやすい構成です（飽和脂肪酸が不足）");
+    }
+
+    // 飽和脂肪酸がゼロ
+    if (groupCount.saturated === 0) {
+        warnings.push("泡立ちが弱くなる可能性があります（飽和脂肪酸が含まれていません）");
+    }
+
+    // 特殊油脂が多すぎる
+    if (groupCount.special >= 2) {
+        warnings.push("特殊油脂が多く、泡立ちや硬さが不安定になる可能性があります");
+    }
+
+    // 飽和脂肪酸が多すぎる（硬すぎる石けんになる可能性）
+    if (groupCount.saturated >= 4 && groupCount.poly === 0 && groupCount.mono === 0) {
+        warnings.push("飽和脂肪酸が多すぎるため、硬くて乾燥しやすい石けんになる可能性があります");
+    }
+
+    return warnings;
+}
+
+// 注意の表示
+function showAlert(warnings) {
+  const warningList = document.getElementById("warningList");
+
+  warningList.innerHTML = "";
+  warnings.forEach(w => {
+    const li = document.createElement("li");
+    li.textContent = w;
+    warningList.appendChild(li);
+  });
+
+  document.getElementById("warningOverlay").classList.remove("hidden");
+}
+
+document.getElementById("closeWarning").onclick = () => {
+  document.getElementById("warningOverlay").classList.add("hidden");
+  document.getElementById("warningToggle").classList.remove("hidden");
+};
+
+document.getElementById("warningToggle").onclick = () => {
+  document.getElementById("warningOverlay").classList.remove("hidden");
+  document.getElementById("warningToggle").classList.add("hidden");
+};
+
+// 選択した油脂の表示
 const display_oils = () => {
-    const oil_names = sessionStorage.getItem("oilNames").split(",");
+    const oil_names = JSON.parse(sessionStorage.getItem("oilNames") || "[]");
+    //const oil_names = oil_names_json.split(",");
     const oil_name1  = oil_names[0];
     const oil_name2  = oil_names[1];
     const oil_name3  = oil_names[2];
@@ -450,6 +582,15 @@ const openIndexedDB = () => {
                 }
 
                 display_result();
+
+                let warnings = collectWarnings();
+                const selectedOilNames = getSelectedOilNames();
+                const oilWarnings = evaluateOilGroups(selectedOilNames);
+                warnings.push(...oilWarnings);
+
+                if(warnings.length > 0) {
+                    showAlert(warnings);
+                }
             };
         };
     }
@@ -567,11 +708,61 @@ const print_result = () => {
     window.print();
 };
 
+// 共有されたレシピの表示
+function renderRecipe(recipe, editable = false) {
+  if (!recipe) return;
+alert("成功")
+  // 名前（なければ生成）
+  const name_result = document.getElementById("name_result");
+  const name = recipe.name || (() => {
+    const now = new Date();
+    return `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+  })();
+  name_result.textContent = name;
+
+  // タイプ
+  const type_result = document.getElementById("type_result");
+  const type = recipe.type;
+  type_result.textContent = type === "soda" ? "★タイプ: 固形せっけん" : "★タイプ: 液体せっけん";
+
+  // アルカリ
+  const alkali_result = document.getElementById("alkali_result");
+  alkali_result.textContent = recipe.alkali || "";
+
+  // 油量合計
+  const oil_amount_sum_result = document.getElementById("oil_amount_sum_result");
+  oil_amount_sum_result.textContent = recipe.oilAmountSum || "";
+
+  // 水分量
+  const water_amount_result = document.getElementById("water_amount_result");
+  water_amount_result.textContent = recipe.waterAmount || "";
+
+  // アルコール（液体せっけんのみ）
+  const alcohol_amount_result = document.getElementById("alcohol_amount_result");
+  if (type === "potash") {
+    alcohol_amount_result.textContent = recipe.alcoholAmount || "";
+  } else {
+    alcohol_amount_result.style.display = "none";
+  }
+
+  // オイル・オプション・特徴・条件・メモなど
+  display_oils(recipe.oils);
+  display_options(recipe.options);
+  display_features(recipe.features);
+  display_conditions(recipe.conditions);
+  display_memo(recipe.memo);
+
+  // UI切り替え（QR共有は result モード）
+  pres_button.style.display = "block";
+  print_button.style.display = "none";
+  imgContainer.style.display = "none";
+}
+
 window.onload = () => {
     if(shouldShowLoader_result()) {
         showLoader_result();
     }
-
+alert("hi")
     setTimeout(() => {
         window.scrollTo({
             top: 0,
@@ -580,7 +771,26 @@ window.onload = () => {
         });
     }, 0);
 
-    openIndexedDB();
+    const params = new URLSearchParams(location.search);
+    const compressed = params.get("data");
+    const editable = params.get("editable") === "true";
+
+    if(compressed) {alert("compressed")
+        try {
+            const qrRecipe = JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
+alert(editable);
+            renderRecipe(qrRecipe, editable);
+            fadeOutLoader_result();
+        } catch(e) {
+            alert("表示に失敗しました");
+            location.href = "../html/list.html";
+        }
+        return;
+    } else {alert("else")
+        openIndexedDB();
+    }
+
+    //openIndexedDB();
 
     fadeOutLoader_result();
 }

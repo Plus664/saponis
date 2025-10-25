@@ -1,5 +1,8 @@
 let input_form_container, input_form, input_form_button, close_button;
 let cover;
+let sap_ratio_global = 0;
+let alkali_ratio_global = 0;
+let alcohol_ratio_global = 0;
 
 const recipes = {
     oil1: {
@@ -43,7 +46,7 @@ const recipes = {
             { name: "ひまし油",     percentage: 30 },
             { name: "パーム核油",   percentage: 30 },
             { name: "ココナッツ油", percentage: 20 },
-            { name: "ホホバオイル", percentage: 20 },
+            { name: "オリーブ油", percentage: 20 },
         ],
         options: [
             { name: "シルクパウダー", percentage: 3 },
@@ -60,7 +63,7 @@ const recipes = {
             { name: "牛脂",         percentage: 40 },
             { name: "パーム油",     percentage: 30 },
             { name: "シアバター",   percentage: 20 },
-            { name: "ココナッツ油", percentage: 10 },
+            { name: "オリーブ油", percentage: 10 },
         ],
         options: [
             { name: "クレイ", percentage: 8 },
@@ -94,7 +97,7 @@ const recipes = {
             { name: "椿油",               percentage: 40 },
             { name: "米ぬか油",           percentage: 30 },
             { name: "ホホバオイル",       percentage: 20 },
-            { name: "ローズヒップオイル", percentage: 10 },
+            { name: "ココナッツ油", percentage: 10 },
         ],
         options: [
             { name: "芳香蒸留水", percentage: 10 },
@@ -128,7 +131,7 @@ const recipes = {
             { name: "ローズヒップオイル", percentage: 35 },
             { name: "ホホバオイル",       percentage: 30 },
             { name: "グレープシード油",   percentage: 20 },
-            { name: "アボガド油",         percentage: 15 },
+            { name: "ココナッツ油",         percentage: 15 },
         ],
         options: [
             { name: "ローズウォーター", percentage: 8 },
@@ -160,7 +163,7 @@ const recipes = {
         description: "長期間品質を保つ、酸化しにくい石鹸。",
         oils: [
             { name: "ホホバオイル", percentage: 35 },
-            { name: "ラード(豚油)", percentage: 25 },
+            { name: "ラード[豚脂]", percentage: 25 },
             { name: "ローズヒップオイル", percentage: 20 },
             { name: "シアバター", percentage: 20 },
         ],
@@ -176,13 +179,13 @@ const recipes = {
         category: "髪用",
         description: "髪と頭皮に優しい、泡立ちが良いヘア用石鹸。",
         oils: [
-            { name: "アルガンオイル", percentage: 30 },
-            { name: "ひまし油", percentage: 30 },
-            { name: "ホホバオイル", percentage: 20 },
-            { name: "紅花油", percentage: 20 },
+            { name: "ひまし油", percentage:25 },
+            { name: "パーム核油", percentage: 25 },
+            { name: "オリーブ油", percentage: 25 },
+            { name: "紅花油", percentage: 25 },
         ],
         options: [
-            { name: "ひまし油", percentage: 10 },
+            { name: "シルクパウダー", percentage: 10 },
             { name: "精油", percentage: 5 },
         ],
         saponification_rate: 0.91,
@@ -207,6 +210,8 @@ const calc_alkali = (recipe, sap_values, amounts) => {
 
 // 固形せっけん固定
     const result = calc_soda(sap_values, amounts, discount, alkali_rate);
+    sap_ratio_global = discount;
+    alkali_ratio_global = alkali_rate;
     return result;
 };
 
@@ -372,6 +377,9 @@ function clear_preserveSession() {
         "id",
         "name",
         "type",
+        "sapRatio",
+        "alkaliRatio",
+        "alcoholRatio",
         "alkali",
         "oilAmountSum",
         "oilNames",
@@ -429,9 +437,12 @@ const calc_result = (recipe, total) => {
     sessionStorage.setItem("prev_page", "result");
     sessionStorage.setItem("name", name.toString());
     sessionStorage.setItem("type", type.toString());
+    sessionStorage.setItem("sapRatio", sap_ratio_global.toString());
+    sessionStorage.setItem("alkaliRatio", alkali_ratio_global.toString());
+    sessionStorage.setItem("alcoholRatio", alcohol_ratio_global.toString());
     sessionStorage.setItem("alkali", "★アルカリ: " + alkali + "g");
     sessionStorage.setItem("oilAmountSum", "★油脂の合計量: " + total + "g");
-    sessionStorage.setItem("oilNames", oil_names.toString());
+    sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
     sessionStorage.setItem("optionNames", option_names.toString());
     sessionStorage.setItem("waterAmount", "★水の量: " + water + "g");
     sessionStorage.setItem("additionalInfos", features.toString());
@@ -468,7 +479,7 @@ window.onload = () => {
     if(shouldShowLoader()) {
         showLoader();
     }
-
+/*
     setTimeout(() => {
         window.scrollTo({
             top: 0,
@@ -476,7 +487,7 @@ window.onload = () => {
             behavior: "smooth"
         });
     }, 0);
-
+*/
     input_form_container = document.getElementById("input_form-container");
     input_form_container.style.display = "none";
     close_button = document.getElementById("close_button");

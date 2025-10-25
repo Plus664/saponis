@@ -5,6 +5,9 @@ var preserve_list;
 var preserve_sheet;
 var oil_amount1, oil_amount2, oil_amount3, oil_amount4, oil_amount5, oil_amount6, oil_amount7, oil_amount8, oil_amount9, oil_amount10;
 var sap_ratio, water_ratio;
+var sap_ratio_global = 0;
+var alkali_ratio_global = 0;
+var alcohol_ratio_global = 0;
 var oil_name_infos;
 var alkali_result;
 var sap_ratio_result;
@@ -59,7 +62,7 @@ onload = function(){
             behavior: "smooth"
         });
     }, 0);
-
+alert("レシピの共有。絶対パスor相対パス。サイトのスキャナから飛べるか確認。editable,qrRecipeの中身確認。renderRecipeも。Netlifyの更新");
     //verifyPassword();
     init();
 }
@@ -81,6 +84,7 @@ function init(){
     oil_amount10 = document.getElementById("oil_amount10");
 
     sap_ratio = document.getElementById("sap_ratio_val");
+    sap_ratio_global = Number(sap_ratio.value);
     water_ratio = document.getElementById("water_ratio_val");
 
     result_arr = [];
@@ -215,7 +219,8 @@ function calc_soda(sap_value1, sap_value2, sap_value3, sap_value4, sap_value5, s
     const discount = Number(sap_ratio.value) / 100;
     const alkali_ratio_val = document.getElementById("alkali_ratio_val");
     const alkali_ratio = Number(alkali_ratio_val.value) / 100;
-                    
+    alkali_ratio_global = alkali_ratio;
+
     alkali_result = Math.round(oil_sum * discount / alkali_ratio * 10) / 10;
 
     //結果を返す
@@ -241,6 +246,7 @@ function calc_potash(sap_value1, sap_value2, sap_value3, sap_value4, sap_value5,
     const discount = Number(sap_ratio.value) / 100;
     const alkali_ratio_val = document.getElementById("alkali_ratio_val");
     const alkali_ratio = Number(alkali_ratio_val.value) / 100;
+    alkali_ratio_global = alkali_ratio;
                     
     alkali_result = Math.round(oil_sum * discount / alkali_ratio * 10) / 10;
 
@@ -286,6 +292,7 @@ function calc_oil(){
 function calc_alcohol(use){
     if(use == "with"){
         const alcohol_ratio = document.getElementById("alcohol_ratio_val").value;
+        alcohol_ratio_global = Number(alcohol_ratio);
         const sum = Number(oil_amount1.value) + Number(oil_amount2.value) + Number(oil_amount3.value) + Number(oil_amount4.value) + Number(oil_amount5.value) + Number(oil_amount6.value) + Number(oil_amount7.value) + Number(oil_amount8.value) + Number(oil_amount9.value) + Number(oil_amount10.value);
         const alcohol_result = Math.round(sum * 0.3 * 10) / 10;
         return Math.round(alcohol_result / (alcohol_ratio / 100) * 10) / 10;
@@ -471,6 +478,9 @@ function clear_preserveSession() {
         "id",
         "name",
         "type",
+        "sapRatio",
+        "alcoholRatio",
+        "alkaliRatio",
         "alkali",
         "oilAmountSum",
         "oilNames",
@@ -563,6 +573,10 @@ function calc_result(){
 
     sessionStorage.setItem("type", radioNodeList.value);
 
+    sessionStorage.setItem("sapRatio", (sap_ratio_global / 100).toString());
+    sessionStorage.setItem("alkaliRatio", alkali_ratio_global.toString());
+    sessionStorage.setItem("alcoholRatio", (alcohol_ratio_global / 100).toString());
+
     const alkali_text = "★アルカリ: " + alkali + "g";
     sessionStorage.setItem("alkali", alkali_text);
 
@@ -570,7 +584,7 @@ function calc_result(){
     sessionStorage.setItem("oilAmountSum", oil_amount_sum_text);
 
     const oil_names = [oil_name1, oil_name2, oil_name3, oil_name4, oil_name5, oil_name6, oil_name7, oil_name8, oil_name9, oil_name10];
-    sessionStorage.setItem("oilNames", oil_names.toString());
+    sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
 
     const option_names = [option1, option2, option3, option4];
     sessionStorage.setItem("optionNames", option_names.toString());
@@ -593,7 +607,7 @@ function calc_result(){
 
     location.href = "./html/result.html";
 }
-
+/*
 document.addEventListener("DOMContentLoaded", () => {
     const elements = document.querySelectorAll("input, textarea, select");
 
@@ -614,7 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-
+*/
 $(function() {
     $('.hamburger').click(function() {
         $('.menu').toggleClass('open');
