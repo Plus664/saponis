@@ -4,6 +4,7 @@
     gap: 6px;
     margin-top: 220px;
     width: 100%;
+    max-width: 100vw;
 }
 
 #original_sheet_label {
@@ -76,6 +77,9 @@ label {
 #suggest_option-container {
     margin-top: 25px;
     width: 100%;
+    max-width: 100vw;
+    display: grid;
+    place-items: center;
 }
 
 #option_label {
@@ -86,11 +90,10 @@ label {
 
 #suggest_button {
     margin-top: 20px;
-    margin-left: 50%;
     margin-bottom: 20px;
     padding: 10px 0;
-    transform: translateX(-50%);
-    width: 250px;
+    width: 90%;
+    max-width: 250px;
     font-size: 20px;
     border: none;
     border-radius: 8px;
@@ -101,14 +104,14 @@ label {
     cursor: pointer;
 }
 
-.suggest-btn:hover {
+#suggest_button:hover {
     color: white;
     background-color: rgba(148, 170, 255, 1);
     box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
     transform: translateY(-2px);
 }
 
-.suggest-btn:active {
+#suggest_button:active {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
     background-color: rgba(120, 140, 230, 1);
@@ -264,14 +267,4 @@ label {
         margin-top: 10px;
         margin-bottom: 10px;
     }
-/*
-    #suggest_option-container {
-        text-align: center;
-    }
-
-    #options-container {
-        display: inline-block;
-        text-align: left;
-        margin-top: 10px;
-    }*/
 }
