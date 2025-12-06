@@ -4,7 +4,7 @@
 function checkPassword() {
   const input = document.getElementById("password-input").value;
 
-  if(input === ACCESS_PASSWORD) {
+  if(input) {
     document.getElementById("overlay-lock").style.display = "none";
     sessionStorage.setItem("isMemberAuthenticated", "true");
   } else {
@@ -94,4 +94,5 @@ function createLoginOverlay() {
   document.body.insertAdjacentHTML("afterbegin", overlayHTML);
 
 }
+
 
