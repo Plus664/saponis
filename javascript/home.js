@@ -6,6 +6,7 @@ var preserve_sheet;
 var oil_amount1, oil_amount2, oil_amount3, oil_amount4, oil_amount5, oil_amount6, oil_amount7, oil_amount8, oil_amount9, oil_amount10;
 var sap_ratio, water_ratio;
 var sap_ratio_global = 0;
+var water_ratio_global = 0;
 var alkali_ratio_global = 0;
 var alcohol_ratio_global = 0;
 var oil_name_infos;
@@ -15,45 +16,6 @@ var water_amount_result;
 var result_arr;
 var soda;
 
-/*async function verifyPassword() {
-    if (sessionStorage.getItem("access_granted") === "true") {
-        init();
-        return;
-    }
-
-    let attempt = parseInt(sessionStorage.getItem("attempt_count") || "0");
-
-    if (attempt >= 5) {
-        document.body.innerHTML = `
-            <div style="text-align:center; margin-top:20vh;">
-                <h2>サイトにアクセスできません</h2>
-                <p style="margin-top:2em; font-size:1.2em;">再読み込みして、もう一度お試しください。</p>
-            </div>
-        `;
-        return;
-    }
-
-    const input = prompt("パスワードを入力してください");
-
-    const res = await fetch("/.netlify/functions/check-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: input })
-    });
-
-    const result = await res.json();
-    if (result.access) {
-        sessionStorage.setItem("access_granted", "true");
-        sessionStorage.removeItem("attempt_count"); // 成功したらカウント消す
-        init();
-    } else {
-        attempt++;
-        sessionStorage.setItem("attempt_count", attempt.toString());
-        alert(`パスワードが違います（${attempt}/5）`);
-        verifyPassword(); // 再試行
-    }
-}
-*/
 onload = function(){
     setTimeout(() => {
         window.scrollTo({
@@ -63,13 +25,103 @@ onload = function(){
         });
     }, 0);
 
-    //verifyPassword();
     init();
+}
+
+function fillOilAndOption (recipe) {
+  recipe.oils.forEach((oil, index) => {
+    // 例: "・オリーブ油 100g (20%)"
+    const match = oil.amount.match(/^・(.+?)\s+(\d+)g\s+\(\d+%\)$/);
+    if (match) {
+      const oilName = match[1];   // オリーブ油
+      const oilAmount = match[2]; // 100
+
+      // select と input を取得
+      const selectEl = document.querySelector(`select[name="sel${index+1}"]`);
+      const amountEl = document.querySelector(`#oil_amount${index+1}`);
+
+      if (selectEl) selectEl.value = oilName;
+      if (amountEl) amountEl.value = oilAmount;
+    }
+  });
+
+  recipe.options.forEach((opt, index) => {
+    // 例: "・ラベンダー精油 10g (2%)"
+    const match = opt.amount.match(/^・(.+?)\s+(\d+)g\s+\(\d+%\)$/);
+    if (match) {
+      const optionName = match[1];   // ラベンダー精油
+      const optionAmount = match[2]; // 10
+
+      // select と input を取得
+      const selectEl = document.querySelector(`select[name="option_select${index+1}"]`);
+      const amountEl = document.querySelector(`#option_amount${index+1}`);
+
+      if (selectEl) selectEl.value = optionName;
+      if (amountEl) amountEl.value = optionAmount;
+    }
+  });
+}
+
+function fillForm(recipe) {
+  document.querySelector("#recipe_name").value = recipe.recipe_name;
+
+  const type = recipe.type;
+  if(type === "soda") {
+    document.querySelector("#radio_soda").checked = true;
+    //document.querySelector("#radio_potash").checked = false;
+    document.querySelector("#water_ratio_val").value = recipe.water_ratio || 34;
+    document.querySelector("#alcohol_ratio_val").value = 100;
+  } else if(type === "potash") {
+    document.querySelector("#radio_potash").checked = true;
+    //document.querySelector("#").value = recipe.;
+    document.querySelector("#water_ratio_val").value = 34;
+  }
+  
+  document.querySelector("#sap_ratio_val").value = recipe.sap_ratio || 92;
+  document.querySelector("#alkali_ratio_val").value = recipe.alkali_ratio || 100;
+  //document.querySelector("#alcohol_ratio_val").value = recipe.alcohol_ratio || 100;
+  const useAlcohol = recipe.use_alcohol;
+  if(useAlcohol) {
+    // 「アルコールを使う」を選択
+    document.querySelector('input[name="ifUseAlcohol"][value="with"]').checked = true;
+    document.querySelector('input[name="ifUseAlcohol"][value="without"]').checked = false;
+
+    // アルコール純度を反映
+    document.querySelector("#alcohol_ratio_val").value = recipe.alcohol_ratio || 100;
+  } else {
+    // 「アルコールを使わない」を選択
+    document.querySelector('input[name="ifUseAlcohol"][value="without"]').checked = true;
+    document.querySelector('input[name="ifUseAlcohol"][value="with"]').checked = false;
+
+    // アルコール純度を反映
+    document.querySelector("#alcohol_ratio_val").value = 100;
+  }
+
+  fillOilAndOption(recipe);
+
+  document.querySelector("#memo").value = recipe.memo || "";
+  //document.querySelector("#").value = recipe.;
+  //document.querySelector("#").value = recipe.;
 }
 
 function init(){
     if(shouldShowLoader()) {
         showLoader();
+    }
+
+    const params = new URLSearchParams(location.search);
+    const compressed = params.get("data");
+    const editable = params.get("editable") === "true";
+
+    if(compressed) {
+        try {
+            const qrRecipe = JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
+            fillForm(qrRecipe);
+        } catch(e) {
+            alert("表示に失敗しました");
+            location.href = "https://saponis.netlify.app/index.html";
+        }
+        return;
     }
 
     oil_amount1 = document.getElementById("oil_amount1");
@@ -86,17 +138,14 @@ function init(){
     sap_ratio = document.getElementById("sap_ratio_val");
     sap_ratio_global = Number(sap_ratio.value);
     water_ratio = document.getElementById("water_ratio_val");
+    water_ratio_global = Number(water_ratio.value);
 
     result_arr = [];
     let tentative_arr = [];
 
     soda = true;
-
+alert("液体せっけん共有時のアルコール、fillFormが途中");
     fadeOutLoader();
-
-// 後で消す
-localStorage.removeItem("betty_to_aozora_kenkaritsu");
-localStorage.removeItem("betty_to_aozora_kenkaritsu_img");
 }
 
 const shouldShowLoader = () => {
@@ -574,8 +623,14 @@ function calc_result(){
     sessionStorage.setItem("type", radioNodeList.value);
 
     sessionStorage.setItem("sapRatio", (sap_ratio_global / 100).toString());
+    sessionStorage.setItem("waterRatio", (water_ratio_global / 100).toString());
     sessionStorage.setItem("alkaliRatio", alkali_ratio_global.toString());
     sessionStorage.setItem("alcoholRatio", (alcohol_ratio_global / 100).toString());
+    const alcoholNode = form.elements['ifUseAlcohol'].value;
+    let useAlcohol = true;
+    if(alcoholNode === "with") useAlcohol = true;
+    else useAlcohol = false;
+    sessionStorage.setItem("useAlcohol", useAlcohol);
 
     const alkali_text = "★アルカリ: " + alkali + "g";
     sessionStorage.setItem("alkali", alkali_text);
