@@ -144,7 +144,7 @@ function init(){
     let tentative_arr = [];
 
     soda = true;
-alert("液体せっけん共有時のアルコール、fillFormが途中");
+
     fadeOutLoader();
 }
 
@@ -690,4 +690,5 @@ $(function() {
 
         $(this).toggleClass('active');
     });
+
 });
