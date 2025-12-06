@@ -538,7 +538,7 @@ const display_memo = () => {
     memo_result.textContent = memo;
 }
 
-const openIndexedDB = (share) => {
+const openIndexedDB = () => {
     scene = sessionStorage.getItem("scene") || "result";
 
     const request = indexedDB.open("SoapRecipeDB", 2);
@@ -582,7 +582,7 @@ const openIndexedDB = (share) => {
                     }
                 }
 
-                if(share !== true) {
+                //if(share !== true) {
                     display_result();
 
                     let warnings = collectWarnings();
@@ -593,7 +593,7 @@ const openIndexedDB = (share) => {
                     if(warnings.length > 0) {
                         showAlert(warnings);
                     }
-                }
+                //}
             };
         };
     }
@@ -619,6 +619,12 @@ function pres_result(){
     const water_amount = document.getElementById("water_amount_result").textContent;
     const alcohol_amount = document.getElementById("alcohol_amount_result").textContent;
     const memo = sessionStorage.getItem("memo") || "";
+
+    const sapRatio = Number(sessionStorage.getItem("sapRatio"));
+    const waterRatioPres = Number(sessionStorage.getItem("waterRatio"));
+    const alkaliRatio = Number(sessionStorage.getItem("alkaliRatio"));
+    const alcoholRatio = Number(sessionStorage.getItem("alcoholRatio"));
+    const useAlcohol = sessionStorage.getItem("useAlcohol");
 
     const oils = [];
     for (let i = 1; i <= 10; i++) {
@@ -651,6 +657,11 @@ function pres_result(){
     const pres_infos = {
         recipe_name,
         type,
+        sap_ratio: sapRatio,
+        water_ratio: waterRatioPres,
+        alkali_ratio: alkaliRatio,
+        alcohol_ratio: alcoholRatio,
+        use_alcohol: useAlcohol,
         alkali,
         oil_amount_sum,
         oils,
@@ -695,6 +706,7 @@ const print_result = () => {
     window.print();
 };
 
+/*
 // 共有されたレシピの表示
 function renderRecipe(recipe, editable = false) {
   if (!recipe) return;
@@ -711,8 +723,8 @@ function renderRecipe(recipe, editable = false) {
 
   // タイプ
   const type_result = document.getElementById("type_result");
-  const type = recipe.type;
-  type_result.textContent = type === "soda" ? "★タイプ: 固形せっけん" : "★タイプ: 液体せっけん";
+  const presType = recipe.type;
+  type_result.textContent = presType === "soda" ? "★タイプ: 固形せっけん" : "★タイプ: 液体せっけん";
 
   // アルカリ
   const alkali_result = document.getElementById("alkali_result");
@@ -728,7 +740,7 @@ function renderRecipe(recipe, editable = false) {
 
   // アルコール（液体せっけんのみ）
   const alcohol_amount_result = document.getElementById("alcohol_amount_result");
-  if (type === "potash") {
+  if (presType == "potash") {
     alcohol_amount_result.textContent = recipe.alcoholAmount || "";
   } else {
     alcohol_amount_result.style.display = "none";
@@ -794,6 +806,7 @@ function renderRecipe(recipe, editable = false) {
   print_button.style.display = "none";
   imgContainer.style.display = "none";
 }
+*/
 
 window.onload = () => {
     if(shouldShowLoader_result()) {
@@ -807,7 +820,7 @@ window.onload = () => {
             behavior: "smooth"
         });
     }, 0);
-
+/*
     const params = new URLSearchParams(location.search);
     const compressed = params.get("data");
     const editable = params.get("editable") === "true";
@@ -821,7 +834,6 @@ window.onload = () => {
             fadeOutLoader_result();
             openIndexedDB(share);
         } catch(e) {
-            alert(e.message)
             alert("表示に失敗しました");
             location.href = "../html/list.html";
         }
@@ -830,7 +842,8 @@ window.onload = () => {
         const share = false;
         openIndexedDB(share);
     }
-
+*/
+    openIndexedDB();
     fadeOutLoader_result();
 }
 

@@ -218,8 +218,8 @@ const toggle_favorite = (id) => {
 // QRオーバーレイ表示（canvas描画 + jsQR対応）
 const open_qr_overlay = (recipe) => {
   const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
-  const shareURL = `https://saponis.netlify.app/html/result.html?data=${compressed}&editable=true`;
-  //const shareURL = `../html/result.html?data=${compressed}&editable=true`;
+  const shareURL = `https://saponis.netlify.app/index.html?data=${compressed}&editable=true`;
+  //const shareURL = `../html/index.html?data=${compressed}&editable=true`;
 
   const backdrop = document.createElement("div");
   backdrop.style.position = "fixed";
@@ -270,11 +270,36 @@ const open_qr_overlay = (recipe) => {
   });
 };
 
+function adjustRecipe(recipe) {
+  const keysToKeep = [
+    "recipe_name",
+    "type",
+    "sap_ratio",
+    "water_ratio",
+    "alkali_ratio",
+    "alcohol_ratio",
+    "use_alcohol",
+    "oils",
+    "options",
+    "memo",
+  ];
+
+  const result = {};
+  for(const key of keysToKeep) {
+    if(key in recipe) {
+        result[key] = recipe[key];
+    }
+  }
+
+  return result;
+}
+
 // QRコードで共有
 function share_pres(id) {
   let recipe = preserved_recipes.find(r => r.id == id);
   if (!recipe) return;
-  open_qr_overlay(recipe);
+  const adjustedRecipe = adjustRecipe(recipe);
+  open_qr_overlay(adjustedRecipe);
 }
 
 // メニューのオーバーレイ表示
@@ -311,6 +336,7 @@ const open_centered_overlay = (id) => {
   const actions = [
     //{ label: "編集する", handler: () => edit_pres(id) },
     { label: "QRコードを表示", handler: () => share_pres(id) },
+    { label: "カレンダーに登録", handler: () => register_to_calender(id) },
     { label: "削除する", handler: () => remove_pres(id) }
   ];
 
@@ -328,6 +354,16 @@ const open_centered_overlay = (id) => {
   backdrop.appendChild(menu);
   document.body.appendChild(backdrop);
 };
+
+function register_to_calender(id) {
+  let recipe = preserved_recipes.find(r => r.id == id);
+  if (!recipe) {
+    alert("レシピが見つかりません");
+    return;
+  }
+
+  //const startDate = new Date(recipe.
+}
 
 // ボタンを生成＆表示
 const display_buttons = (id) => {
