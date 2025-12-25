@@ -220,9 +220,9 @@ const open_qr_overlay = (recipe) => {
     const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
     const encoded = encodeURIComponent(compressed);
 
-    const shareURL = `../html/index.html?data=${encoded}&editable=true`;
+    //const shareURL = `../html/index.html?data=${encoded}&editable=true`;
     //const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
-    ///const shareURL = `https://saponis.netlify.app/index.html?data=${compressed}&editable=true`;
+    const shareURL = `https://saponis.netlify.app/index.html?data=${encoded}&editable=true`;
     //const shareURL = `../html/index.html?data=${compressed}&editable=true`;
 
     const backdrop = document.createElement("div");
