@@ -12,8 +12,8 @@ function update_display() {
 // 並べ替え
 const sort_recipes = (method) => {
     sessionStorage.setItem("sortMethod", method);
-    switch(method) {
-        case "newest": 
+    switch (method) {
+        case "newest":
             preserved_recipes.sort((a, b) => b.id - a.id);
             break;
         case "oldest":
@@ -31,7 +31,7 @@ const sort_recipes = (method) => {
             break;
         case "favorite_first":
             preserved_recipes.sort((a, b) => {
-                if(a.isFavorite == b.isFavorite) return b.id - a.id;
+                if (a.isFavorite == b.isFavorite) return b.id - a.id;
                 return a.isFavorite ? -1 : 1;
             });
             break;
@@ -41,7 +41,7 @@ const sort_recipes = (method) => {
 
 // 保存したレシピ一覧をボタンで表示
 const display_list = () => {
-    if(!db) {
+    if (!db) {
         alert("IndexedDBが使えません");
         return;
     }
@@ -50,11 +50,11 @@ const display_list = () => {
     const store = transaction.objectStore("recipes");
     const request = store.getAll();
 
-    request.onsuccess = function(e) {
+    request.onsuccess = function (e) {
         preserved_recipes = e.target.result;
 
         const savedMethod = sessionStorage.getItem("sortMethod");
-        if(savedMethod) {
+        if (savedMethod) {
             document.getElementById("sort-select").value = savedMethod;
             sort_recipes(savedMethod);
         } else {
@@ -62,7 +62,7 @@ const display_list = () => {
         }
     };
 
-    request.onerror = function() {
+    request.onerror = function () {
         alert("レシピの取得に失敗しました");
         return;
     }
@@ -91,7 +91,7 @@ function clear_preserveSession() {
 }
 
 // 保存したレシピの表示
-function display_pres(id){
+function display_pres(id) {
     // sessionStorageで保存、resultのページで表示
     clear_preserveSession();
 
@@ -101,7 +101,7 @@ function display_pres(id){
     sessionStorage.setItem("id", id);
 
     const recipe = preserved_recipes.find(recipe => recipe.id == id);
-    if(!recipe) {
+    if (!recipe) {
         alert("レシピが見つかりません");
         return;
     }
@@ -116,10 +116,10 @@ function display_pres(id){
 
     const presOils = recipe.oils || [];
     const oilList = [];
-    if(Array.isArray(presOils)) {
-        for(let i = 0; i < 10; i++) {
+    if (Array.isArray(presOils)) {
+        for (let i = 0; i < 10; i++) {
             const oil = presOils[i];
-            if(oil && oil.name && oil.amount) oilList.push(`${oil.amount}`);
+            if (oil && oil.name && oil.amount) oilList.push(`${oil.amount}`);
             else oilList.push("・ 0g (0%)");
         }
     } else {
@@ -131,14 +131,14 @@ function display_pres(id){
 
     const presOptions = recipe.options || [];
     const optionList = [];
-    if(Array.isArray(presOptions)) {
-        for(let i = 0; i < 4; i++) {
+    if (Array.isArray(presOptions)) {
+        for (let i = 0; i < 4; i++) {
             const option = presOptions[i];
-            if(option && option.name && option.amount) optionList.push(`${option.amount}`);
+            if (option && option.name && option.amount) optionList.push(`${option.amount}`);
             else optionList.push("");
         }
     } else {
-        for(let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             optionList.push("");
         }
     }
@@ -149,19 +149,19 @@ function display_pres(id){
     sessionStorage.setItem("alcoholAmount", recipe.alcohol);
 
     const presFeatures = recipe.features;
-    const additional_infos = [presFeatures[0].value, 
-                              presFeatures[1].value, 
-                              presFeatures[2].value,
-                              presFeatures[3].value,
-                              presFeatures[4].value,
-                              presFeatures[5].value];
+    const additional_infos = [presFeatures[0].value,
+    presFeatures[1].value,
+    presFeatures[2].value,
+    presFeatures[3].value,
+    presFeatures[4].value,
+    presFeatures[5].value];
     sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));
 
     const presConditions = recipe.conditions;
     const conditions = [presConditions[0].value,
-                        presConditions[1].value,
-                        presConditions[2].value,
-                        presConditions[3].value];
+    presConditions[1].value,
+    presConditions[2].value,
+    presConditions[3].value];
     sessionStorage.setItem("conditions", JSON.stringify(conditions));
 
     sessionStorage.setItem("memo", recipe.memo || "");
@@ -170,8 +170,8 @@ function display_pres(id){
 };
 
 // 保存したレシピを削除
-function remove_pres(id){
-    if(!db) {
+function remove_pres(id) {
+    if (!db) {
         alert("IndexedDBが利用できません");
         return;
     }
@@ -179,22 +179,22 @@ function remove_pres(id){
     const recipe = preserved_recipes.find(r => r.id === id);
     const name = recipe?.recipe_name || "このレシピ";
     const confirmed = confirm(`\"${name}\"を削除しますか？`);
-    if(!confirmed) return;
+    if (!confirmed) return;
 
     const transaction = db.transaction(["recipes", "images"], "readwrite");
     const recipeStore = transaction.objectStore("recipes");
     const imageStore = transaction.objectStore("images");
 
     const deleteRecipeRequest = recipeStore.delete(id);
-    deleteRecipeRequest.onsuccess = function() {
+    deleteRecipeRequest.onsuccess = function () {
         const deleteImageRequest = imageStore.delete(id);
-        deleteImageRequest.onsuccess = function() {
+        deleteImageRequest.onsuccess = function () {
             alert("レシピを削除しました");
             window.location.reload();
         };
     };
 
-    deleteRecipeRequest.onerror = function() {
+    deleteRecipeRequest.onerror = function () {
         alert("レシピの削除に失敗しました");
     };
 };
@@ -202,7 +202,7 @@ function remove_pres(id){
 // お気に入り登録・解除
 const toggle_favorite = (id) => {
     const recipe = preserved_recipes.find(r => r.id === id);
-    if(!recipe) return;
+    if (!recipe) return;
 
     recipe.isFavorite = !recipe.isFavorite;
 
@@ -217,158 +217,162 @@ const toggle_favorite = (id) => {
 
 // QRオーバーレイ表示（canvas描画 + jsQR対応）
 const open_qr_overlay = (recipe) => {
-  const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
-  const shareURL = `https://saponis.netlify.app/index.html?data=${compressed}&editable=true`;
-  //const shareURL = `../html/index.html?data=${compressed}&editable=true`;
+    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
+    const encoded = encodeURIComponent(compressed);
 
-  const backdrop = document.createElement("div");
-  backdrop.style.position = "fixed";
-  backdrop.style.top = "0";
-  backdrop.style.left = "0";
-  backdrop.style.width = "100vw";
-  backdrop.style.height = "100vh";
-  backdrop.style.background = "rgba(0, 0, 0, 0.5)";
-  backdrop.style.zIndex = "999";
-  backdrop.addEventListener("click", () => {
-    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
-  });
+    const shareURL = `../html/index.html?data=${encoded}&editable=true`;
+    //const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
+    ///const shareURL = `https://saponis.netlify.app/index.html?data=${compressed}&editable=true`;
+    //const shareURL = `../html/index.html?data=${compressed}&editable=true`;
 
-  const box = document.createElement("div");
-  box.style.position = "fixed";
-  box.style.top = "50%";
-  box.style.left = "50%";
-  box.style.transform = "translate(-50%, -50%)";
-  box.style.background = "white";
-  box.style.padding = "24px";
-  box.style.borderRadius = "12px";
-  box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.3)";
-  box.style.textAlign = "center";
-
-  const title = document.createElement("div");
-  title.textContent = "QRコードで共有";
-  title.style.fontSize = "20px";
-  title.style.marginBottom = "12px";
-
-  const qrCanvas = document.createElement("canvas");
-  qrCanvas.width = 384;
-  qrCanvas.height = 384;
-  qrCanvas.style.margin = "0 auto";
-  qrCanvas.id = "qr-canvas";
-
-  box.appendChild(title);
-  box.appendChild(qrCanvas);
-  backdrop.appendChild(box);
-  document.body.appendChild(backdrop);
-
-  requestAnimationFrame(() => {
-    new QRious({
-      element: qrCanvas,
-      value: shareURL,
-      size: 384,
-      level: "M"
+    const backdrop = document.createElement("div");
+    backdrop.style.position = "fixed";
+    backdrop.style.top = "0";
+    backdrop.style.left = "0";
+    backdrop.style.width = "100vw";
+    backdrop.style.height = "100vh";
+    backdrop.style.background = "rgba(0, 0, 0, 0.5)";
+    backdrop.style.zIndex = "999";
+    backdrop.addEventListener("click", () => {
+        if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
     });
-  });
+
+    const box = document.createElement("div");
+    box.style.position = "fixed";
+    box.style.top = "50%";
+    box.style.left = "50%";
+    box.style.transform = "translate(-50%, -50%)";
+    box.style.background = "white";
+    box.style.padding = "24px";
+    box.style.borderRadius = "12px";
+    box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.3)";
+    box.style.textAlign = "center";
+
+    const title = document.createElement("div");
+    title.textContent = "QRコードで共有";
+    title.style.fontSize = "20px";
+    title.style.marginBottom = "12px";
+
+    const qrCanvas = document.createElement("canvas");
+    qrCanvas.width = 384;
+    qrCanvas.height = 384;
+    qrCanvas.style.margin = "0 auto";
+    qrCanvas.id = "qr-canvas";
+
+    box.appendChild(title);
+    box.appendChild(qrCanvas);
+    backdrop.appendChild(box);
+    document.body.appendChild(backdrop);
+
+    requestAnimationFrame(() => {
+        new QRious({
+            element: qrCanvas,
+            value: shareURL,
+            size: 384,
+            level: "M"
+        });
+    });
 };
 
 function adjustRecipe(recipe) {
-  const keysToKeep = [
-    "recipe_name",
-    "type",
-    "sap_ratio",
-    "water_ratio",
-    "alkali_ratio",
-    "alcohol_ratio",
-    "use_alcohol",
-    "oils",
-    "options",
-    "memo",
-  ];
+    const keysToKeep = [
+        "recipe_name",
+        "type",
+        "sap_ratio",
+        "water_ratio",
+        "alkali_ratio",
+        "alcohol_ratio",
+        "use_alcohol",
+        "oils",
+        "options",
+        "memo",
+    ];
 
-  const result = {};
-  for(const key of keysToKeep) {
-    if(key in recipe) {
-        result[key] = recipe[key];
+    const result = {};
+    for (const key of keysToKeep) {
+        if (key in recipe) {
+            result[key] = recipe[key];
+        }
     }
-  }
 
-  return result;
+    return result;
 }
 
 // QRコードで共有
 function share_pres(id) {
-  let recipe = preserved_recipes.find(r => r.id == id);
-  if (!recipe) return;
-  const adjustedRecipe = adjustRecipe(recipe);
-  open_qr_overlay(adjustedRecipe);
+    let recipe = preserved_recipes.find(r => r.id == id);
+    if (!recipe) return;
+    const adjustedRecipe = adjustRecipe(recipe);
+    open_qr_overlay(adjustedRecipe);
 }
 
 // メニューのオーバーレイ表示
 const open_centered_overlay = (id) => {
-  const recipe = preserved_recipes.find(r => r.id == id);
-  if (!recipe) return;
+    const recipe = preserved_recipes.find(r => r.id == id);
+    if (!recipe) return;
 
-  // 背景レイヤー
-  const backdrop = document.createElement("div");
-  backdrop.style.position = "fixed";
-  backdrop.style.top = "0";
-  backdrop.style.left = "0";
-  backdrop.style.width = "100vw";
-  backdrop.style.height = "100vh";
-  backdrop.style.background = "rgba(0, 0, 0, 0.4)";
-  backdrop.style.zIndex = "999";
-  backdrop.addEventListener("click", () => {
-    if(document.body.contains(backdrop)) document.body.removeChild(backdrop);
-  });
-
-  // メニュー本体
-  const menu = document.createElement("div");
-  menu.style.position = "fixed";
-  menu.style.top = "50%";
-  menu.style.left = "50%";
-  menu.style.transform = "translate(-50%, -50%)";
-  menu.style.background = "rgba(220, 225, 235, 1)";
-  menu.style.padding = "24px";
-  menu.style.borderRadius = "8px";
-  menu.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-  menu.style.minWidth = "240px";
-  menu.style.textAlign = "center";
-
-  const actions = [
-    //{ label: "編集する", handler: () => edit_pres(id) },
-    { label: "QRコードを表示", handler: () => share_pres(id) },
-    { label: "カレンダーに登録", handler: () => register_to_calender(id) },
-    { label: "削除する", handler: () => remove_pres(id) }
-  ];
-
-  actions.forEach(action => {
-    const btn = document.createElement("button");
-    btn.textContent = action.label;
-    btn.className = "overlay-buttons";
-    btn.addEventListener("click", () => {
-      document.body.removeChild(backdrop); // 先に閉じる
-      action.handler();
+    // 背景レイヤー
+    const backdrop = document.createElement("div");
+    backdrop.style.position = "fixed";
+    backdrop.style.top = "0";
+    backdrop.style.left = "0";
+    backdrop.style.width = "100vw";
+    backdrop.style.height = "100vh";
+    backdrop.style.background = "rgba(0, 0, 0, 0.4)";
+    backdrop.style.zIndex = "999";
+    backdrop.addEventListener("click", () => {
+        if (document.body.contains(backdrop)) document.body.removeChild(backdrop);
     });
-    menu.appendChild(btn);
-  });
 
-  backdrop.appendChild(menu);
-  document.body.appendChild(backdrop);
+    // メニュー本体
+    const menu = document.createElement("div");
+    menu.style.position = "fixed";
+    menu.style.top = "50%";
+    menu.style.left = "50%";
+    menu.style.transform = "translate(-50%, -50%)";
+    menu.style.background = "rgba(220, 225, 235, 1)";
+    menu.style.padding = "24px";
+    menu.style.borderRadius = "8px";
+    menu.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+    menu.style.minWidth = "240px";
+    menu.style.textAlign = "center";
+
+    const actions = [
+        //{ label: "編集する", handler: () => edit_pres(id) },
+        { label: "QRコードを表示", handler: () => share_pres(id) },
+        { label: "カレンダーに登録", handler: () => register_to_calender(id) },
+        { label: "削除する", handler: () => remove_pres(id) }
+    ];
+
+    actions.forEach(action => {
+        const btn = document.createElement("button");
+        btn.textContent = action.label;
+        btn.className = "overlay-buttons";
+        btn.addEventListener("click", () => {
+            document.body.removeChild(backdrop); // 先に閉じる
+            action.handler();
+        });
+        menu.appendChild(btn);
+    });
+
+    backdrop.appendChild(menu);
+    document.body.appendChild(backdrop);
 };
 
 function register_to_calender(id) {
-  let recipe = preserved_recipes.find(r => r.id == id);
-  if (!recipe) {
-    alert("レシピが見つかりません");
-    return;
-  }
+    let recipe = preserved_recipes.find(r => r.id == id);
+    if (!recipe) {
+        alert("レシピが見つかりません");
+        return;
+    }
 
-  //const startDate = new Date(recipe.
+    //const startDate = new Date(recipe.
 }
 
 // ボタンを生成＆表示
 const display_buttons = (id) => {
     const recipe = preserved_recipes.find(r => r.id == id);
-    if(!recipe) return;
+    if (!recipe) return;
 
     // レシピ表示＆削除用のボタンのwrapper
     const button_wrapper = document.createElement("div");
@@ -414,8 +418,8 @@ const display_buttons = (id) => {
     menu_icon.style.pointEvents = "none";
 
     menu_icon_wrapper.addEventListener("click", (e) => {
-      e.stopPropagation();
-      open_centered_overlay(recipe.id, menu_icon);
+        e.stopPropagation();
+        open_centered_overlay(recipe.id, menu_icon);
     });
 
     menu_icon_wrapper.appendChild(menu_icon);
@@ -428,15 +432,15 @@ const display_buttons = (id) => {
     list_container.appendChild(button_wrapper);
 
     requestAnimationFrame(() => {
-        if(text.scrollWidth > text_wrapper.clientWidth) {
+        if (text.scrollWidth > text_wrapper.clientWidth) {
             text.classList.add("scrolling");
         }
     });
 };
 
 // ハンバーガーメニューの実装
-$(function() {
-    $('.hamburger').click(function() {
+$(function () {
+    $('.hamburger').click(function () {
         $('.menu').toggleClass('open');
 
         $(this).toggleClass('active');
@@ -444,22 +448,22 @@ $(function() {
 });
 
 window.onload = () => {
-    if(shouldShowLoader()) {
+    if (shouldShowLoader()) {
         showLoader();
     }
-/*
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
-*/
+    /*
+        setTimeout(() => {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "smooth"
+            });
+        }, 0);
+    */
 
     request = indexedDB.open("SoapRecipeDB", 2);
 
-    request.onupgradeneeded = function(e) {
+    request.onupgradeneeded = function (e) {
         const db = e.target.result;
         if (!db.objectStoreNames.contains("recipes")) {
             db.createObjectStore("recipes", { keyPath: "id", autoIncrement: true });
@@ -469,7 +473,7 @@ window.onload = () => {
         }
     };
 
-    request.onsuccess = function(e) {
+    request.onsuccess = function (e) {
         db = e.target.result;
         display_list();
     };
@@ -485,7 +489,7 @@ window.onload = () => {
 
         items.forEach(item => {
             const name = item.textContent.toLowerCase();
-            if(name.includes(keyword)){
+            if (name.includes(keyword)) {
                 item.style.display = "";
             } else {
                 item.style.display = "none";
@@ -495,7 +499,7 @@ window.onload = () => {
 
     document.addEventListener("click", () => {
         const menu = document.getElementById("context-menu");
-        if(menu) menu.remove();
+        if (menu) menu.remove();
     });
 
     fadeOutLoader();
