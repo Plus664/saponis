@@ -1,4 +1,70 @@
 // ===============================
+// Supabase
+// ===============================
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const supabase = createClient(
+    'https://rmbbsrfstmnfxbbttaro.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtYmJzcmZzdG1uZnhiYnR0YXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDc0OTgsImV4cCI6MjA4NDcyMzQ5OH0.ELoVUxFgbWxaUJDg1DziRp0Y4cSo5MX2zEUDO2bIEzk'
+);
+
+// ユーザーキー生成
+function getOrCreateUserKey() {
+    let key = localStorage.getItem("user_key");
+    if (!key) {
+        key = crypto.randomUUID();
+        localStorage.setItem("user_key", key);
+    }
+    return key;
+}
+
+const USER_KEY = getOrCreateUserKey();
+
+async function refreshJWTWithUserKey() {
+    await supabase.auth.updateUser({
+        data: { user_key: USER_KEY }
+    });
+}
+
+await ensureAnonymousLogin();
+await refreshJWTWithUserKey();
+
+// 入室コード取得
+async function fetchRoomCode() {
+    const { data, error } = await supabase
+        .from("settings")
+        .select("value")
+        .eq("key", "room_code")
+        .single();
+
+    if (error) {
+        console.error("入室コード取得エラー:", error);
+        return null;
+    }
+
+    return data.value;
+}
+
+// 入室コード認証
+async function checkRoomCode(inputCode) {
+    const currentCode = await fetchRoomCode();
+    return inputCode === currentCode;
+}
+
+// 入室コード確認ボタン
+document.getElementById("enterButton").addEventListener("click", async () => {
+    const inputCode = document.getElementById("roomCodeInput").value.trim();
+    const ok = await checkRoomCode(inputCode);
+
+    if (ok) {
+        document.getElementById("gate").style.display = "none";
+        document.getElementById("mainApp").style.display = "block";
+    } else {
+        document.getElementById("gateError").textContent = "入室コードが違います";
+    }
+});
+
+// ===============================
 // SPA ルーター（画面切り替え）
 // ===============================
 

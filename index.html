@@ -69,7 +69,14 @@
         <div id="logo-watermark"></div>
         <img src="./assets/image/logo.png" class="logo">
 
-        <div id="app"></div>
+        <div id="gate" style="display: block;">
+            <h2>入室コードを入力</h2>
+            <input id="roomCodeInput" type="text" placeholder="入室コード">
+            <button id="enterButton">入室</button>
+            <p id="gateError" style="color:red;"></p>
+        </div>
+
+        <div id="app" style="display: none;"></div>
     </main>
 
     <footer>
