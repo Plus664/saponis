@@ -20,6 +20,22 @@ function getOrCreateUserKey() {
 
 const USER_KEY = getOrCreateUserKey();
 
+async function ensureAnonymousLogin() {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // すでにログイン済みなら何もしない
+  if (session) return session;
+
+  // 匿名ログイン
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) {
+    console.error("匿名ログイン失敗:", error);
+    return null;
+  }
+
+  return data.session;
+}
+
 async function refreshJWTWithUserKey() {
     await supabase.auth.updateUser({
         data: { user_key: USER_KEY }
@@ -247,4 +263,5 @@ const fadeOutLoader = () => {
 openDB().then(() => {
     showView(location.hash.replace("#", "") || "input") // 初期画面
 });
+
 
