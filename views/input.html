@@ -1,0 +1,615 @@
+<div id="input_sheet-container">
+    <div id="recipe_name-container">
+        <p id="recipe_name_label" style="display: inline">レシピ名:</p>
+        <input type="text" id="recipe_name" style="display: inline" autocomplete="off">
+    </div>
+
+    <form name="form">
+        <div id="soda_potash-container">
+            <p style="font-size: 22px; font-weight: bold;" id="soda_potash_label">せっけんのタイプ</p>
+            <div id="soap_types_wrapper">
+                <div id="soda-container">
+                    <label id="soda_label">
+                        <input type="radio" name="sodaOrPotash" id="radio_soda" value="soda"
+                            checked>固形せっけん（苛性ソーダ）
+                    </label>
+                    <div id="water_ratio-container">
+                        <p style="display: inline">水の割合:　油脂の</p>
+                        <input id="water_ratio_val" type="number" value="34" style="display: inline">
+                        <p id="water_ratio_unit" style="display: inline">%</p>
+                    </div>
+                </div>
+
+                <div id="potash-container">
+                    <label id="potash_label">
+                        <input type="radio" name="sodaOrPotash" id="radio_potash" value="potash">液体せっけん（苛性カリ）
+                    </label>
+                    <div id="alcohol-container">
+                        <div id="with_alcohol-container">
+                            <label id="with_alcohol_label">
+                                <input type="radio" name="ifUseAlcohol" value="with" checked>アルコールを使う
+                            </label>
+                            <div id="alcohol_ratio-container">
+                                <p style="display: inline">アルコールの純度: </p>
+                                <input id="alcohol_ratio_val" type="number" value="100" style="display: inline">
+                                <p id="alcohol_ratio_unit" style="display: inline">%</p>
+                            </div>
+                        </div>
+
+                        <div id="without_alcohol-container">
+                            <label id="without_alcohol_label">
+                                <input type="radio" name="ifUseAlcohol" value="without">アルコールを使わない
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="oil-container">
+            <div id="oil_name-container">
+                <p id="oil_label" style="display:inline">油脂</p><br>
+
+                <select name="sel1" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel2" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel3" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel4" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel5" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel6" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel7" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel8" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel9" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+                <select name="sel10" class="selects">
+                    <option value="" selected>油脂を選んでください</option>
+                    <option value="アプリコット核油">アプリコット核油(194)</option>
+                    <option value="アボガド油">アボガド油(193)</option>
+                    <option value="アルガンオイル">アルガンオイル(194)</option>
+                    <option value="オリーブ油">オリーブ油(191)</option>
+                    <option value="キャノーラ油">キャノーラ油(187)</option>
+                    <option value="牛脂">牛脂(196)</option>
+                    <option value="ククイナッツ油">ククイナッツ油(190)</option>
+                    <option value="くるみ油">くるみ油(194)</option>
+                    <option value="グレープシード油">グレープシード油(188)</option>
+                    <option value="ココアバター">ココアバター(201)</option>
+                    <option value="ココナッツ油">ココナッツ油(258)</option>
+                    <option value="小麦胚芽油">小麦胚芽油(185)</option>
+                    <option value="米ぬか油">米ぬか油(188)</option>
+                    <option value="コーン油">コーン油(193)</option>
+                    <option value="ごま油">ごま油(191)</option>
+                    <option value="シアバター">シアバター(187)</option>
+                    <option value="ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ">ｽｲｰﾄｱｰﾓﾝﾄﾞｵｲﾙ(194)</option>
+                    <option value="ステアリン酸">ステアリン酸(189)</option>
+                    <option value="月見草油">月見草油(188)</option>
+                    <option value="椿油">椿油(193)</option>
+                    <option value="バター[乳脂]">バター[乳脂](198)</option>
+                    <option value="馬油">馬油(200)</option>
+                    <option value="パーム油">パーム油(203)</option>
+                    <option value="パーム核油">パーム核油(249)</option>
+                    <option value="ひまし油">ひまし油(182)</option>
+                    <option value="ひまわり油">ひまわり油(190)</option>
+                    <option value="ヘーゼルナッツ油">ヘーゼルナッツ油(188)</option>
+                    <option value="紅花油">紅花油(190)</option>
+                    <option value="ホホバオイル">ホホバオイル(92)</option>
+                    <option value="マカデミアナッツ油">マカデミアナッツ油(195)</option>
+                    <option value="みつろう">みつろう(91)</option>
+                    <option value="落花生油">落花生油(193)</option>
+                    <option value="ラード[豚脂]">ラード[豚脂](198)</option>
+                    <option value="ローズヒップオイル">ローズヒップオイル(190)</option>
+                </select>
+
+            </div>
+
+            <div id="oil_amount-container">
+                <p id="oil_amounts_label" style="display:inline">量(g)</p><br>
+                <input type="number" class="oil_amounts" id="oil_amount1" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount2" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount3" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount4" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount5" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount6" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount7" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount8" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount9" placeholder="例)100">
+                <input type="number" class="oil_amounts" id="oil_amount10" placeholder="例)100">
+            </div>
+        </div>
+
+        <div id="option-container">
+            <div id="option_name_container">
+                <p id="option_name_label">オプション</p>
+
+                <select name="option_select1" class="option_selects">
+                    <option value="">オプションを選択</option>
+                    <option value="アロエベラ">アロエベラ</option>
+                    <option value="アルガンオイル">アルガンオイル</option>
+                    <option value="カレンデュラエキス">カレンデュラエキス</option>
+                    <option value="カモミール精油">カモミール精油</option>
+                    <option value="クレイ">クレイ</option>
+                    <option value="サンダルウッド精油">サンダルウッド精油</option>
+                    <option value="ジャスミン精油">ジャスミン精油</option>
+                    <option value="シーソルト">シーソルト</option>
+                    <option value="シアバター">シアバター</option>
+                    <option value="紫雲膏パウダー">紫雲膏パウダー</option>
+                    <option value="シルクパウダー">シルクパウダー</option>
+                    <option value="スピルリナパウダー">スピルリナパウダー</option>
+                    <option value="精油">精油</option>
+                    <option value="ゼラニウム精油">ゼラニウム精油</option>
+                    <option value="竹炭パウダー">竹炭パウダー</option>
+                    <option value="ティーツリー精油">ティーツリー精油</option>
+                    <option value="はちみつ">はちみつ</option>
+                    <option value="ハッカ油">ハッカ油</option>
+                    <option value="ピンククレイ">ピンククレイ</option>
+                    <option value="ベントナイトクレイ">ベントナイトクレイ</option>
+                    <option value="ペパーミント精油">ペパーミント精油</option>
+                    <option value="ミルクプロテイン">ミルクプロテイン</option>
+                    <option value="ヤギミルク">ヤギミルク</option>
+                    <option value="ラベンダー精油">ラベンダー精油</option>
+                    <option value="ローズウォーター">ローズウォーター</option>
+                    <option value="ローズ精油">ローズ精油</option>
+                    <option value="芳香蒸留水">芳香蒸留水</option>
+                    <option value="レモン精油">レモン精油</option>
+
+                </select>
+
+                <select name="option_select2" class="option_selects">
+                    <option value="">オプションを選択</option>
+                    <option value="アロエベラ">アロエベラ</option>
+                    <option value="アルガンオイル">アルガンオイル</option>
+                    <option value="カレンデュラエキス">カレンデュラエキス</option>
+                    <option value="カモミール精油">カモミール精油</option>
+                    <option value="クレイ">クレイ</option>
+                    <option value="サンダルウッド精油">サンダルウッド精油</option>
+                    <option value="ジャスミン精油">ジャスミン精油</option>
+                    <option value="シーソルト">シーソルト</option>
+                    <option value="シアバター">シアバター</option>
+                    <option value="紫雲膏パウダー">紫雲膏パウダー</option>
+                    <option value="シルクパウダー">シルクパウダー</option>
+                    <option value="スピルリナパウダー">スピルリナパウダー</option>
+                    <option value="精油">精油</option>
+                    <option value="ゼラニウム精油">ゼラニウム精油</option>
+                    <option value="竹炭パウダー">竹炭パウダー</option>
+                    <option value="ティーツリー精油">ティーツリー精油</option>
+                    <option value="はちみつ">はちみつ</option>
+                    <option value="ハッカ油">ハッカ油</option>
+                    <option value="ピンククレイ">ピンククレイ</option>
+                    <option value="ベントナイトクレイ">ベントナイトクレイ</option>
+                    <option value="ペパーミント精油">ペパーミント精油</option>
+                    <option value="ミルクプロテイン">ミルクプロテイン</option>
+                    <option value="ヤギミルク">ヤギミルク</option>
+                    <option value="ラベンダー精油">ラベンダー精油</option>
+                    <option value="ローズウォーター">ローズウォーター</option>
+                    <option value="ローズ精油">ローズ精油</option>
+                    <option value="芳香蒸留水">芳香蒸留水</option>
+                    <option value="レモン精油">レモン精油</option>
+
+                </select>
+
+                <select name="option_select3" class="option_selects">
+                    <option value="">オプションを選択</option>
+                    <option value="アロエベラ">アロエベラ</option>
+                    <option value="アルガンオイル">アルガンオイル</option>
+                    <option value="カレンデュラエキス">カレンデュラエキス</option>
+                    <option value="カモミール精油">カモミール精油</option>
+                    <option value="クレイ">クレイ</option>
+                    <option value="サンダルウッド精油">サンダルウッド精油</option>
+                    <option value="ジャスミン精油">ジャスミン精油</option>
+                    <option value="シーソルト">シーソルト</option>
+                    <option value="シアバター">シアバター</option>
+                    <option value="紫雲膏パウダー">紫雲膏パウダー</option>
+                    <option value="シルクパウダー">シルクパウダー</option>
+                    <option value="スピルリナパウダー">スピルリナパウダー</option>
+                    <option value="精油">精油</option>
+                    <option value="ゼラニウム精油">ゼラニウム精油</option>
+                    <option value="竹炭パウダー">竹炭パウダー</option>
+                    <option value="ティーツリー精油">ティーツリー精油</option>
+                    <option value="はちみつ">はちみつ</option>
+                    <option value="ハッカ油">ハッカ油</option>
+                    <option value="ピンククレイ">ピンククレイ</option>
+                    <option value="ベントナイトクレイ">ベントナイトクレイ</option>
+                    <option value="ペパーミント精油">ペパーミント精油</option>
+                    <option value="ミルクプロテイン">ミルクプロテイン</option>
+                    <option value="ヤギミルク">ヤギミルク</option>
+                    <option value="ラベンダー精油">ラベンダー精油</option>
+                    <option value="ローズウォーター">ローズウォーター</option>
+                    <option value="ローズ精油">ローズ精油</option>
+                    <option value="芳香蒸留水">芳香蒸留水</option>
+                    <option value="レモン精油">レモン精油</option>
+
+                </select>
+
+                <select name="option_select4" class="option_selects">
+                    <option value="">オプションを選択</option>
+                    <option value="アロエベラ">アロエベラ</option>
+                    <option value="アルガンオイル">アルガンオイル</option>
+                    <option value="カレンデュラエキス">カレンデュラエキス</option>
+                    <option value="カモミール精油">カモミール精油</option>
+                    <option value="クレイ">クレイ</option>
+                    <option value="サンダルウッド精油">サンダルウッド精油</option>
+                    <option value="ジャスミン精油">ジャスミン精油</option>
+                    <option value="シーソルト">シーソルト</option>
+                    <option value="シアバター">シアバター</option>
+                    <option value="紫雲膏パウダー">紫雲膏パウダー</option>
+                    <option value="シルクパウダー">シルクパウダー</option>
+                    <option value="スピルリナパウダー">スピルリナパウダー</option>
+                    <option value="精油">精油</option>
+                    <option value="ゼラニウム精油">ゼラニウム精油</option>
+                    <option value="竹炭パウダー">竹炭パウダー</option>
+                    <option value="ティーツリー精油">ティーツリー精油</option>
+                    <option value="はちみつ">はちみつ</option>
+                    <option value="ハッカ油">ハッカ油</option>
+                    <option value="ピンククレイ">ピンククレイ</option>
+                    <option value="ベントナイトクレイ">ベントナイトクレイ</option>
+                    <option value="ペパーミント精油">ペパーミント精油</option>
+                    <option value="ミルクプロテイン">ミルクプロテイン</option>
+                    <option value="ヤギミルク">ヤギミルク</option>
+                    <option value="ラベンダー精油">ラベンダー精油</option>
+                    <option value="ローズウォーター">ローズウォーター</option>
+                    <option value="ローズ精油">ローズ精油</option>
+                    <option value="芳香蒸留水">芳香蒸留水</option>
+                    <option value="レモン精油">レモン精油</option>
+
+                </select>
+            </div>
+
+            <div id="option_amount-container">
+                <p id="option_amounts_label">量(g)</p>
+                <input type="number" class="option_amounts" id="option_amount1" placeholder="例)10">
+                <input type="number" class="option_amounts" id="option_amount2" placeholder="例)10">
+                <input type="number" class="option_amounts" id="option_amount3" placeholder="例)10">
+                <input type="number" class="option_amounts" id="option_amount4" placeholder="例)10">
+            </div>
+        </div>
+    </form>
+
+    <div id="memo-container">
+        <p id="memo_label">MEMO</p>
+        <textarea id="memo" rows="8"></textarea>
+    </div>
+
+    <div id="sap_ratio-container">
+        <p id="sap_ratio_label" style="display: inline; font-weight: bold;">鹸化率:　</p>
+        <input id="sap_ratio_val" type="number" value="92" style="display: inline">
+        <p id="sap_ratio_unit" style="display: inline">%</p>
+    </div>
+
+    <div id="alkali_ratio-container">
+        <p id="alkali_ratio_label" style="display: inline; font-weight: bold;">アルカリの純度:　</p>
+        <input id="alkali_ratio_val" type="number" value="100" style="display: inline">
+        <p id="alkali_ratio_unit" style="display: inline">%</p>
+    </div>
+
+    <input type="button" value="計算" class="calc-btn" onclick="calc_result()">
+</div>

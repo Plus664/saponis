@@ -1,0 +1,415 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+#warningOverlay h3 {
+    text-align: center;
+}
+
+.overlay-content {
+    background: #fff;
+    padding: 2em;
+    border-radius: 8px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    font-size: 20px;
+    position: relative;
+    animation: fadeIn 0.4s ease;
+}
+
+#closeWarning {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+#closeWarning:hover {
+    color: #000;
+}
+
+.warning-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5em;
+    background: #4a90af;
+    /* 落ち着いた水色系 */
+    color: #004d5a;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(163, 213, 224, 0.6);
+    transition: transform 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.warning-button:hover {
+    transform: scale(1.1);
+    background: #8ccbd8;
+}
+
+@keyframes fadeIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#result_sheet-container .hidden {
+    display: none !important;
+}
+
+#result_sheet-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 220px;
+    width: 100%;
+}
+
+#result_sheet-container #result_sheet_label {
+    justify-self: center;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+#result_sheet-container #name_result_label {
+    margin-top: 15px;
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #name_result {
+    margin-top: 15px;
+    justify-self: center;
+    font-size: 22px;
+    max-width: 80%;
+}
+
+#result_sheet-container #type_result {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #alkali_result {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #oil_amount_sum_result {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #oil_amounts_result-container {
+    display: flex;
+    flex-flow: column;
+    gap: 5px;
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container .oil_amount_results {
+    margin-left: 10px;
+    font-size: 18px;
+}
+
+#result_sheet-container #option_amounts_result-container {
+    display: flex;
+    flex-flow: column;
+    gap: 5px;
+    margin-top: 5px;
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container .option_amount_results {
+    margin-left: 10px;
+    font-size: 18px;
+}
+
+#result_sheet-container #water_amount_result {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #alcohol_amount_result {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #features {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container #additional_info-container {
+    display: flex;
+    flex-flow: column;
+    gap: 5px;
+    margin-left: 30px;
+    font-size: 22px;
+}
+
+#result_sheet-container .additional_infos {
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+#result_sheet-container #chart_canvas-container {
+    justify-self: center;
+    width: 90%;
+}
+
+#result_sheet-container #chart_canvas {
+    width: 100%;
+}
+
+#result_sheet-container #conditions-container {
+    display: flex;
+    flex-flow: column;
+    gap: 5px;
+    margin-left: 30px;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+#result_sheet-container #image-container {
+    margin-left: 30px;
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+#result_sheet-container #image_label {
+    padding: 5px 0;
+}
+
+#result_sheet-container #img_file {
+    margin-left: 15px;
+    padding: 5px 0;
+    width: 250px;
+}
+
+#result_sheet-container #preview {
+    margin-left: 15px;
+    padding: 5px 0;
+    width: 250px;
+    height: auto;
+}
+
+#result_sheet-container #memo-container {
+    margin-left: 30px;
+    margin-bottom: 40px;
+    font-size: 22px;
+}
+
+#result_sheet-container #memo_result {
+    overflow-wrap: break-word;
+    width: 250px;
+    max-width: 500px;
+    margin-left: 15px;
+    padding: 5px 0;
+    font-size: 20px;
+}
+
+#result_sheet-container #pres-btn {
+    justify-self: center;
+    border: none;
+    color: rgba(148, 170, 255, 1);
+    background-color: white;
+    font-size: 22px;
+    width: 120px;
+    padding: 10px 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
+    cursor: pointer;
+}
+
+#result_sheet-container #pres-btn:hover {
+    color: white;
+    background-color: rgba(148, 170, 255, 1);
+    box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+#result_sheet-container #pres-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
+    background-color: rgba(120, 140, 230, 1);
+    /* 少し濃いめで押した感 */
+}
+
+#result_sheet-container #print-btn {
+    justify-self: center;
+    border: none;
+    color: rgba(148, 170, 255, 1);
+    background-color: white;
+    font-size: 22px;
+    width: 120px;
+    padding: 10px 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
+    cursor: pointer;
+}
+
+#result_sheet-container #print-btn:hover {
+    color: white;
+    background-color: rgba(148, 170, 255, 1);
+    box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+#result_sheet-container #print-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
+    background-color: rgba(120, 140, 230, 1);
+    /* 少し濃いめで押した感 */
+}
+
+@media (min-width: 1024px) {
+    #result_sheet-container {
+        max-width: 700px;
+        margin: 250px auto 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    #result_sheet-container #result_sheet_label {
+        align-self: center;
+        font-weight: bold;
+        font-size: 25px;
+        margin: 0;
+    }
+
+    #result_sheet-container #name_result-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    #result_sheet-container #chart_canvas-container {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    #result_sheet-container #chart_canvas {
+        max-width: 80%;
+        justify-self: center;
+    }
+
+    #result_sheet-container #preview {
+        width: 80%;
+        height: auto;
+    }
+
+    #result_sheet-container #memo_result {
+        width: 100%;
+    }
+
+    #result_sheet-container #pres-btn,
+    #result_sheet-container #print-btn {
+        margin: 0 auto;
+    }
+}
+
+@media print {
+    #result_sheet-container {
+        margin-top: 60mm;
+        font-size: 20pt;
+        margin: 10mm;
+    }
+
+
+    /* 非表示にする要素 */
+    header,
+    nav,
+    .loader-wrapper,
+    .logo,
+    #result_sheet-container #warningOverlay,
+    #result_sheet-container #warningToggle,
+    #result_sheet-container #image-container,
+    #result_sheet-container #result_sheet_label,
+    #result_sheet-container #pres-btn,
+    #result_sheet-container #print-btn {
+        display: none !important;
+    }
+
+    #logo-watermark {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("../assets/image/logo.png");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 90%;
+        opacity: 0.2;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    #result_sheet-container #chart_canvas-container {
+        position: absolute;
+        top: 50mm;
+        left: 90mm;
+        width: 120mm;
+        height: 120mm;
+    }
+
+    #result_sheet-container img {
+        max-width: 60mm;
+        height: auto;
+    }
+
+    #result_sheet-container .memo {
+        page-break-before: always;
+    }
+}

@@ -1,0 +1,298 @@
+#input_sheet-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 230px;
+    width: 100%;
+}
+
+#input_sheet-container #recipe_name-container {
+    justify-self: center;
+    height: 30px;
+}
+
+#input_sheet-container #recipe_name_label {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#input_sheet-container #recipe_name {
+    padding: 2px;
+    width: 180px;
+    font-size: 20px;
+}
+
+#input_sheet-container #soda_potash-container {
+    justify-self: center;
+    margin-top: 20px;
+    width: 90%;
+    height: 150px;
+}
+
+#input_sheet-container #soda-container {
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 100%;
+    height: 50px;
+}
+
+#input_sheet-container #soda_label {
+    font-size: 20px;
+}
+
+#input_sheet-container #water_ratio-container {
+    margin-top: 10px;
+    margin-left: 15px;
+    font-size: 18px;
+}
+
+#input_sheet-container #water_ratio_val {
+    width: 80px;
+    height: 20px;
+    font-size: 18px;
+}
+
+#input_sheet-container #potash-container {
+    margin-top: 14px;
+    margin-left: 10px;
+    width: 100%;
+    height: 70px;
+}
+
+#input_sheet-container #potash_label {
+    font-size: 20px;
+}
+
+#input_sheet-container #alcohol-container {
+    margin-top: 10px;
+    margin-left: 15px;
+    width: 100%;
+    height: 70px;
+}
+
+#input_sheet-container #with_alcohol_label {
+    font-size: 20px;
+}
+
+#input_sheet-container #alcohol_ratio-container {
+    margin-top: 10px;
+    margin-left: 15px;
+    font-size: 18px;
+}
+
+#input_sheet-container #alcohol_ratio_val {
+    width: 80px;
+    height: 20px;
+    font-size: 18px;
+}
+
+#input_sheet-container #without_alcohol-container {
+    margin-top: 10px;
+}
+
+#input_sheet-container #without_alcohol_label {
+    font-size: 20px;
+}
+
+#input_sheet-container #oil-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 6px;
+    justify-self: center;
+    margin-top: 90px;
+    width: 90%;
+}
+
+#input_sheet-container #oil_name-container {
+    width: 100%;
+}
+
+#input_sheet-container #oil_label {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#input_sheet-container .selects {
+    margin-top: 2px;
+    width: 93%;
+    padding: 6px 0;
+    font-size: 16px;
+}
+
+#input_sheet-container #oil_amount-container {
+    width: 100%;
+}
+
+#input_sheet-container #oil_amounts_label {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#input_sheet-container .oil_amounts {
+    margin-top: 2px;
+    width: 93%;
+    padding: 6px 0;
+    font-size: 16px;
+}
+
+#input_sheet-container #option-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 6px;
+    justify-self: center;
+    margin-top: 30px;
+    width: 90%;
+}
+
+#input_sheet-container #option_name-container {
+    width: 100%;
+}
+
+#input_sheet-container #option_name_label {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#input_sheet-container .option_selects {
+    margin-top: 2px;
+    width: 93%;
+    padding: 6px 0;
+    font-size: 16px;
+}
+
+#input_sheet-container #option_amount-container {
+    width: 100%;
+}
+
+#input_sheet-container #option_amounts_label {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#input_sheet-container .option_amounts {
+    margin-top: 2px;
+    width: 93%;
+    padding: 6px 0;
+    font-size: 16px;
+}
+
+#input_sheet-container .oil_amounts::-webkit-outer-spin-button,
+.oil_amounts::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#input_sheet-container input::placeholder {
+    font-size: 18px;
+}
+
+#input_sheet-container #memo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    justify-self: center;
+    margin-top: 20px;
+    width: 80%;
+}
+
+#input_sheet-container #memo_label {
+    margin: 10px 0;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+#input_sheet-container #memo {
+    width: 100%;
+    font-size: 18px;
+}
+
+#input_sheet-container #sap_ratio-container {
+    margin-top: 20px;
+    justify-self: center;
+    width: 300px;
+    font-size: 20px;
+}
+
+#input_sheet-container #sap_ratio_val {
+    width: 80px;
+    height: 20px;
+    font-size: 18px;
+}
+
+#input_sheet-container #alkali_ratio-container {
+    margin-top: 10px;
+    justify-self: center;
+    width: 300px;
+    font-size: 20px;
+}
+
+#input_sheet-container #alkali_ratio_val {
+    width: 80px;
+    height: 20px;
+    font-size: 18px;
+}
+
+#input_sheet-container .calc-btn {
+    margin-top: 20px;
+    justify-self: center;
+    border: none;
+    color: rgba(148, 170, 255, 1);
+    background-color: white;
+    font-size: 22px;
+    width: 120px;
+    padding: 10px 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
+    cursor: pointer;
+}
+
+#input_sheet-container .calc-btn:hover {
+    color: white;
+    background-color: rgba(148, 170, 255, 1);
+    box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+#input_sheet-container .calc-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
+    background-color: rgba(120, 140, 230, 1);
+    /* 少し濃いめで押した感 */
+}
+
+@media (min-width: 1024px) {
+    #input_sheet-container {
+        margin-top: 260px;
+    }
+
+    #input_sheet-container #recipe_name {
+        width: 300px;
+    }
+
+    #input_sheet-container #soda_potash_label {
+        width: 100%;
+        font-weight: bold;
+    }
+
+    #input_sheet-container #soda_potash-container {
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+    }
+
+    #input_sheet-container #soap_types_wrapper {
+        display: flex;
+    }
+
+    #input_sheet-container #soda-container,
+    #potash-container {
+        flex: 1 1 48%;
+        padding: 1rem;
+        margin-top: 10px;
+        margin-left: 10px;
+        width: 100%;
+        height: 50px;
+    }
+}

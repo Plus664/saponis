@@ -1,0 +1,83 @@
+<div id="result_sheet-container">
+    <p id="result_sheet_label">結果</p>
+
+    <div id="warningOverlay" class="overlay hidden">
+        <div class="overlay-content">
+            <button id="closeWarning">×</button>
+            <h3>⚠️ 注意 ⚠️</h3>
+            <ul id="warningList"></ul>
+        </div>
+    </div>
+    <button id="warningToggle" class="warning-button hidden">❗</button>
+
+    <div id="name_result-container">
+        <label for="name_result" id="name_result_label">★せっけんの名前:</label>
+        <p id="name_result"></p>
+    </div>
+
+    <p id="type_result"></p>
+
+    <p id="alkali_result"></p>
+
+    <p id="oil_amount_sum_result"></p>
+
+    <div id="oil_amounts_result-container">
+        <p id="oil_amount_result1" class="oil_amount_results"></p>
+        <p id="oil_amount_result2" class="oil_amount_results"></p>
+        <p id="oil_amount_result3" class="oil_amount_results"></p>
+        <p id="oil_amount_result4" class="oil_amount_results"></p>
+        <p id="oil_amount_result5" class="oil_amount_results"></p>
+        <p id="oil_amount_result6" class="oil_amount_results"></p>
+        <p id="oil_amount_result7" class="oil_amount_results"></p>
+        <p id="oil_amount_result8" class="oil_amount_results"></p>
+        <p id="oil_amount_result9" class="oil_amount_results"></p>
+        <p id="oil_amount_result10" class="oil_amount_results"></p>
+    </div>
+
+    <div id="option_amounts_result-container">
+        <p id="option_result_label">★オプション</p>
+        <p id="option_amount_result1" class="option_amount_results"></p>
+        <p id="option_amount_result2" class="option_amount_results"></p>
+        <p id="option_amount_result3" class="option_amount_results"></p>
+        <p id="option_amount_result4" class="option_amount_results"></p>
+    </div>
+
+    <p id="water_amount_result" style="display: inline"></p>
+    <p id="alcohol_amount_result" style="display: inline;"></p>
+
+    <p id="features"></p>
+    <div id="additional_info-container">
+        <p id="skin_result" class="additional_infos"></p>
+        <p id="clean_result" class="additional_infos"></p>
+        <p id="foam_result" class="additional_infos"></p>
+        <p id="hard_result" class="additional_infos"></p>
+        <p id="collapse_result" class="additional_infos"></p>
+        <p id="stability_result" class="additional_infos"></p>
+    </div>
+
+    <div id="chart_canvas-container">
+        <canvas id="chart_canvas"></canvas>
+    </div>
+
+    <div id="conditions-container">
+        <p id="conditions_label">★補足</p>
+        <p id="mix_temp_text"></p>
+        <p id="cure_temp_text"></p>
+        <p id="cure_humidity_text"></p>
+        <p id="final_ph_text"></p>
+    </div>
+
+    <div id="image-container">
+        <p id="image_label">★完成したせっけんの画像</p>
+        <input type="file" id="img_file" accept="image/*">
+        <img id="preview" alt="完成したせっけんの画像" 　width="200px" height="200px">
+    </div>
+
+    <div id="memo-container">
+        <p id="memo_label">★MEMO</p>
+        <p id="memo_result"></p>
+    </div>
+
+    <input type="button" value="保存" id="pres-btn" onclick="pres_result()">
+    <input type="button" value="印刷" id="print-btn" onclick="print_result()">
+</div>

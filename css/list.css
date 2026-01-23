@@ -1,0 +1,166 @@
+#list_sheet-container {
+    position: relative;
+    margin-top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+}
+
+#list_sheet-container #list_sheet_label {
+    position: static;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 25px;
+    white-space: nowrap;
+}
+
+#list_sheet-container #controlls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+#list_sheet-container #controlls label {
+    font-size: 18px;
+}
+
+#list_sheet-container #sort-select,
+#search-box {
+    padding: 6px 10px;
+    font-size: 18px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+#list_sheet-container .overlay-menu div:hover {
+    background-color: #f0f0f0;
+}
+
+#list_sheet-container .overlay-buttons {
+    justify-self: center;
+    border: none;
+    color: rgba(148, 170, 255, 1);
+    background-color: white;
+    font-size: 22px;
+    width: 200px;
+    padding: 10px 0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
+    cursor: pointer;
+    display: block;
+    margin: 12px auto;
+}
+
+#list_sheet-container .overlay-buttons:hover {
+    color: white;
+    background-color: rgba(148, 170, 255, 1);
+    box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+#list_sheet-container .overlay-buttons:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
+    background-color: rgba(120, 140, 230, 1);
+}
+
+#list_sheet-container #list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    top: 20px;
+    width: 100%;
+    padding-bottom: 50px;
+}
+
+#list_sheet-container .marquee-wrapper {
+    width: 300px;
+    height: 50px;
+    overflow: hidden;
+    background: rgb(252, 252, 252);
+    border: none;
+    border-radius: 16px;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+#list_sheet-container .marquee-wrapper:hover {
+    background: rgba(148, 170, 255, 0.7);
+    box-shadow: 0 4px 12px rgba(148, 170, 255, 0.2);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+#list_sheet-container .marquee-wrapper:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.1);
+}
+
+#list_sheet-container .text-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 50px);
+    line-height: 50px;
+    overflow: hidden;
+}
+
+#list_sheet-container .marquee-inner {
+    display: inline-block;
+    white-space: nowrap;
+    transition: transform 0.2s ease-out;
+}
+
+#list_sheet-container .scrolling {
+    animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+#list_sheet-container .favorite-icon {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-left: 8px;
+    font-size: 20px;
+    color: #f39c12;
+    z-index: 1;
+}
+
+#list_sheet-container .menu_icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    width: 40px;
+    height: 50px;
+    cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+    #list_sheet-container {
+        margin-top: 250px;
+    }
+
+    #list_sheet-container #controlls {
+        flex-direction: row;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+    <meta name="description" content="手作り石鹸のレシピサイト。オイルとオプションの組み合わせを自由にカスタマイズできます。">
+
+    <title>アルカリ計算機</title>
+
+    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <link href="./css/input.css" rel="stylesheet" type="text/css">
+    <link href="./css/result.css" rel="stylesheet" type="text/css">
+    <link href="./css/list.css" rel="stylesheet" type="text/css">
+    <link href="./css/original.css" rel="stylesheet" type="text/css">
+    <link href="./css/recommend.css" rel="stylesheet" type="text/css">
+    <link href="./css/oil_characteristics.css" rel="stylesheet" type="text/css">
+    <link href="./css/column.css" rel="stylesheet" type="text/css">
+    <link href="./css/other.css" rel="stylesheet" type="text/css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
+    <script src="./javascript/global.js" defer></script>
+
+    <script src="./javascript/input.js" defer></script>
+    <script src="./javascript/result.js" defer></script>
+    <script src="./javascript/list.js" defer></script>
+    <script src="./javascript/original.js" defer></script>
+    <script src="./javascript/recommend.js" defer></script>
+    <script src="./javascript/oil-characteristics.js" defer></script>
+    <script src="./javascript/column.js" defer></script>
+    <script src="./javascript/other.js" defer></script>
+
+    <script src="./app.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <h2 class="title">アルカリ計算機</h2>
+
+        <nav class="menu">
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul>
+                <li data-view="input">レシピ入力</li>
+                <li data-view="result">結果</li>
+                <li data-view="list">保存したレシピ</li>
+                <li data-view="original">オリジナルのレシピ作り</li>
+                <li data-view="recommend">特長別のレシピ</li>
+                <li data-view="oil-characteristics">各オイルの特徴</li>
+                <li data-view="column">コラム</li>
+                <li data-view="other">その他</li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="loader-wrapper" id="loader">
+        <div class="soap-spinner"></div>
+        <div class="loader-message">LOADING...</div>
+    </div>
+
+    <main>
+        <div id="logo-watermark"></div>
+        <img src="./assets/image/logo.png" class="logo">
+
+        <div id="app"></div>
+    </main>
+
+    <footer>
+
+    </footer>
+</body>
+
+</html>
