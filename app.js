@@ -81,6 +81,28 @@ document.getElementById("enterButton").addEventListener("click", async () => {
 });
 
 // ===============================
+// LOADING制御
+// ===============================
+const shouldShowLoader = () => {
+    const logo = document.querySelector(".logo");
+    return logo && !logo.complete;
+};
+
+const showLoader = () => {
+    const loader = document.getElementById("loader");
+    loader.style.display = "flex";
+    loader.style.opacity = "1";
+};
+
+const fadeOutLoader = () => {
+    const loader = document.getElementById("loader");
+    loader.style.opacity = "0";
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, 300);
+};
+
+// ===============================
 // SPA ルーター（画面切り替え）
 // ===============================
 
@@ -237,31 +259,10 @@ function closeMenu() {
     hamburger.classList.remove("active");
 }
 
-// ===============================
-// LOADING制御
-// ===============================
-const shouldShowLoader = () => {
-    const logo = document.querySelector(".logo");
-    return logo && !logo.complete;
-};
-
-const showLoader = () => {
-    const loader = document.getElementById("loader");
-    loader.style.display = "flex";
-    loader.style.opacity = "1";
-};
-
-const fadeOutLoader = () => {
-    const loader = document.getElementById("loader");
-    loader.style.opacity = "0";
-    setTimeout(() => {
-        loader.style.display = "none";
-    }, 300);
-};
-
 // アプリ起動時
 openDB().then(() => {
     showView(location.hash.replace("#", "") || "input") // 初期画面
 });
+
 
 
