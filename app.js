@@ -51,7 +51,7 @@ async function fetchRoomCode() {
         .from("settings")
         .select("value")
         .eq("SettingKey", "RoomCode")
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error("入室コード取得エラー:", error);
@@ -241,5 +241,6 @@ function closeMenu() {
 openDB().then(() => {
     showView(location.hash.replace("#", "") || "input") // 初期画面
 });
+
 
 
