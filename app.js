@@ -49,9 +49,8 @@ await refreshJWTWithUserKey();
 async function fetchRoomCode() {
     const { data, error } = await supabase
         .from("settings")
-        .select("value")
-        .eq("SettingKey", "RoomCode")
-        .maybeSingle();
+        .select("*");
+    console.log(data);
 
     if (error) {
         console.error("入室コード取得エラー:", error);
@@ -241,6 +240,7 @@ function closeMenu() {
 openDB().then(() => {
     showView(location.hash.replace("#", "") || "input") // 初期画面
 });
+
 
 
 
