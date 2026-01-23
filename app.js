@@ -50,7 +50,7 @@ async function fetchRoomCode() {
     const { data, error } = await supabase
         .from("settings")
         .select("value")
-        .eq("key", "room_code")
+        .eq("setting_key", "room_code")
         .single();
 
     if (error) {
