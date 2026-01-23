@@ -50,7 +50,7 @@ async function fetchRoomCode() {
     const { data, error } = await supabase
         .from("settings")
         .select("value")
-        .eq("setting_key", "room_code")
+        .eq("SettingKey", "RoomCode")
         .single();
 
     if (error) {
@@ -241,4 +241,5 @@ function closeMenu() {
 openDB().then(() => {
     showView(location.hash.replace("#", "") || "input") // 初期画面
 });
+
 
