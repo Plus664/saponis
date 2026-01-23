@@ -21,19 +21,19 @@ function getOrCreateUserKey() {
 const USER_KEY = getOrCreateUserKey();
 
 async function ensureAnonymousLogin() {
-  const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
 
-  // すでにログイン済みなら何もしない
-  if (session) return session;
+    // すでにログイン済みなら何もしない
+    if (session) return session;
 
-  // 匿名ログイン
-  const { data, error } = await supabase.auth.signInAnonymously();
-  if (error) {
-    console.error("匿名ログイン失敗:", error);
-    return null;
-  }
+    // 匿名ログイン
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) {
+        console.error("匿名ログイン失敗:", error);
+        return null;
+    }
 
-  return data.session;
+    return data.session;
 }
 
 async function refreshJWTWithUserKey() {
@@ -79,28 +79,6 @@ document.getElementById("enterButton").addEventListener("click", async () => {
         document.getElementById("gateError").textContent = "入室コードが違います";
     }
 });
-
-// ===============================
-// LOADING制御
-// ===============================
-const shouldShowLoader = () => {
-    const logo = document.querySelector(".logo");
-    return logo && !logo.complete;
-};
-
-const showLoader = () => {
-    const loader = document.getElementById("loader");
-    loader.style.display = "flex";
-    loader.style.opacity = "1";
-};
-
-const fadeOutLoader = () => {
-    const loader = document.getElementById("loader");
-    loader.style.opacity = "0";
-    setTimeout(() => {
-        loader.style.display = "none";
-    }, 300);
-};
 
 // ===============================
 // SPA ルーター（画面切り替え）
@@ -263,6 +241,4 @@ function closeMenu() {
 openDB().then(() => {
     showView(location.hash.replace("#", "") || "input") // 初期画面
 });
-
-
 

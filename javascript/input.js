@@ -9,6 +9,28 @@ let alkali_result;
 let sap_ratio_result;
 let water_amount_result;
 
+// ===============================
+// LOADING制御
+// ===============================
+const shouldShowLoader = () => {
+    const logo = document.querySelector(".logo");
+    return logo && !logo.complete;
+};
+
+const showLoader = () => {
+    const loader = document.getElementById("loader");
+    loader.style.display = "flex";
+    loader.style.opacity = "1";
+};
+
+const fadeOutLoader = () => {
+    const loader = document.getElementById("loader");
+    loader.style.opacity = "0";
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, 300);
+};
+
 function initInputView() {
     setTimeout(() => {
         window.scrollTo({
