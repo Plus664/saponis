@@ -8,7 +8,7 @@ const sb = window.supabase.createClient(
 window.supabase = sb;
 
 // ユーザーキー生成
-function getOrCreateUserKey() {
+/*function getOrCreateUserKey() {
     let key = localStorage.getItem("user_key");
     if (!key) {
         key = crypto.randomUUID();
@@ -63,6 +63,26 @@ async function initApp() {
 
     //await refreshJWTWithUserKey(USER_KEY);
 }
+initApp();*/
+async function ensureAnonymousLogin() {
+    const { data: { session } } = await window.supabase.auth.getSession();
+
+    if (session) return session;
+
+    const { data, error } = await window.supabase.auth.signInAnonymously();
+    if (error) {
+        console.error("匿名ログイン失敗:", error);
+        return null;
+    }
+
+    return data.session;
+}
+
+async function initApp() {
+    const session = await ensureAnonymousLogin();
+    window.currentUser = session.user; // ← どこでも使えるように保存
+}
+
 initApp();
 
 // 入室コード取得
@@ -299,6 +319,4 @@ const fadeOutLoader = () => {
     setTimeout(() => {
         loader.style.display = "none";
     }, 300);
-
 };
-

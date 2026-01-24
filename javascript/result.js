@@ -665,14 +665,17 @@ async function pres_result() {
         isFavorite: false
     };
 
-    const user_key = sessionStorage.getItem("user_key");
+    //const user_key = sessionStorage.getItem("user_key");
+
+    const { data: userData } = await window.supabase.auth.getUser();
+    const user = userData.user;
 
     const { error } = await window.supabase
         .from("recipes")
         .insert({
             title: recipe_name,
             data,
-            user_key,
+            user_id: user.id,
         });
 
     if (error) {
