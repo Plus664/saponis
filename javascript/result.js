@@ -1,8 +1,6 @@
 let type;
 let scene;
 let alcohol;
-//let request;
-//let db;
 let preserved_recipes = [];        // 保存したレシピの配列
 let preserved_images = [];         // 保存した画像の配列
 let chartInstance = null;
@@ -13,7 +11,7 @@ let imgPreview;
 let pres_button, print_button;
 
 //結果を表示
-const display_result = () => {
+async function display_result() {
     let name = sessionStorage.getItem("name");
     if (!name) {
         const now = new Date();
@@ -71,7 +69,38 @@ const display_result = () => {
         print_button.style.display = "block";
         imgContainer.style.display = "block";
 
-        if (preserved_recipes.length > 0) {
+        const recipeId = sessionStorage.getItem("id");
+
+        // Supabaseからレシピ読み込み
+        const { data: recipe } = await supabase
+            .from("recipes")
+            .select("*")
+            .eq("id", recipeId)
+            .single();
+
+        const { data: img } = supabase.storage
+            .from("recipe-images")
+            .getPublicUrl(`${recipeId}.jpg`);
+
+        imgPreview.src = img.publicUrl || "../assets/image/default.jpg";
+
+        // 画像アップロード
+        imgFile.addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            await supabase.storage
+                .from("recipe-images")
+                .upload(`${recipeId}.jpg`, file, { upsert: true });
+
+            const { data: img2 } = supabase.storage
+                .from("recipe-images")
+                .getPublicUrl(`${recipeId}.jpg`);
+
+            imgPreview.src = img2.publicUrl;
+        });
+
+        /*if (preserved_recipes.length > 0) {
             const id = Number(sessionStorage.getItem("id"));
             const recipe = preserved_recipes.find(recipe => recipe.id == id);
 
@@ -133,7 +162,7 @@ const display_result = () => {
                 };
                 reader.readAsDataURL(file);
             }
-        });
+        });*/
     }
 
     display_memo();
@@ -503,7 +532,7 @@ const display_conditions = () => {
     document.getElementById("cure_humidity_text").textContent = cure_humidity;
     document.getElementById("final_ph_text").textContent = final_ph;
 };
-
+/*
 const loadImage = (id) => {
     return new Promise((resolve, reject) => {
         const transaction = db.transaction("images", "readonly");
@@ -519,7 +548,7 @@ const loadImage = (id) => {
         };
     });
 };
-
+*/
 const display_memo = () => {
     const memo_result = document.getElementById("memo_result");
     const raw = sessionStorage.getItem("memo")
@@ -527,7 +556,7 @@ const display_memo = () => {
 
     memo_result.textContent = memo;
 }
-
+/*
 const openIndexedDB = () => {
     scene = sessionStorage.getItem("scene") || "result";
 
@@ -540,15 +569,15 @@ const openIndexedDB = () => {
     });
 
 };
-
-function pres_result() {
-    if (!db) {
+*/
+async function pres_result() {
+    /*if (!db) {
         alert("IndexedDBが利用できません");
         return;
-    }
+    }*/
 
     showLoader_result();
-    const start = performance.now();
+    //const start = performance.now();
 
     const recipe_name = document.getElementById("name_result").textContent;
     const type = document.getElementById("type_result").textContent;
@@ -592,7 +621,7 @@ function pres_result() {
         { key: "final_ph", value: document.getElementById("final_ph_text").textContent },
     ];
 
-    const pres_infos = {
+    const data = {
         recipe_name,
         type,
         sap_ratio: sapRatio,
@@ -610,11 +639,28 @@ function pres_result() {
         features,
         conditions,
         memo,
-        isFavorite: false,
-        created_at: new Date().toISOString(),
+        isFavorite: false
     };
 
-    const transaction = db.transaction("recipes", "readwrite");
+    const user_key = sessionStorage.getItem("user_key");
+
+    const { error } = await supabase
+        .from("recipes")
+        .insert({
+            title: recipe_name,
+            data,
+            user_key,
+        });
+
+    if (error) {
+        console.error(error);
+        alert("保存に失敗しました");
+    } else {
+        alert("保存しました");
+    }
+    //fadeOutLoader_result();
+
+    /*const transaction = db.transaction("recipes", "readwrite");
     const store = transaction.objectStore("recipes");
     const addRequest = store.add(pres_infos);
 
@@ -636,7 +682,7 @@ function pres_result() {
 
         fadeOutLoader_result();
         alert("レシピを保存できませんでした");
-    };
+    };*/
 }
 
 // 印刷
@@ -673,7 +719,9 @@ function initResultView() {
         document.getElementById("warningToggle").classList.add("hidden");
     };
 
-    openIndexedDB();
+    //openIndexedDB();
+    scene = sessionStorage.getItem("scene") || "result";
+    display_result();
     fadeOutLoader_result();
 }
 

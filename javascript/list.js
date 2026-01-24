@@ -36,8 +36,8 @@ const sort_recipes = (method) => {
 };
 
 // 保存したレシピ一覧をボタンで表示
-const display_list = () => {
-    if (!db) {
+const display_list = async () => {
+    /*if (!db) {
         alert("IndexedDBが使えません");
         return;
     }
@@ -61,11 +61,34 @@ const display_list = () => {
     request.onerror = function () {
         alert("レシピの取得に失敗しました");
         return;
+    }*/
+    const user_key = sessionStorage.getItem("user_key");
+
+    const { data: recipes, error } = await supabase
+        .from("recipes")
+        .select("*")
+        .eq("user_key", user_key)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        alert("レシピの取得に失敗しました");
+        console.error(error);
+        return;
+    }
+
+    preserved_recipes = recipes; // ← 今まで通り使える
+
+    const savedMethod = sessionStorage.getItem("sortMethod");
+    if (savedMethod) {
+        document.getElementById("sort-select").value = savedMethod;
+        sort_recipes(savedMethod);
+    } else {
+        sort_recipes("newest");
     }
 };
 
 // 要らないキーのみ削除
-/*function clear_preserveSession() {
+function clear_preserveSession() {
     const keysToRemove = [
         "scene",
         "prev_page",
@@ -84,7 +107,7 @@ const display_list = () => {
     ];
 
     keysToRemove.forEach(key => sessionStorage.removeItem(key));
-}*/
+}
 
 // 保存したレシピの表示
 function display_pres_list(id) {
@@ -93,7 +116,6 @@ function display_pres_list(id) {
 
     sessionStorage.setItem("scene", "preserve");
     sessionStorage.setItem("prev_page", "preserve");
-
     sessionStorage.setItem("id", id);
 
     const recipe = preserved_recipes.find(recipe => recipe.id == id);
@@ -102,15 +124,14 @@ function display_pres_list(id) {
         return;
     }
 
-    sessionStorage.setItem("name", recipe.recipe_name);
+    const data = recipe.data
 
-    sessionStorage.setItem("type", recipe.type == "★タイプ: 固形せっけん" ? "soda" : "potash");
+    sessionStorage.setItem("name", data.recipe_name);
+    sessionStorage.setItem("type", data.type == "★タイプ: 固形せっけん" ? "soda" : "potash");
+    sessionStorage.setItem("alkali", data.alkali);
+    sessionStorage.setItem("oilAmountSum", data.oil_amount_sum);
 
-    sessionStorage.setItem("alkali", recipe.alkali);
-
-    sessionStorage.setItem("oilAmountSum", recipe.oil_amount_sum);
-
-    const presOils = recipe.oils || [];
+    const presOils = data.oils || [];
     const oilList = [];
     if (Array.isArray(presOils)) {
         for (let i = 0; i < 10; i++) {
@@ -125,7 +146,7 @@ function display_pres_list(id) {
     }
     sessionStorage.setItem("oilNames", JSON.stringify(oilList));
 
-    const presOptions = recipe.options || [];
+    const presOptions = data.options || [];
     const optionList = [];
     if (Array.isArray(presOptions)) {
         for (let i = 0; i < 4; i++) {
@@ -140,11 +161,11 @@ function display_pres_list(id) {
     }
     sessionStorage.setItem("optionNames", JSON.stringify(optionList));
 
-    sessionStorage.setItem("waterAmount", recipe.water_amount);
+    sessionStorage.setItem("waterAmount", data.water_amount);
 
-    sessionStorage.setItem("alcoholAmount", recipe.alcohol);
+    sessionStorage.setItem("alcoholAmount", data.alcohol);
 
-    const presFeatures = recipe.features;
+    const presFeatures = data.features;
     const additional_infos = [presFeatures[0].value,
     presFeatures[1].value,
     presFeatures[2].value,
@@ -153,31 +174,31 @@ function display_pres_list(id) {
     presFeatures[5].value];
     sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));
 
-    const presConditions = recipe.conditions;
+    const presConditions = data.conditions;
     const conditions = [presConditions[0].value,
     presConditions[1].value,
     presConditions[2].value,
     presConditions[3].value];
     sessionStorage.setItem("conditions", JSON.stringify(conditions));
 
-    sessionStorage.setItem("memo", recipe.memo || "");
+    sessionStorage.setItem("memo", data.memo || "");
 
     showView("result");
 };
 
 // 保存したレシピを削除
-function remove_pres(id) {
-    if (!db) {
+async function remove_pres(id) {
+    /*if (!db) {
         alert("IndexedDBが利用できません");
         return;
-    }
+    }*/
 
     const recipe = preserved_recipes.find(r => r.id === id);
     const name = recipe?.recipe_name || "このレシピ";
     const confirmed = confirm(`\"${name}\"を削除しますか？`);
     if (!confirmed) return;
 
-    const transaction = db.transaction(["recipes", "images"], "readwrite");
+    /*const transaction = db.transaction(["recipes", "images"], "readwrite");
     const recipeStore = transaction.objectStore("recipes");
     const imageStore = transaction.objectStore("images");
 
@@ -192,15 +213,34 @@ function remove_pres(id) {
 
     deleteRecipeRequest.onerror = function () {
         alert("レシピの削除に失敗しました");
-    };
+    };*/
+
+    const { error } = await supabase
+        .from("recipes")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        alert("レシピの削除に失敗しました");
+        console.error(error);
+        return;
+    }
+
+    // 画像削除
+    await supabase.storage
+        .from("recipe-images")
+        .remove([`${id}.jpg`]);
+
+    alert("レシピを削除しました");
+    showView("list");
 };
 
 // お気に入り登録・解除
-const toggle_favorite = (id) => {
+const toggle_favorite = async (id) => {
     const recipe = preserved_recipes.find(r => r.id === id);
     if (!recipe) return;
 
-    recipe.isFavorite = !recipe.isFavorite;
+    /*recipe.isFavorite = !recipe.isFavorite;
 
     const transaction = db.transaction("recipes", "readwrite");
     const store = transaction.objectStore("recipes");
@@ -208,7 +248,24 @@ const toggle_favorite = (id) => {
 
     transaction.oncomplete = () => {
         sort_recipes(sessionStorage.getItem("sortMethod") || "newest");
-    };
+    };*/
+
+    const newValue = !recipe.data.isFavorite;
+
+    const { error } = await supabase
+        .from("recipes")
+        .update({ data: { ...recipe.data, isFavorite: newValue } })
+        .eq("id", id);
+
+    if (error) {
+        alert("お気に入り登録の更新に失敗しました");
+        console.error(error);
+        return;
+    }
+
+    recipe.data.isFavorite = newValue;
+
+    sort_recipes(sessionStorage.getItem("sortMethod") || "newest");
 };
 
 // QRオーバーレイ表示（canvas描画 + jsQR対応）

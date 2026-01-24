@@ -50,12 +50,16 @@ async function fetchRoomCode() {
     const { data, error } = await supabase
         .from("settings")
         .select("value")
-        .eq("settingkey", "roomcode")
-        .single();
-    console.log(data);
+        .eq("setting_key", "room_code")
+        .maybeSingle();
 
     if (error) {
-        console.error("入室コード取得エラー:", error);
+        console.error("パスコード取得エラー:", error);
+        return null;
+    }
+
+    if (!data) {
+        console.warn("room_codeが存在しません");
         return null;
     }
 
@@ -65,19 +69,37 @@ async function fetchRoomCode() {
 // 入室コード認証
 async function checkRoomCode(inputCode) {
     const currentCode = await fetchRoomCode();
+
+    if (!currentCode) {
+        console.warn("現在のパスコードが取得できません");
+        return false;
+    }
+
     return inputCode === currentCode;
 }
 
 // 入室コード確認ボタン
 document.getElementById("enterButton").addEventListener("click", async () => {
     const inputCode = document.getElementById("roomCodeInput").value.trim();
+    const errorBox = document.getElementById("gateError");
+
+    errorBox.textContent = "";
+
+    if (!inputCode) {
+        errorBox.textContent = "パスコードを入力して下さい";
+        return;
+    }
+
     const ok = await checkRoomCode(inputCode);
 
     if (ok) {
         document.getElementById("gate").style.display = "none";
-        document.getElementById("mainApp").style.display = "block";
+        document.getElementById("app").style.display = "block";
+
+        // アプリ起動時
+        showView(location.hash.replace("#", "") || "input") // 初期画面
     } else {
-        document.getElementById("gateError").textContent = "入室コードが違います";
+        errorBox.textContent = "パスコードが違います";
     }
 });
 
@@ -106,7 +128,7 @@ async function showView(name, push = true) {
 }
 
 
-// ===============================
+/*// ===============================
 // indexedDB
 // ===============================
 let db = null;
@@ -150,7 +172,7 @@ function loadAllData() {
             };
         };
     });
-}
+}*/
 
 // ===============================
 // 戻るボタン対応
@@ -237,13 +259,3 @@ function closeMenu() {
     menu.classList.remove("open");
     hamburger.classList.remove("active");
 }
-
-// アプリ起動時
-openDB().then(() => {
-    showView(location.hash.replace("#", "") || "input") // 初期画面
-});
-
-
-
-
-
