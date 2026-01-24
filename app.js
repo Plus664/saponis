@@ -37,8 +37,13 @@ async function ensureAnonymousLogin() {
 
 async function refreshJWTWithUserKey() {
     await window.supabase.auth.updateUser({
-        data: { user_key: USER_KEY }
+        data: { user_key: USER_KEY },
+        user_key: USER_KEY
     });
+
+    const { data: { session } } = await window.supabase.auth.getSession();
+    console.log("UPDATED SESSION:", session);
+
 }
 
 async function initApp() {
