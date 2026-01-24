@@ -17,8 +17,6 @@ function getOrCreateUserKey() {
     return key;
 }
 
-const USER_KEY = getOrCreateUserKey();
-
 async function ensureAnonymousLogin() {
     const { data: { session } } = await window.supabase.auth.getSession();
 
@@ -35,20 +33,18 @@ async function ensureAnonymousLogin() {
     return data.session;
 }
 
-async function refreshJWTWithUserKey() {
+async function refreshJWTWithUserKey(USER_KEY) {
     await window.supabase.auth.updateUser({
         data: { user_key: USER_KEY },
         user_key: USER_KEY
     });
-
-    const { data: { session } } = await window.supabase.auth.getSession();
-    console.log("UPDATED SESSION:", session);
-
 }
 
 async function initApp() {
     await ensureAnonymousLogin();
-    await refreshJWTWithUserKey();
+
+    const USER_KEY = getOrCreateUserKey();
+    await refreshJWTWithUserKey(USER_KEY);
 }
 initApp();
 
