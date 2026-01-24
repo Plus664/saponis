@@ -62,13 +62,20 @@ const display_list = async () => {
         alert("レシピの取得に失敗しました");
         return;
     }*/
-    const user_key = sessionStorage.getItem("user_key");
+    /*const user_key = sessionStorage.getItem("user_key");
 
     const { data: recipes, error } = await window.supabase
         .from("recipes")
         .select("*")
         .eq("user_key", user_key)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false });*/
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+
+    const { data, error } = await supabase
+        .from("recipes")
+        .select("*")
+        .eq("user_id", user.id);
 
     if (error) {
         alert("レシピの取得に失敗しました");

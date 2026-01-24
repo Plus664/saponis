@@ -782,4 +782,3 @@ const fadeOutLoader_result = () => {
         loader.style.display = "none";
     }, 300);
 };
-
