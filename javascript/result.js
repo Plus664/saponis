@@ -70,6 +70,7 @@ async function display_result() {
         imgContainer.style.display = "block";
 
         const recipeId = sessionStorage.getItem("id");
+        console.log("recipeId: ", recipeId);
 
         // Supabaseからレシピ読み込み
         const { data: recipe, error: recipeErr } = await window.supabase
@@ -782,3 +783,4 @@ const fadeOutLoader_result = () => {
         loader.style.display = "none";
     }, 300);
 };
+
