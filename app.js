@@ -33,6 +33,16 @@ async function ensureAnonymousLogin() {
     return data.session;
 }
 
+async function setUserKey(user_id, user_key) {
+    const res = await fetch("/functions/v1/set-user-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id, user_key })
+    });
+
+    return await res.json();
+}
+
 async function refreshJWTWithUserKey(USER_KEY) {
     await window.supabase.auth.updateUser({
         data: { user_key: USER_KEY },
@@ -41,10 +51,17 @@ async function refreshJWTWithUserKey(USER_KEY) {
 }
 
 async function initApp() {
-    await ensureAnonymousLogin();
+    const session = await ensureAnonymousLogin();
+
+    const user = session.user;
 
     const USER_KEY = getOrCreateUserKey();
-    await refreshJWTWithUserKey(USER_KEY);
+
+    await setUserKey(user.id, USER_KEY);
+
+    await window.supabase.auth.refreshSession();
+
+    //await refreshJWTWithUserKey(USER_KEY);
 }
 initApp();
 
