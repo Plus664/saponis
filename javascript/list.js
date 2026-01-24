@@ -64,7 +64,7 @@ const display_list = async () => {
     }*/
     const user_key = sessionStorage.getItem("user_key");
 
-    const { data: recipes, error } = await supabase
+    const { data: recipes, error } = await window.supabase
         .from("recipes")
         .select("*")
         .eq("user_key", user_key)
@@ -215,7 +215,7 @@ async function remove_pres(id) {
         alert("レシピの削除に失敗しました");
     };*/
 
-    const { error } = await supabase
+    const { error } = await window.supabase
         .from("recipes")
         .delete()
         .eq("id", id);
@@ -227,7 +227,7 @@ async function remove_pres(id) {
     }
 
     // 画像削除
-    await supabase.storage
+    await window.supabase.storage
         .from("recipe-images")
         .remove([`${id}.jpg`]);
 
@@ -252,7 +252,7 @@ const toggle_favorite = async (id) => {
 
     const newValue = !recipe.data.isFavorite;
 
-    const { error } = await supabase
+    const { error } = await window.supabase
         .from("recipes")
         .update({ data: { ...recipe.data, isFavorite: newValue } })
         .eq("id", id);

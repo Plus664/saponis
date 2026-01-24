@@ -72,13 +72,13 @@ async function display_result() {
         const recipeId = sessionStorage.getItem("id");
 
         // Supabaseからレシピ読み込み
-        const { data: recipe } = await supabase
+        const { data: recipe } = await window.supabase
             .from("recipes")
             .select("*")
             .eq("id", recipeId)
             .single();
 
-        const { data: img } = supabase.storage
+        const { data: img } = window.supabase.storage
             .from("recipe-images")
             .getPublicUrl(`${recipeId}.jpg`);
 
@@ -89,11 +89,11 @@ async function display_result() {
             const file = e.target.files[0];
             if (!file) return;
 
-            await supabase.storage
+            await window.supabase.storage
                 .from("recipe-images")
                 .upload(`${recipeId}.jpg`, file, { upsert: true });
 
-            const { data: img2 } = supabase.storage
+            const { data: img2 } = window.supabase.storage
                 .from("recipe-images")
                 .getPublicUrl(`${recipeId}.jpg`);
 
@@ -644,7 +644,7 @@ async function pres_result() {
 
     const user_key = sessionStorage.getItem("user_key");
 
-    const { error } = await supabase
+    const { error } = await window.supabase
         .from("recipes")
         .insert({
             title: recipe_name,
