@@ -684,7 +684,7 @@ async function pres_result() {
     } else {
         alert("保存しました");
     }
-    //fadeOutLoader_result();
+    fadeOutLoader_result();
 
     /*const transaction = db.transaction("recipes", "readwrite");
     const store = transaction.objectStore("recipes");
@@ -782,3 +782,4 @@ const fadeOutLoader_result = () => {
         loader.style.display = "none";
     }, 300);
 };
+
