@@ -83,7 +83,7 @@ const display_list = async () => {
         return;
     }
 
-    preserved_recipes = recipes; // ← 今まで通り使える
+    preserved_recipes = data;
 
     const savedMethod = sessionStorage.getItem("sortMethod");
     if (savedMethod) {
@@ -531,4 +531,5 @@ function initListView() {
     });
 
     fadeOutLoader();
+
 };
