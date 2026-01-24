@@ -70,7 +70,6 @@ async function display_result() {
         imgContainer.style.display = "block";
 
         const recipeId = sessionStorage.getItem("id");
-        console.log("recipeId: ", recipeId);
 
         // Supabaseからレシピ読み込み
         const { data: recipe, error: recipeErr } = await window.supabase
@@ -87,16 +86,17 @@ async function display_result() {
         async function loadImage() {
             const path = `${recipeId}.jpg`;
 
-            const { data: exists, error: dlErr } = await window.supabase.storage
+            const { data: exists, error: dlErr } = await supabase.storage
                 .from("recipe-images")
                 .download(path);
 
             if (dlErr) {
+                // 404 は正常なので console に出さない
                 imgPreview.src = "../assets/image/default.jpg";
                 return;
             }
 
-            const { data: urlData } = window.supabase.storage
+            const { data: urlData } = supabase.storage
                 .from("recipe-images")
                 .getPublicUrl(path);
 
@@ -112,9 +112,11 @@ async function display_result() {
 
             const path = `${recipeId}.jpg`;
 
-            const { error: upErr } = await window.supabase.storage
+            const { data, error } = await supabase.storage
                 .from("recipe-images")
                 .upload(path, file, { upsert: true });
+
+            console.log("upload result:", data, error);
 
             if (upErr) {
                 console.error("画像アップロード失敗:", upErr);
@@ -783,4 +785,3 @@ const fadeOutLoader_result = () => {
         loader.style.display = "none";
     }, 300);
 };
-
