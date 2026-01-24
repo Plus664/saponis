@@ -10,6 +10,30 @@ let sap_ratio_result;
 let water_amount_result;
 
 // ===============================
+// SPA ルーター（画面切り替え）
+// ===============================
+
+// ビューを読み込んで表示する
+async function showView(name, push = true) {
+    try {
+        const html = await fetch(`views/${name}.html`).then(r => r.text());
+        document.getElementById("app").innerHTML = html;
+
+        // ビューごとの初期化
+        initView(name);
+
+        // 履歴に積む（戻るボタン対応）
+        if (push) {
+            history.pushState({ view: name }, "", `#${name}`);
+        }
+
+    } catch (e) {
+        console.error("ビュー読み込みエラー:", e);
+        document.getElementById("app").innerHTML = `<p>読み込みエラー</p>`;
+    }
+}
+
+// ===============================
 // 戻るボタン対応
 // ===============================
 window.addEventListener("popstate", (event) => {
@@ -756,3 +780,4 @@ function calc_result() {
     showView("result");
 
 }
+
