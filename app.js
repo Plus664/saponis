@@ -34,7 +34,7 @@ async function ensureAnonymousLogin() {
 }
 
 async function setUserKey(user_id, user_key) {
-    const res = await fetch("/functions/v1/set-user-key", {
+    const res = await fetch("https://rmbbsrfstmnfxbbttaro.supabase.co/functions/v1/clever-api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id, user_key })
@@ -299,4 +299,5 @@ const fadeOutLoader = () => {
     setTimeout(() => {
         loader.style.display = "none";
     }, 300);
+
 };
