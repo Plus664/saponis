@@ -10,6 +10,92 @@ let sap_ratio_result;
 let water_amount_result;
 
 // ===============================
+// 戻るボタン対応
+// ===============================
+window.addEventListener("popstate", (event) => {
+    const view = event.state?.view || location.hash.replace("#", "") || "input";
+    showView(view, false);
+});
+
+// ===============================
+// メニュークリックで画面切り替え
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("nav.menu li").forEach(li => {
+        li.addEventListener("click", () => {
+            const view = li.dataset.view;
+            closeMenu(); // ハンバーガーメニューを閉じる
+            showView(view);
+        });
+    });
+
+    // 初期表示
+    const initialView = location.hash.replace("#", "") || "input";
+    showView(initialView, false);
+});
+
+// ===============================
+// ビューごとの初期化
+// ===============================
+function initView(name) {
+    switch (name) {
+        case "input":
+            if (typeof initInputView === "function") initInputView();
+            break;
+
+        case "result":
+            if (typeof initResultView === "function") initResultView();
+            break;
+
+        case "list":
+            if (typeof initListView === "function") initListView();
+            break;
+
+        case "original":
+            if (typeof initOriginalView === "function") initOriginalView();
+            break;
+
+        case "recommend":
+            if (typeof initRecommendView === "function") initRecommendView();
+            break;
+
+        case "oil-characteristics":
+            if (typeof initOilCharacteristicsView === "function") initOilCharacteristicsView();
+            break;
+
+        case "column":
+            if (typeof initColumnView === "function") initColumnView();
+            break;
+
+        case "other":
+            if (typeof initOtherView === "function") initOtherView();
+            break;
+
+        default:
+            console.warn("未定義ビュー:", name);
+    }
+}
+
+$(function () {
+    $('.hamburger').click(function () {
+        $('.menu').toggleClass('open');
+
+        $(this).toggleClass('active');
+    });
+});
+
+// ===============================
+// ハンバーガーメニュー制御
+// ===============================
+function closeMenu() {
+    const menu = document.querySelector("nav.menu");
+    const hamburger = document.querySelector(".hamburger");
+
+    menu.classList.remove("open");
+    hamburger.classList.remove("active");
+}
+
+// ===============================
 // LOADING制御
 // ===============================
 const shouldShowLoader = () => {
@@ -668,4 +754,5 @@ function calc_result() {
     sessionStorage.setItem("img", "");
 
     showView("result");
+
 }
