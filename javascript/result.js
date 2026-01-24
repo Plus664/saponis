@@ -72,32 +72,55 @@ async function display_result() {
         const recipeId = sessionStorage.getItem("id");
 
         // Supabaseからレシピ読み込み
-        const { data: recipe } = await window.supabase
+        const { data: recipe, error: recipeErr } = await window.supabase
             .from("recipes")
             .select("*")
             .eq("id", recipeId)
             .single();
 
-        const { data: img } = window.supabase.storage
-            .from("recipe-images")
-            .getPublicUrl(`${recipeId}.jpg`);
+        if (recipeErr) {
+            console.error("レシピ取得エラー:", recipeErr);
+        }
 
-        imgPreview.src = img.publicUrl || "../assets/image/default.jpg";
+        // 画像存在チェック
+        async function loadImage() {
+            const path = `${recipeId}.jpg`;
+
+            const { data: exists, error: dlErr } = await window.supabase.storage
+                .from("recipe-images")
+                .download(path);
+
+            if (dlErr) {
+                imgPreview.src = "../assets/image/default.jpg";
+                return;
+            }
+
+            const { data: urlData } = window.supabase.storage
+                .from("recipe-images")
+                .getPublicUrl(path);
+
+            imgPreview.src = `${urlData.publicUrl}?t=${Date.now()}`;
+        }
+
+        await loadImage();
 
         // 画像アップロード
         imgFile.addEventListener("change", async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            await window.supabase.storage
-                .from("recipe-images")
-                .upload(`${recipeId}.jpg`, file, { upsert: true });
+            const path = `${recipeId}.jpg`;
 
-            const { data: img2 } = window.supabase.storage
+            const { error: upErr } = await window.supabase.storage
                 .from("recipe-images")
-                .getPublicUrl(`${recipeId}.jpg`);
+                .upload(path, file, { upsert: true });
 
-            imgPreview.src = img2.publicUrl;
+            if (upErr) {
+                console.error("画像アップロード失敗:", upErr);
+                return;
+            }
+
+            await loadImage();
         });
 
         /*if (preserved_recipes.length > 0) {

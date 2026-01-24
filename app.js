@@ -1,7 +1,11 @@
 // ===============================
 // Supabase
 // ===============================
-window.supabase = supabase;
+const sb = window.supabase.createClient(
+    'https://rmbbsrfstmnfxbbttaro.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtYmJzcmZzdG1uZnhiYnR0YXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDc0OTgsImV4cCI6MjA4NDcyMzQ5OH0.ELoVUxFgbWxaUJDg1DziRp0Y4cSo5MX2zEUDO2bIEzk'
+);
+window.supabase = sb;
 
 // ユーザーキー生成
 function getOrCreateUserKey() {
@@ -16,13 +20,13 @@ function getOrCreateUserKey() {
 const USER_KEY = getOrCreateUserKey();
 
 async function ensureAnonymousLogin() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await window.supabase.auth.getSession();
 
     // すでにログイン済みなら何もしない
     if (session) return session;
 
     // 匿名ログイン
-    const { data, error } = await supabase.auth.signInAnonymously();
+    const { data, error } = await window.supabase.auth.signInAnonymously();
     if (error) {
         console.error("匿名ログイン失敗:", error);
         return null;
@@ -32,17 +36,20 @@ async function ensureAnonymousLogin() {
 }
 
 async function refreshJWTWithUserKey() {
-    await supabase.auth.updateUser({
+    await window.supabase.auth.updateUser({
         data: { user_key: USER_KEY }
     });
 }
 
-await ensureAnonymousLogin();
-await refreshJWTWithUserKey();
+async function initApp() {
+    await ensureAnonymousLogin();
+    await refreshJWTWithUserKey();
+}
+initApp();
 
 // 入室コード取得
 async function fetchRoomCode() {
-    const { data, error } = await supabase
+    const { data, error } = await window.supabase
         .from("settings")
         .select("value")
         .eq("setting_key", "room_code")
