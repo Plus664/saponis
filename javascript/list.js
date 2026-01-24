@@ -131,7 +131,7 @@ function display_pres_list(id) {
         return;
     }
 
-    const data = recipe.data
+    const data = recipe.data;
 
     sessionStorage.setItem("name", data.recipe_name);
     sessionStorage.setItem("type", data.type == "★タイプ: 固形せっけん" ? "soda" : "potash");
@@ -450,7 +450,7 @@ const display_buttons = (id) => {
 
     const text = document.createElement("div");
     text.className = "marquee-inner";
-    text.textContent = recipe.recipe_name;
+    text.textContent = recipe.title;
 
     text_wrapper.appendChild(text);
     text_wrapper.addEventListener("click", () => display_pres_list(recipe.id));
@@ -531,5 +531,4 @@ function initListView() {
     });
 
     fadeOutLoader();
-
 };
