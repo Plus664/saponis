@@ -139,7 +139,6 @@ async function display_result() {
     }
 
     display_memo();
-
 }
 
 // 各数値の確認
@@ -593,6 +592,7 @@ const print_result = () => {
     window.print();
 };
 
+// 初期化
 function initResultView() {
     if (shouldShowLoader_result()) {
         showLoader_result();

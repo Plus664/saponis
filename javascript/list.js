@@ -94,7 +94,7 @@ function display_pres_list(id) {
     clear_preserveSession();
 
     sessionStorage.setItem("scene", "preserve");
-    sessionStorage.setItem("prev_page", "preserve");
+    //sessionStorage.setItem("prev_page", "preserve");
     sessionStorage.setItem("id", id);
 
     const recipe = preserved_recipes.find(recipe => recipe.id == id);
@@ -141,7 +141,6 @@ function display_pres_list(id) {
     sessionStorage.setItem("optionNames", JSON.stringify(optionList));
 
     sessionStorage.setItem("waterAmount", data.water_amount);
-
     sessionStorage.setItem("alcoholAmount", data.alcohol);
 
     const presFeatures = data.features;
@@ -162,7 +161,7 @@ function display_pres_list(id) {
 
     sessionStorage.setItem("memo", data.memo || "");
 
-    showView("result");
+    showView("result", false);
 };
 
 // 保存したレシピを削除
@@ -195,7 +194,6 @@ async function remove_pres(id) {
         .remove([`${id}.jpg`]);
 
     alert("レシピを削除しました");
-    //showView("list");
 };
 
 // お気に入り登録・解除

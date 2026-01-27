@@ -66,27 +66,36 @@ document.getElementById("enterButton").addEventListener("click", async () => {
     app.style.display = "block";
 });
 
-
 // ===============================
 // SPA ルーター（画面切り替え）
 // ===============================
+let currentView = null;
+let isNavigating = false;
 
 // ビューを読み込んで表示する
 async function showView(name, push = true) {
+    if (isNavigating) return;
+    if (currentView === name && push === false) return;
+
+    isNavigating = true;
+
     try {
         const html = await fetch(`views/${name}.html`).then(r => r.text());
         document.getElementById("app").innerHTML = html;
 
         initView(name);
+        currentView = name;
 
-        // ✅ push が true の時だけ履歴を積む
+        // push が true の時だけ履歴を積む
         if (push) {
-            history.pushState({ view: name }, "", `/${name}`);
+            history.pushState({ view: name }, "", `#${name}`);
         }
 
     } catch (e) {
         console.error("ビュー読み込みエラー:", e);
         document.getElementById("app").innerHTML = `<p>読み込みエラー</p>`;
+    } finally {
+        isNavigating = false;
     }
 }
 
@@ -94,7 +103,7 @@ async function showView(name, push = true) {
 // 戻るボタン対応
 // ===============================
 window.addEventListener("popstate", (event) => {
-    const view = event.state?.view || "input";
+    const view = event.state?.view || location.hash.replace("#", "") || "input";
     showView(view, false);
 });
 
