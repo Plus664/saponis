@@ -37,42 +37,14 @@ const sort_recipes = (method) => {
 
 // 保存したレシピ一覧をボタンで表示
 const display_list = async () => {
-    /*if (!db) {
-        alert("IndexedDBが使えません");
+    const { data: userData, error: userErr } = await sb.auth.getUser();
+    if (userErr || !userData.user) {
+        console.error("ユーザー取得失敗", userErr);
         return;
     }
-
-    const transaction = db.transaction("recipes", "readonly");
-    const store = transaction.objectStore("recipes");
-    const request = store.getAll();
-
-    request.onsuccess = function (e) {
-        preserved_recipes = e.target.result;
-
-        const savedMethod = sessionStorage.getItem("sortMethod");
-        if (savedMethod) {
-            document.getElementById("sort-select").value = savedMethod;
-            sort_recipes(savedMethod);
-        } else {
-            sort_recipes("newest");
-        }
-    };
-
-    request.onerror = function () {
-        alert("レシピの取得に失敗しました");
-        return;
-    }*/
-    /*const user_key = sessionStorage.getItem("user_key");
-
-    const { data: recipes, error } = await window.supabase
-        .from("recipes")
-        .select("*")
-        .eq("user_key", user_key)
-        .order("created_at", { ascending: false });*/
-    const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
 
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from("recipes")
         .select("*")
         .eq("user_id", user.id);
@@ -205,24 +177,8 @@ async function remove_pres(id) {
     const confirmed = confirm(`\"${name}\"を削除しますか？`);
     if (!confirmed) return;
 
-    /*const transaction = db.transaction(["recipes", "images"], "readwrite");
-    const recipeStore = transaction.objectStore("recipes");
-    const imageStore = transaction.objectStore("images");
 
-    const deleteRecipeRequest = recipeStore.delete(id);
-    deleteRecipeRequest.onsuccess = function () {
-        const deleteImageRequest = imageStore.delete(id);
-        deleteImageRequest.onsuccess = function () {
-            alert("レシピを削除しました");
-            showView("list")
-        };
-    };
-
-    deleteRecipeRequest.onerror = function () {
-        alert("レシピの削除に失敗しました");
-    };*/
-
-    const { error } = await window.supabase
+    const { error } = await sb
         .from("recipes")
         .delete()
         .eq("id", id);
@@ -234,12 +190,12 @@ async function remove_pres(id) {
     }
 
     // 画像削除
-    await window.supabase.storage
+    await sb.storage
         .from("recipe-images")
         .remove([`${id}.jpg`]);
 
     alert("レシピを削除しました");
-    showView("list");
+    //showView("list");
 };
 
 // お気に入り登録・解除
@@ -259,7 +215,7 @@ const toggle_favorite = async (id) => {
 
     const newValue = !recipe.data.isFavorite;
 
-    const { error } = await window.supabase
+    const { error } = await sb
         .from("recipes")
         .update({ data: { ...recipe.data, isFavorite: newValue } })
         .eq("id", id);

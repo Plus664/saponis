@@ -71,124 +71,71 @@ async function display_result() {
 
         const recipeId = sessionStorage.getItem("id");
 
-        // Supabaseからレシピ読み込み
-        const { data: recipe, error: recipeErr } = await window.supabase
+        // レシピ一覧取得（これは今まで通りでOK）
+        const { data, error } = await sb
             .from("recipes")
             .select("*")
-            .eq("id", recipeId)
-            .single();
+            .eq("user_id", window.currentUser.id);
 
-        if (recipeErr) {
-            console.error("レシピ取得エラー:", recipeErr);
+        if (error) {
+            console.error("レシピ取得エラー:", error);
         }
 
-        // 画像存在チェック
+        // =======================
+        // 画像読み込み
+        // =======================
         async function loadImage() {
             const path = `${recipeId}.jpg`;
 
-            const { data: exists, error: dlErr } = await supabase.storage
-                .from("recipe-images")
-                .download(path);
-
-            if (dlErr) {
-                // 404 は正常なので console に出さない
-                imgPreview.src = "../assets/image/default.jpg";
-                return;
-            }
-
-            const { data: urlData } = supabase.storage
+            // Public URL は「存在しなくても取得できる」
+            const { data } = sb.storage
                 .from("recipe-images")
                 .getPublicUrl(path);
 
-            imgPreview.src = `${urlData.publicUrl}?t=${Date.now()}`;
+            // 画像がなければ onerror でデフォルトに落とす
+            imgPreview.onerror = () => {
+                imgPreview.src = "../assets/image/default.jpg";
+            };
+
+            imgPreview.src = `${data.publicUrl}?t=${Date.now()}`;
         }
 
         await loadImage();
 
+        // =======================
         // 画像アップロード
-        imgFile.addEventListener("change", async (e) => {
+        // =======================
+        imgFile.onchange = null;
+        imgFile.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            const path = `${recipeId}.jpg`;
-
-            const { data, error } = await supabase.storage
-                .from("recipe-images")
-                .upload(path, file, { upsert: true });
-
-            console.log("upload result:", data, error);
-
-            if (upErr) {
-                console.error("画像アップロード失敗:", upErr);
+            // 念のためセッション確認
+            const { data: sessionData } = await sb.auth.getSession();
+            if (!sessionData.session) {
+                console.error("未ログイン状態です");
                 return;
             }
 
-            await loadImage();
-        });
+            showLoader_result();
 
-        /*if (preserved_recipes.length > 0) {
-            const id = Number(sessionStorage.getItem("id"));
-            const recipe = preserved_recipes.find(recipe => recipe.id == id);
+            try {
+                const { error } = await sb.storage
+                    .from("recipe-images")
+                    .upload(`${recipeId}.jpg`, file, { upsert: true });
 
-            if (recipe) {
-                loadImage(recipe.id).then((imageData) => {
-                    imgPreview.src = imageData || "../assets/image/default.jpg";
-                }).catch((error) => {
-                    alert("エラー: " + error);
-                });
+                if (error) throw error;
+
+                alert("画像を保存しました");
+                await loadImage();
+            } catch (err) {
+                console.error(err);
+                alert("画像を保存できませんでした");
+
+            } finally {
+                fadeOutLoader_result();
             }
-        }
-
-        imgFile.addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            let result;
-            if (file) {
-                const reader = new FileReader();
-
-                reader.onload = function (event) {
-                    const img = new Image();
-                    img.src = event.target.result;
-
-                    img.onload = function () {
-                        const canvas = document.createElement("canvas");
-                        const ctx = canvas.getContext("2d");
-
-                        const maxWidth = 300; // サムネイルの最大幅
-                        const scale = maxWidth / img.width;
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * scale;
-
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                        const thumbnailData = canvas.toDataURL("image/jpeg", 0.8); // 圧縮率80%
-
-                        // IndexedDBに保存
-                        if (!db) {
-                            alert("IndexedDBを利用できません");
-                            return;
-                        }
-
-                        const transaction = db.transaction("images", "readwrite");
-                        const store = transaction.objectStore("images");
-                        const recipeId = Number(sessionStorage.getItem("id"));
-                        const putRequest = store.put({ id: recipeId, imageData: thumbnailData });
-
-                        // プレビューに表示
-                        imgPreview.src = thumbnailData;
-
-                        putRequest.onsuccess = async function () {
-                            await showLoading(imgPreview, 500);
-                            alert("画像を保存しました");
-                        };
-
-                        putRequest.onerror = function () {
-                            alert("画像を保存できませんでした");
-                        };
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        });*/
+        };
     }
 
     display_memo();
@@ -486,13 +433,6 @@ const create_chart = (sk, cl, fo, ha, co, st) => {
         chartInstance.destroy();
     }
 
-    /*const skin = Number(sk.replace(/[^0-9|"."]/g, ""));
-    const clean = Number(cl.replace(/[^0-9|"."]/g, ""));
-    const foam = Number(fo.replace(/[^0-9|"."]/g, ""));
-    const hard = Number(ha.replace(/[^0-9|"."]/g, ""));
-    const collapse = Number(co.replace(/[^0-9|"."]/g, ""));
-    const stability = Number(st.replace(/[^0-9|"."]/g, ""));
-    */
     const toNum = v => Number(v.replace(/[^\d.]/g, ""));
     const skin = toNum(sk);
     const clean = toNum(cl);
@@ -558,23 +498,7 @@ const display_conditions = () => {
     document.getElementById("cure_humidity_text").textContent = cure_humidity;
     document.getElementById("final_ph_text").textContent = final_ph;
 };
-/*
-const loadImage = (id) => {
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction("images", "readonly");
-        const store = transaction.objectStore("images");
-        const getRequest = store.get(id);
 
-        getRequest.onsuccess = function (e) {
-            resolve(e.target.result ? e.target.result.imageData : "../assets/image/default.jpg");
-        };
-
-        getRequest.onerror = function () {
-            reject("画像の取得に失敗しました");
-        };
-    });
-};
-*/
 const display_memo = () => {
     const memo_result = document.getElementById("memo_result");
     const raw = sessionStorage.getItem("memo")
@@ -582,28 +506,9 @@ const display_memo = () => {
 
     memo_result.textContent = memo;
 }
-/*
-const openIndexedDB = () => {
-    scene = sessionStorage.getItem("scene") || "result";
 
-    loadAllData().then(() => {
-        display_result();
-        const warnings = collectWarnings();
-        const selectedOilNames = getSelectedOilNames();
-        warnings.push(...evaluateOilGroups(selectedOilNames));
-        if (warnings.length > 0) showAlert(warnings);
-    });
-
-};
-*/
 async function pres_result() {
-    /*if (!db) {
-        alert("IndexedDBが利用できません");
-        return;
-    }*/
-
     showLoader_result();
-    //const start = performance.now();
 
     const recipe_name = document.getElementById("name_result").textContent;
     const type = document.getElementById("type_result").textContent;
@@ -668,18 +573,11 @@ async function pres_result() {
         isFavorite: false
     };
 
-    //const user_key = sessionStorage.getItem("user_key");
-
-    const { data: userData } = await window.supabase.auth.getUser();
-    const user = userData.user;
-
-    const { error } = await window.supabase
-        .from("recipes")
-        .insert({
-            title: recipe_name,
-            data,
-            user_id: user.id,
-        });
+    const { error } = await sb.from("recipes").insert({
+        title: recipe_name,
+        data,
+        user_id: window.currentUser.id,
+    });
 
     if (error) {
         console.error(error);
@@ -688,30 +586,6 @@ async function pres_result() {
         alert("保存しました");
     }
     fadeOutLoader_result();
-
-    /*const transaction = db.transaction("recipes", "readwrite");
-    const store = transaction.objectStore("recipes");
-    const addRequest = store.add(pres_infos);
-
-    addRequest.onsuccess = async function () {
-        const elapsed = performance.now() - start;
-        const minTime = 500;
-        const remaining = minTime - elapsed;
-        if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
-
-        fadeOutLoader_result();
-        alert("レシピを保存しました");
-    };
-
-    addRequest.onerror = async function () {
-        const elapsed = performance.now() - start;
-        const minTime = 500;
-        const remaining = minTime - elapsed;
-        if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
-
-        fadeOutLoader_result();
-        alert("レシピを保存できませんでした");
-    };*/
 }
 
 // 印刷
@@ -754,7 +628,7 @@ function initResultView() {
     fadeOutLoader_result();
 }
 
-const showLoading = (elm, duration = 500) => {
+/*const showLoading = (elm, duration = 500) => {
     elm.style.opacity = "0.5";
     elm.classList.add("loading");
 
@@ -765,7 +639,7 @@ const showLoading = (elm, duration = 500) => {
             resolve();
         }, duration);
     });
-};
+};*/
 
 const shouldShowLoader_result = () => {
     const logo = document.querySelector(".logo");

@@ -1,93 +1,24 @@
 // ===============================
 // Supabase
 // ===============================
-const sb = window.supabase.createClient(
+const sb = supabase.createClient(
     'https://rmbbsrfstmnfxbbttaro.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtYmJzcmZzdG1uZnhiYnR0YXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDc0OTgsImV4cCI6MjA4NDcyMzQ5OH0.ELoVUxFgbWxaUJDg1DziRp0Y4cSo5MX2zEUDO2bIEzk'
 );
-window.supabase = sb;
 
-// ユーザーキー生成
-/*function getOrCreateUserKey() {
-    let key = localStorage.getItem("user_key");
-    if (!key) {
-        key = crypto.randomUUID();
-        localStorage.setItem("user_key", key);
-    }
-    return key;
-}
-
-async function ensureAnonymousLogin() {
-    const { data: { session } } = await window.supabase.auth.getSession();
-
-    // すでにログイン済みなら何もしない
-    if (session) return session;
-
-    // 匿名ログイン
-    const { data, error } = await window.supabase.auth.signInAnonymously();
+async function loginAfterGate() {
+    const { data, error } = await sb.auth.signInAnonymously();
     if (error) {
-        console.error("匿名ログイン失敗:", error);
+        console.error("匿名ログイン失敗", error);
         return null;
     }
-
-    return data.session;
+    return data.user;
 }
 
-async function setUserKey(user_id, user_key) {
-    const res = await fetch("https://rmbbsrfstmnfxbbttaro.supabase.co/functions/v1/set-user-key", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id, user_key })
-    });
-
-    return await res.json();
-}
-
-async function refreshJWTWithUserKey(USER_KEY) {
-    await window.supabase.auth.updateUser({
-        data: { user_key: USER_KEY },
-        user_key: USER_KEY
-    });
-}
-
-async function initApp() {
-    const session = await ensureAnonymousLogin();
-
-    const user = session.user;
-
-    const USER_KEY = getOrCreateUserKey();
-
-    await setUserKey(user.id, USER_KEY);
-
-    await window.supabase.auth.refreshSession();
-
-    //await refreshJWTWithUserKey(USER_KEY);
-}
-initApp();*/
-async function ensureAnonymousLogin() {
-    const { data: { session } } = await window.supabase.auth.getSession();
-
-    if (session) return session;
-
-    const { data, error } = await window.supabase.auth.signInAnonymously();
-    if (error) {
-        console.error("匿名ログイン失敗:", error);
-        return null;
-    }
-
-    return data.session;
-}
-
-async function initApp() {
-    const session = await ensureAnonymousLogin();
-    window.currentUser = session.user; // ← どこでも使えるように保存
-}
-
-initApp();
 
 // 入室コード取得
 async function fetchRoomCode() {
-    const { data, error } = await window.supabase
+    const { data, error } = await sb
         .from("settings")
         .select("value")
         .eq("setting_key", "room_code")
@@ -120,74 +51,21 @@ async function checkRoomCode(inputCode) {
 
 // 入室コード確認ボタン
 document.getElementById("enterButton").addEventListener("click", async () => {
-    const inputCode = document.getElementById("roomCodeInput").value.trim();
-    const errorBox = document.getElementById("gateError");
+    const inputCode = roomCodeInput.value.trim();
+    const ok = await checkRoomCode(inputCode);
 
-    errorBox.textContent = "";
-
-    if (!inputCode) {
-        errorBox.textContent = "パスコードを入力して下さい";
+    if (!ok) {
+        gateError.textContent = "パスコードが違います";
         return;
     }
 
-    const ok = await checkRoomCode(inputCode);
+    const user = await loginAfterGate();
+    window.currentUser = user;
 
-    if (ok) {
-        document.getElementById("gate").style.display = "none";
-        document.getElementById("app").style.display = "block";
-
-        // アプリ起動時
-        showView(location.hash.replace("#", "") || "input") // 初期画面
-    } else {
-        errorBox.textContent = "パスコードが違います";
-    }
+    gate.style.display = "none";
+    app.style.display = "block";
 });
 
-/*// ===============================
-// indexedDB
-// ===============================
-let db = null;
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open("SoapRecipeDB", 2);
-
-        request.onupgradeneeded = e => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains("recipes")) {
-                db.createObjectStore("recipes", { keyPath: "id", autoIncrement: true });
-            }
-            if (!db.objectStoreNames.contains("images")) {
-                db.createObjectStore("images", { keyPath: "id", autoIncrement: true });
-            }
-        };
-
-        request.onsuccess = e => {
-            db = e.target.result;
-            resolve(db);
-        };
-
-        request.onerror = e => reject(e);
-    });
-}
-
-function loadAllData() {
-    return new Promise(resolve => {
-        const tx1 = db.transaction("recipes", "readonly");
-        const req1 = tx1.objectStore("recipes").getAll();
-
-        const tx2 = db.transaction("images", "readonly");
-        const req2 = tx2.objectStore("images").getAll();
-
-        req1.onsuccess = () => {
-            preserved_recipes = req1.result;
-
-            req2.onsuccess = () => {
-                preserved_images = req2.result;
-                resolve();
-            };
-        };
-    });
-}*/
 
 // ===============================
 // SPA ルーター（画面切り替え）
@@ -199,12 +77,11 @@ async function showView(name, push = true) {
         const html = await fetch(`views/${name}.html`).then(r => r.text());
         document.getElementById("app").innerHTML = html;
 
-        // ビューごとの初期化
         initView(name);
 
-        // 履歴に積む（戻るボタン対応）
+        // ✅ push が true の時だけ履歴を積む
         if (push) {
-            history.pushState({ view: name }, "", `#${name}`);
+            history.pushState({ view: name }, "", `/${name}`);
         }
 
     } catch (e) {
@@ -217,7 +94,7 @@ async function showView(name, push = true) {
 // 戻るボタン対応
 // ===============================
 window.addEventListener("popstate", (event) => {
-    const view = event.state?.view || location.hash.replace("#", "") || "input";
+    const view = event.state?.view || "input";
     showView(view, false);
 });
 
@@ -228,15 +105,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("nav.menu li").forEach(li => {
         li.addEventListener("click", () => {
             const view = li.dataset.view;
-            closeMenu(); // ハンバーガーメニューを閉じる
-            showView(view);
+            closeMenu();
+            showView(view, true);
         });
     });
 
-    // 初期表示
-    const initialView = location.hash.replace("#", "") || "input";
+    const path = location.pathname.replace("/", "");
+    const initialView = path || "input";
+
+    // 🔑 初期表示は絶対 push しない
     showView(initialView, false);
 });
+
 
 // ===============================
 // ビューごとの初期化
