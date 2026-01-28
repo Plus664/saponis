@@ -81,6 +81,12 @@ p {
     color: #000;
 }
 
+body.gate-open nav,
+body.gate-open .hamburger {
+    pointer-events: none;
+    opacity: 0.3;
+}
+
 .menu {
     position: fixed;
     top: 0;
@@ -158,6 +164,74 @@ p {
 
 #logo-watermark {
     display: none;
+}
+
+/* ===== Gate Overlay ===== */
+#gate {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.96);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 15vh;
+
+    gap: 18px;
+    text-align: center;
+}
+
+/* タイトル */
+#gate h2 {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* 入力欄 */
+#roomCodeInput {
+    width: 240px;
+    padding: 10px 14px;
+    font-size: 16px;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    text-align: center;
+    letter-spacing: 0.15em;
+}
+
+#roomCodeInput:focus {
+    outline: none;
+    border-color: rgba(148, 170, 255, 1);
+}
+
+/* 確認ボタン */
+#enterButton {
+    width: 120px;
+    padding: 10px;
+    font-size: 15px;
+
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+
+    background: rgba(148, 170, 255, 1);
+    color: #fff;
+}
+
+#enterButton:hover {
+    opacity: 0.85;
+}
+
+/* エラーメッセージ */
+#gateError {
+    margin-top: 0.6em;
+    font-size: 13px;
+    color: #e55353;
+    min-height: 1.2em;
 }
 
 

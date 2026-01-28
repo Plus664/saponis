@@ -479,6 +479,14 @@ function initRecommendView() {
         showLoader();
     }
 
+    setTimeout(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth"
+        });
+    }, 0);
+
     input_form_container = document.getElementById("input_form-container");
     input_form_container.style.display = "none";
     close_button = document.getElementById("close_button");

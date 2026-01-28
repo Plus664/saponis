@@ -6,77 +6,96 @@ const sb = supabase.createClient(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtYmJzcmZzdG1uZnhiYnR0YXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDc0OTgsImV4cCI6MjA4NDcyMzQ5OH0.ELoVUxFgbWxaUJDg1DziRp0Y4cSo5MX2zEUDO2bIEzk'
 );
 
+function getUserKey() {
+    let key = localStorage.getItem("user_key");
+    if (!key) {
+        key = "uk_" + crypto.randomUUID();
+        localStorage.setItem("user_key", key);
+    }
+    return key;
+}
+
 async function loginAfterGate() {
     const { data, error } = await sb.auth.signInAnonymously();
     if (error) {
         console.error("匿名ログイン失敗", error);
         return null;
     }
-    return data.user;
-}
 
+    const userKey = getUserKey();
 
-// 入室コード取得
-async function fetchRoomCode() {
-    const { data, error } = await sb
-        .from("settings")
-        .select("value")
-        .eq("setting_key", "room_code")
-        .maybeSingle();
-
-    if (error) {
-        console.error("パスコード取得エラー:", error);
-        return null;
+    return {
+        authUser: data.user,
+        userKey: userKey,
     }
-
-    if (!data) {
-        console.warn("room_codeが存在しません");
-        return null;
-    }
-
-    return data.value;
 }
 
 // 入室コード認証
 async function checkRoomCode(inputCode) {
-    const currentCode = await fetchRoomCode();
+    if (!inputCode) return false;
 
-    if (!currentCode) {
-        console.warn("現在のパスコードが取得できません");
+    const { data, error } = await sb
+        .rpc("check_passcode", {
+            target_role: "user",
+            input_passcode: inputCode
+        });
+
+    if (error) {
+        console.error(error);
         return false;
     }
 
-    return inputCode === currentCode;
+    return data === true;
 }
 
+const roomCodeInput = document.getElementById("roomCodeInput");
+const enterButton = document.getElementById("enterButton");
+
+roomCodeInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        enterButton.click();
+    }
+});
+
 // 入室コード確認ボタン
-document.getElementById("enterButton").addEventListener("click", async () => {
+enterButton.addEventListener("click", async () => {
+    showLoader();
+
     const inputCode = roomCodeInput.value.trim();
     const ok = await checkRoomCode(inputCode);
 
     if (!ok) {
         gateError.textContent = "パスコードが違います";
+        gateError.style.fontSize = "0.8em";
+        roomCodeInput.value = "";
+        roomCodeInput.focus();
+        fadeOutLoader();
         return;
     }
 
-    const user = await loginAfterGate();
-    window.currentUser = user;
+    sessionStorage.setItem("gatePassed", "1");
 
-    gate.style.display = "none";
-    app.style.display = "block";
+    const login = await loginAfterGate();
+    if (!login) {
+        fadeOutLoader();
+        return;
+    }
+
+    window.currentUser = login.authUser;
+    window.userKey = login.userKey;
+
+    openApp();
+    fadeOutLoader();
 });
 
 // ===============================
 // SPA ルーター（画面切り替え）
 // ===============================
-let currentView = null;
 let isNavigating = false;
 
 // ビューを読み込んで表示する
 async function showView(name, push = true) {
     if (isNavigating) return;
-    if (currentView === name && push === false) return;
-
     isNavigating = true;
 
     try {
@@ -102,28 +121,86 @@ async function showView(name, push = true) {
 // ===============================
 // 戻るボタン対応
 // ===============================
-window.addEventListener("popstate", (event) => {
-    const view = event.state?.view || location.hash.replace("#", "") || "input";
+window.addEventListener("popstate", () => {
+    const view =
+        history.state?.view ||
+        location.hash.replace("#", "") ||
+        "input";
+
     showView(view, false);
 });
 
 // ===============================
 // メニュークリックで画面切り替え
 // ===============================
-document.addEventListener("DOMContentLoaded", () => {
+/*document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("nav.menu li").forEach(li => {
         li.addEventListener("click", () => {
             const view = li.dataset.view;
             closeMenu();
-            showView(view, true);
+            showView(view);
         });
     });
 
-    const path = location.pathname.replace("/", "");
-    const initialView = path || "input";
+    const initialView = location.hash.replace("#", "") || "input";
 
-    // 🔑 初期表示は絶対 push しない
+    // ★ここが重要
+    history.replaceState({ view: initialView }, "", `#${initialView}`);
     showView(initialView, false);
+});*/
+function openGate() {
+    gate.style.display = "block";
+    app.style.display = "none";
+
+    // メニュー無効化
+    document.body.classList.add("gate-locked");
+
+    // PCなら自動フォーカス
+    if (!("ontouchstart" in window)) {
+        roomCodeInput.focus();
+    }
+}
+
+function openApp() {
+    gate.style.display = "none";
+    app.style.display = "block";
+
+    document.body.classList.remove("gate-locked");
+
+    const initialView = location.hash.replace("#", "") || "input";
+    showView(initialView, false);
+}
+
+function initMenu() {
+    document.querySelectorAll("nav.menu li").forEach(li => {
+        li.addEventListener("click", () => {
+            const view = li.dataset.view;
+            closeMenu();
+            showView(view);
+        });
+    });
+}
+
+async function initApp() {
+    const gatePassed = sessionStorage.getItem("gatePassed") === "1";
+
+    if (!gatePassed) {
+        openGate();
+        return;
+    }
+
+    history.replaceState(
+        { view: "input" },
+        "",
+        "#input"
+    );
+
+    openApp();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMenu();
+    initApp();   // ← ここで全部判断させる
 });
 
 

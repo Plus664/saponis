@@ -115,8 +115,10 @@
 #input_sheet-container .selects {
     margin-top: 2px;
     width: 93%;
-    padding: 6px 0;
+    height: 36px;
+    padding: 0 2px;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 #input_sheet-container #oil_amount-container {
@@ -131,8 +133,10 @@
 #input_sheet-container .oil_amounts {
     margin-top: 2px;
     width: 93%;
-    padding: 6px 0;
+    height: 36px;
+    padding: 0 6px;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 #input_sheet-container #option-container {
@@ -156,8 +160,10 @@
 #input_sheet-container .option_selects {
     margin-top: 2px;
     width: 93%;
-    padding: 6px 0;
+    height: 36px;
+    padding: 0 6px;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 #input_sheet-container #option_amount-container {
@@ -172,8 +178,10 @@
 #input_sheet-container .option_amounts {
     margin-top: 2px;
     width: 93%;
-    padding: 6px 0;
+    height: 36px;
+    padding: 0 6px;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 #input_sheet-container .oil_amounts::-webkit-outer-spin-button,

@@ -75,7 +75,7 @@ async function display_result() {
         const { data, error } = await sb
             .from("recipes")
             .select("*")
-            .eq("user_id", window.currentUser.id);
+            .eq("user_key", window.userKey);
 
         if (error) {
             console.error("レシピ取得エラー:", error);
@@ -85,7 +85,8 @@ async function display_result() {
         // 画像読み込み
         // =======================
         async function loadImage() {
-            const path = `${recipeId}.jpg`;
+            const userKey = window.userKey;
+            const path = `${userKey}/${recipeId}.jpg`;
 
             // Public URL は「存在しなくても取得できる」
             const { data } = sb.storage
@@ -93,9 +94,12 @@ async function display_result() {
                 .getPublicUrl(path);
 
             // 画像がなければ onerror でデフォルトに落とす
-            imgPreview.onerror = () => {
-                imgPreview.src = "../assets/image/default.jpg";
-            };
+            if (!imgPreview._onerrorSet) {
+                imgPreview.onerror = () => {
+                    imgPreview.src = "../assets/image/default.jpg";
+                };
+                imgPreview._onerrorSet = true;
+            }
 
             imgPreview.src = `${data.publicUrl}?t=${Date.now()}`;
         }
@@ -120,14 +124,16 @@ async function display_result() {
             showLoader_result();
 
             try {
+                const userKey = window.userKey;
+                const path = `${userKey}/${recipeId}.jpg`;
                 const { error } = await sb.storage
                     .from("recipe-images")
-                    .upload(`${recipeId}.jpg`, file, { upsert: true });
+                    .upload(path, file, { upsert: true });
 
                 if (error) throw error;
 
-                alert("画像を保存しました");
                 await loadImage();
+                alert("画像を保存しました");
             } catch (err) {
                 console.error(err);
                 alert("画像を保存できませんでした");
@@ -575,7 +581,7 @@ async function pres_result() {
     const { error } = await sb.from("recipes").insert({
         title: recipe_name,
         data,
-        user_id: window.currentUser.id,
+        user_key: window.userKey,
     });
 
     if (error) {
@@ -622,24 +628,10 @@ function initResultView() {
         document.getElementById("warningToggle").classList.add("hidden");
     };
 
-    //openIndexedDB();
     scene = sessionStorage.getItem("scene") || "result";
     display_result();
     fadeOutLoader_result();
 }
-
-/*const showLoading = (elm, duration = 500) => {
-    elm.style.opacity = "0.5";
-    elm.classList.add("loading");
-
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            elm.style.opacity = "1";
-            elm.classList.remove("loading");
-            resolve();
-        }, duration);
-    });
-};*/
 
 const shouldShowLoader_result = () => {
     const logo = document.querySelector(".logo");

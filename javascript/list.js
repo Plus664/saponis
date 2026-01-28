@@ -37,17 +37,17 @@ const sort_recipes = (method) => {
 
 // 保存したレシピ一覧をボタンで表示
 const display_list = async () => {
-    const { data: userData, error: userErr } = await sb.auth.getUser();
-    if (userErr || !userData.user) {
-        console.error("ユーザー取得失敗", userErr);
+    // user_key を取得
+    const userKey = window.userKey;
+    if (!userKey) {
+        alert("ユーザーキーが見つかりません");
         return;
     }
-    const user = userData.user;
 
     const { data, error } = await sb
         .from("recipes")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_key", userKey);
 
     if (error) {
         alert("レシピの取得に失敗しました");
@@ -166,21 +166,21 @@ function display_pres_list(id) {
 
 // 保存したレシピを削除
 async function remove_pres(id) {
-    /*if (!db) {
-        alert("IndexedDBが利用できません");
-        return;
-    }*/
-
     const recipe = preserved_recipes.find(r => r.id === id);
-    const name = recipe?.recipe_name || "このレシピ";
+    const name = recipe?.data.recipe_name || "このレシピ";
     const confirmed = confirm(`\"${name}\"を削除しますか？`);
     if (!confirmed) return;
 
+    if (recipe.user_key !== window.userKey) {
+        alert("このレシピは削除できません");
+        return;
+    }
 
     const { error } = await sb
         .from("recipes")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_key", window.userKey);
 
     if (error) {
         alert("レシピの削除に失敗しました");
@@ -188,28 +188,21 @@ async function remove_pres(id) {
         return;
     }
 
-    // 画像削除
-    await sb.storage
-        .from("recipe-images")
-        .remove([`${id}.jpg`]);
+    const path = `${window.userKey}/${id}.jpg`;
 
-    alert("レシピを削除しました");
+    const { imgError } = await sb.storage
+        .from("recipe-images")
+        .remove([path]);
+
+    if (imgError) console.error("画像の削除に失敗しました:", imgError)
+
+    alert("削除しました");
 };
 
 // お気に入り登録・解除
 const toggle_favorite = async (id) => {
     const recipe = preserved_recipes.find(r => r.id === id);
     if (!recipe) return;
-
-    /*recipe.isFavorite = !recipe.isFavorite;
-
-    const transaction = db.transaction("recipes", "readwrite");
-    const store = transaction.objectStore("recipes");
-    store.put(recipe);
-
-    transaction.oncomplete = () => {
-        sort_recipes(sessionStorage.getItem("sortMethod") || "newest");
-    };*/
 
     const newValue = !recipe.data.isFavorite;
 
@@ -457,6 +450,14 @@ function initListView() {
     if (shouldShowLoader()) {
         showLoader();
     }
+
+    setTimeout(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth"
+        });
+    }, 0);
 
     display_list();
 
