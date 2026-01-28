@@ -95,7 +95,7 @@ let isNavigating = false;
 
 // ビューを読み込んで表示する
 async function showView(name, push = true) {
-    if (isNavigating) return;
+    if (isNavigating && push) return;
     isNavigating = true;
 
     try {
@@ -127,27 +127,13 @@ window.addEventListener("popstate", () => {
         location.hash.replace("#", "") ||
         "input";
 
+    isNavigating = false;
     showView(view, false);
 });
 
 // ===============================
 // メニュークリックで画面切り替え
 // ===============================
-/*document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("nav.menu li").forEach(li => {
-        li.addEventListener("click", () => {
-            const view = li.dataset.view;
-            closeMenu();
-            showView(view);
-        });
-    });
-
-    const initialView = location.hash.replace("#", "") || "input";
-
-    // ★ここが重要
-    history.replaceState({ view: initialView }, "", `#${initialView}`);
-    showView(initialView, false);
-});*/
 function openGate() {
     gate.style.display = "block";
     app.style.display = "none";
@@ -195,6 +181,8 @@ async function initApp() {
         "#input"
     );
 
+    window.userKey = localStorage.getItem("user_key");
+
     openApp();
 }
 
@@ -202,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initMenu();
     initApp();   // ← ここで全部判断させる
 });
-
 
 // ===============================
 // ビューごとの初期化

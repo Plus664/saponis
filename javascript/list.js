@@ -161,7 +161,7 @@ function display_pres_list(id) {
 
     sessionStorage.setItem("memo", data.memo || "");
 
-    showView("result", false);
+    showView("result", true);
 };
 
 // 保存したレシピを削除

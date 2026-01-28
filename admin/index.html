@@ -16,6 +16,12 @@
       color: #eee;
     }
 
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
     input,
     button {
       padding: .5rem;
@@ -42,8 +48,10 @@
     <!-- 管理者ログイン -->
     <div id="login">
       <h2>Admin Login</h2>
-      <input id="adminCode" type="password" placeholder="管理者パスコード" />
-      <button id="loginBtn">ログイン</button>
+      <form>
+        <input id="adminCode" type="password" placeholder="管理者パスコード" autocomplete="off" />
+        <button id="loginBtn">ログイン</button>
+      </form>
       <p id="loginMsg"></p>
     </div>
 
@@ -52,19 +60,22 @@
       <h2>Passcode Settings</h2>
 
       <h3>ユーザー用パスコード</h3>
-      <input id="userPass" type="password" placeholder="新しいユーザーパスコード" />
-      <button id="updateUser">変更</button>
+      <form>
+        <input id="userPass" type="password" placeholder="新しいユーザーパスコード" autocomplete="off" />
+        <button id="updateUser">変更</button>
+      </form>
 
       <h3>管理者用パスコード</h3>
-      <input id="adminPass" type="password" placeholder="新しい管理者パスコード" />
-      <button id="updateAdmin">変更</button>
+      <form>
+        <input id="adminPass" type="password" placeholder="新しい管理者パスコード" autocomplete="off" />
+        <button id="updateAdmin">変更</button>
+      </form>
 
       <p id="panelMsg"></p>
     </div>
 
   </div>
 
-  <script src="../supabase.js"></script>
   <script src="admin.js"></script>
 </body>
 
