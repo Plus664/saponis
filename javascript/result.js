@@ -133,10 +133,10 @@ async function display_result() {
                 if (error) throw error;
 
                 await loadImage();
-                alert("画像を保存しました");
+                showMessage({ message: "画像を保存しました", type: "info", mode: "alert" });
             } catch (err) {
                 console.error(err);
-                alert("画像を保存できませんでした");
+                showMessage({ message: "画像を保存できませんでした", type: "error", mode: "alert" });
 
             } finally {
                 fadeOutLoader_result();
@@ -512,10 +512,53 @@ const display_memo = () => {
     memo_result.textContent = memo;
 }
 
+// 保存したレシピのリスト取得
+async function getPreservedRecipeNames(userKey) {
+    const { data, error } = await sb
+        .from("recipes")
+        .select("data")
+        .eq("user_key", userKey)
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error(error);
+        return [];
+    }
+
+    return data
+        .map(r => r.data?.recipe_name)
+        .filter(Boolean);
+}
+
+// 名前の正規化
+function normalizeRecipeName(baseName, recipeNames) {
+    // "〇〇 (n)" を除いたベース名
+    const base = baseName.replace(/\s*\(\d+\)$/, "");
+
+    // 既存の recipeNames から番号を抽出
+    const nums = recipeNames
+        .filter(name => name === base || name.startsWith(`${base} (`))
+        .map(name => {
+            const m = name.match(/\((\d+)\)$/);
+            return m ? Number(m[1]) : 0;
+        });
+
+    if (nums.length === 0) return base;
+
+    const next = Math.max(...nums) + 1;
+    return `${base} (${next})`;
+}
+
 async function pres_result() {
     showLoader_result();
 
-    const recipe_name = document.getElementById("name_result").textContent;
+    const userKey = window.userKey;
+    const names = await getPreservedRecipeNames(userKey);
+    const recipe_name_input = document.getElementById("name_result").textContent;
+    const recipe_name = normalizeRecipeName(
+        recipe_name_input,
+        names
+    );
     const type = document.getElementById("type_result").textContent;
     const alkali = document.getElementById("alkali_result").textContent;
     const oil_amount_sum = document.getElementById("oil_amount_sum_result").textContent;
@@ -586,9 +629,9 @@ async function pres_result() {
 
     if (error) {
         console.error(error);
-        alert("保存に失敗しました");
+        showMessage({ message: "保存できませんでした", type: "error", mode: "alert" });
     } else {
-        alert("保存しました");
+        showMessage({ message: "保存しました", type: "info", mode: "alert" });
     }
     fadeOutLoader_result();
 }

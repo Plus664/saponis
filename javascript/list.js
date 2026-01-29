@@ -8,30 +8,40 @@ function update_display() {
 // 並べ替え
 const sort_recipes = (method) => {
     sessionStorage.setItem("sortMethod", method);
-    switch (method) {
-        case "newest":
-            preserved_recipes.sort((a, b) => b.id - a.id);
-            break;
-        case "oldest":
-            preserved_recipes.sort((a, b) => a.id - b.id);
-            break;
-        case "name_asc":
-            preserved_recipes.sort((a, b) =>
-                a.recipe_name.localeCompare(b.recipe_name, 'ja', { sensitivity: 'base' })
-            );
-            break;
-        case "name_desc":
-            preserved_recipes.sort((a, b) =>
-                b.recipe_name.localeCompare(a.recipe_name, 'ja', { sensitivity: 'base' })
-            );
-            break;
-        case "favorite_first":
-            preserved_recipes.sort((a, b) => {
-                if (a.isFavorite == b.isFavorite) return b.id - a.id;
-                return a.isFavorite ? -1 : 1;
-            });
-            break;
-    }
+
+    preserved_recipes.sort((a, b) => {
+        switch (method) {
+            case "newest":
+                return new Date(b.created_at) - new Date(a.created_at);
+
+            case "oldest":
+                return new Date(a.created_at) - new Date(b.created_at);
+
+            case "name_asc":
+                return (a.data?.recipe_name || "").localeCompare(
+                    b.data?.recipe_name || "",
+                    'ja',
+                    { sensitivity: 'base' }
+                );
+
+            case "name_desc":
+                return (b.data?.recipe_name || "").localeCompare(
+                    a.data?.recipe_name || "",
+                    'ja',
+                    { sensitivity: 'base' }
+                );
+
+            case "favorite_first":
+                if (a.data.isFavorite === b.data.isFavorite) {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                }
+                return a.data.isFavorite ? -1 : 1;
+
+            default:
+                return 0;
+        }
+    });
+
     update_display();
 };
 
@@ -40,7 +50,7 @@ const display_list = async () => {
     // user_key を取得
     const userKey = window.userKey;
     if (!userKey) {
-        alert("ユーザーキーが見つかりません");
+        showMessage({ message: "ユーザーキーが見つかりません", type: "error", mode: "alert" });
         return;
     }
 
@@ -50,7 +60,7 @@ const display_list = async () => {
         .eq("user_key", userKey);
 
     if (error) {
-        alert("レシピの取得に失敗しました");
+        showMessage({ message: "保存したレシピを取得できません", type: "error", mode: "alert" });
         console.error(error);
         return;
     }
@@ -99,7 +109,7 @@ function display_pres_list(id) {
 
     const recipe = preserved_recipes.find(recipe => recipe.id == id);
     if (!recipe) {
-        alert("レシピが見つかりません");
+        showMessage({ message: "レシピが見つかりません", type: "error", mode: "alert" });
         return;
     }
 
@@ -168,11 +178,15 @@ function display_pres_list(id) {
 async function remove_pres(id) {
     const recipe = preserved_recipes.find(r => r.id === id);
     const name = recipe?.data.recipe_name || "このレシピ";
-    const confirmed = confirm(`\"${name}\"を削除しますか？`);
+    const confirmed = await showMessage({
+        message: `"${name}"を削除しますか？`,
+        type: "info",
+        mode: "confirm"
+    });
     if (!confirmed) return;
 
     if (recipe.user_key !== window.userKey) {
-        alert("このレシピは削除できません");
+        showMessage({ message: "このレシピは削除できません", type: "error", mode: "alert" });
         return;
     }
 
@@ -183,7 +197,7 @@ async function remove_pres(id) {
         .eq("user_key", window.userKey);
 
     if (error) {
-        alert("レシピの削除に失敗しました");
+        showMessage({ message: "レシピの削除に失敗しました", type: "error", mode: "alert" });
         console.error(error);
         return;
     }
@@ -196,7 +210,12 @@ async function remove_pres(id) {
 
     if (imgError) console.error("画像の削除に失敗しました:", imgError)
 
-    alert("削除しました");
+    // preserved_recipes を直接書き換える
+    const index = preserved_recipes.findIndex(r => r.id === id);
+    if (index !== -1) preserved_recipes.splice(index, 1);
+
+    showMessage({ message: "削除しました", type: "info", mode: "alert" });
+    update_display();
 };
 
 // お気に入り登録・解除
@@ -204,7 +223,8 @@ const toggle_favorite = async (id) => {
     const recipe = preserved_recipes.find(r => r.id === id);
     if (!recipe) return;
 
-    const newValue = !recipe.data.isFavorite;
+    const current = !!recipe.data?.isFavorite;
+    const newValue = !current;
 
     const { error } = await sb
         .from("recipes")
@@ -212,7 +232,7 @@ const toggle_favorite = async (id) => {
         .eq("id", id);
 
     if (error) {
-        alert("お気に入り登録の更新に失敗しました");
+        showMessage({ message: "お気に入りに登録できませんでした", type: "error", mode: "alert" });
         console.error(error);
         return;
     }
@@ -314,26 +334,27 @@ function share_pres(id) {
     open_qr_overlay(adjustedRecipe);
 }
 
+function closeOverlay() {
+    const overlayRoot = document.getElementById("overlay-root");
+    if (!overlayRoot) return;
+    overlayRoot.innerHTML = "";
+}
+
 // メニューのオーバーレイ表示
 const open_centered_overlay = (id) => {
     const recipe = preserved_recipes.find(r => r.id == id);
     if (!recipe) return;
 
+    const overlayRoot = document.getElementById("overlay-root");
+
     // 背景レイヤー
     const backdrop = document.createElement("div");
-    backdrop.style.position = "fixed";
-    backdrop.style.top = "0";
-    backdrop.style.left = "0";
-    backdrop.style.width = "100vw";
-    backdrop.style.height = "100vh";
-    backdrop.style.background = "rgba(0, 0, 0, 0.4)";
-    backdrop.style.zIndex = "999";
-    backdrop.addEventListener("click", () => {
-        if (document.body.contains(backdrop)) document.body.removeChild(backdrop);
-    });
+    backdrop.className = "backdrop";
+    backdrop.addEventListener("click", closeOverlay);
 
     // メニュー本体
     const menu = document.createElement("div");
+    menu.className = "list-menu";
     menu.style.position = "fixed";
     menu.style.top = "50%";
     menu.style.left = "50%";
@@ -344,12 +365,13 @@ const open_centered_overlay = (id) => {
     menu.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
     menu.style.minWidth = "240px";
     menu.style.textAlign = "center";
+    menu.style.zIndex = 1001;
 
     const actions = [
         //{ label: "編集する", handler: () => edit_pres(id) },
         { label: "QRコードを表示", handler: () => share_pres(id) },
         { label: "カレンダーに登録", handler: () => register_to_calender(id) },
-        { label: "削除する", handler: () => remove_pres(id) }
+        { label: "このレシピを削除", handler: () => remove_pres(id) }
     ];
 
     actions.forEach(action => {
@@ -357,24 +379,21 @@ const open_centered_overlay = (id) => {
         btn.textContent = action.label;
         btn.className = "overlay-buttons";
         btn.addEventListener("click", () => {
-            document.body.removeChild(backdrop); // 先に閉じる
+            closeOverlay();      // 先に閉じる
             action.handler();
         });
         menu.appendChild(btn);
     });
 
-    backdrop.appendChild(menu);
-    document.body.appendChild(backdrop);
+    overlayRoot.append(backdrop, menu);
 };
 
 function register_to_calender(id) {
     let recipe = preserved_recipes.find(r => r.id == id);
     if (!recipe) {
-        alert("レシピが見つかりません");
+        showMessage({ message: "レシピが見つかりません", type: "error", mode: "alert" });
         return;
     }
-
-    //const startDate = new Date(recipe.
 }
 
 // ボタンを生成＆表示
@@ -404,12 +423,12 @@ const display_buttons = (id) => {
 
     const icon = document.createElement("span");
     icon.className = "favorite-icon";
-    icon.textContent = recipe.isFavorite ? "♥" : "♡";
+    icon.textContent = recipe.data.isFavorite ? "♥" : "♡";
     icon.style.cursor = "pointer";
-    icon.addEventListener("click", (e) => {
+    icon.addEventListener("click", async (e) => {
         e.stopPropagation();
-        toggle_favorite(recipe.id);
-        icon.textContent = recipe.isFavorite ? "♥" : "♡";
+        await toggle_favorite(recipe.id);
+        icon.textContent = recipe.data.isFavorite ? "♥" : "♡";
     });
 
     text_wrapper.appendChild(text);

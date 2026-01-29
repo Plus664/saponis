@@ -407,7 +407,7 @@ const calc_result_recommend = (recipe, total) => {
             const amount = total * (Number(recipe.oils[i].percentage) / 100);
             amounts.push(amount);
         } else {
-            alert("エラー: データが見つかりません");
+            showMessage({ message: "データが見つかりません", type: "error", mode: "alert" });
             return;
         }
     }

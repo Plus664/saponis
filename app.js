@@ -233,23 +233,118 @@ function initView(name) {
     }
 }
 
+// ===============================
+// ハンバーガーメニュー制御
+// ===============================
 $(function () {
     $('.hamburger').click(function () {
+        closeAllMessages();
         $('.menu').toggleClass('open');
 
         $(this).toggleClass('active');
     });
 });
 
-// ===============================
-// ハンバーガーメニュー制御
-// ===============================
 function closeMenu() {
     const menu = document.querySelector("nav.menu");
     const hamburger = document.querySelector(".hamburger");
 
     menu.classList.remove("open");
     hamburger.classList.remove("active");
+}
+
+// ===============================
+// 通知UI
+// ===============================
+// 全表示中のメッセージを管理
+const activeMessages = new Set();
+
+function showMessage({ message, type = "info", mode = "alert" }) {
+    const root = document.getElementById("overlay-root");
+    if (!root) return;
+
+    // メッセージ用オーバーレイ
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.background = "rgba(0,0,0,0.2)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "1000";
+
+    const box = document.createElement("div");
+    box.className = `msg-box msg-${type}`;
+    box.style.padding = "16px 24px";
+    box.style.borderRadius = "8px";
+    box.style.background = "#fff3c4";
+    box.style.color = type === "error" ? "red" : "black";
+    box.style.minWidth = "200px";
+    box.style.minHeight = "200px"
+    box.style.textAlign = "center";
+    box.style.display = "flex";
+    box.style.flexDirection = "column";
+    box.style.justifyContent = "center";
+    box.style.zIndex = "1001";
+
+    const text = document.createElement("p");
+    text.textContent = message;
+    box.appendChild(text);
+
+    const btnContainer = document.createElement("div");
+    btnContainer.style.marginTop = "30px";
+    btnContainer.style.display = "flex";
+    btnContainer.style.justifyContent = "center";
+    btnContainer.style.gap = "8px";
+    box.appendChild(btnContainer);
+
+    overlay.appendChild(box);
+    root.appendChild(overlay);
+
+    // 全表示中メッセージに追加
+    activeMessages.add(overlay);
+
+    if (mode === "alert") {
+        const okBtn = document.createElement("button");
+        okBtn.textContent = "OK";
+        okBtn.onclick = () => { overlay.remove(); activeMessages.delete(overlay); };
+        btnContainer.appendChild(okBtn);
+
+        // 外クリックで消せる
+        overlay.addEventListener("click", (e) => {
+            if (!box.contains(e.target)) {
+                overlay.remove();
+                activeMessages.delete(overlay);
+            }
+        });
+
+        return;
+    }
+
+    if (mode === "confirm") {
+        const okBtn = document.createElement("button");
+        okBtn.textContent = "OK";
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "キャンセル";
+
+        btnContainer.appendChild(okBtn);
+        btnContainer.appendChild(cancelBtn);
+
+        return new Promise(resolve => {
+            okBtn.onclick = () => { overlay.remove(); activeMessages.delete(overlay); resolve(true); };
+            cancelBtn.onclick = () => { overlay.remove(); activeMessages.delete(overlay); resolve(false); };
+        });
+    }
+}
+
+
+// 全メッセージを閉じる
+function closeAllMessages() {
+    activeMessages.forEach(box => box.remove());
+    activeMessages.clear();
 }
 
 // ===============================

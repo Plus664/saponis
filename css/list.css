@@ -36,11 +36,16 @@
     border: 1px solid #ccc;
 }
 
-#list_sheet-container .overlay-menu div:hover {
-    background-color: #f0f0f0;
+#overlay-root .backdrop {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, .4);
+    z-index: 1000;
 }
 
-#list_sheet-container .overlay-buttons {
+#overlay-root .overlay-buttons {
     justify-self: center;
     border: none;
     color: rgba(148, 170, 255, 1);
@@ -56,14 +61,14 @@
     margin: 12px auto;
 }
 
-#list_sheet-container .overlay-buttons:hover {
+#overlay-root .overlay-buttons:hover {
     color: white;
     background-color: rgba(148, 170, 255, 1);
     box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
     transform: translateY(-2px);
 }
 
-#list_sheet-container .overlay-buttons:active {
+#overlay-root .overlay-buttons:active {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
     background-color: rgba(120, 140, 230, 1);

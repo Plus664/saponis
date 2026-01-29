@@ -11,7 +11,9 @@ const panelBox = document.getElementById("panel");
 const loginMsg = document.getElementById("loginMsg");
 const panelMsg = document.getElementById("panelMsg");
 
-document.getElementById("loginBtn").onclick = async () => {
+document.getElementById("loginBtn").onclick = async (e) => {
+  e.preventDefault();
+
   const code = document.getElementById("adminCode").value;
   if (!code) return;
 

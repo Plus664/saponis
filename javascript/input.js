@@ -540,7 +540,7 @@ function clear_preserveSession() {
 //結果を表示
 function calc_result() {
     if (Number(sap_ratio.value) == "") {
-        alert("鹸化率を入力して下さい");
+        showMessage({ message: "鹸化率を入力してください", type: "info", mode: "alert" });
         return;
     }
 
@@ -557,7 +557,7 @@ function calc_result() {
     const alkali = calc_alkali();
     const oil_amount_info = calc_oil();
     if (Number(oil_amount_info[10]) == 0) {
-        alert("オイルを選択してください");
+        showMessage({ message: "油脂を選択して下さい", type: "info", mode: "alert" });
         return;
     }
 

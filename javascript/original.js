@@ -161,14 +161,14 @@ const calc_soda_original = (oils, total, ratios, discount, alkali_rate) => {
 const calc_alkali_original = (oils, total, ratios) => {
     let discount = Number(document.getElementById("sap_ratio_val").value);
     if (!discount || discount <= 0) {
-        alert("鹸化率を正しく入力して下さい");
+        showMessage({ message: "鹸化率を入力して下さい", type: "error", mode: "alert" });
         return;
     } else {
         discount *= 0.01;
     }
     let alkali_rate = Number(document.getElementById("alkali_ratio_val").value);
     if (!alkali_rate || alkali_rate <= 0) {
-        alert("アルカリの純度を正しく入力して下さい");
+        showMessage({ message: "アルカリの純度を正しく入力して下さい", type: "error", mode: "alert" });
         return;
     } else {
         alkali_rate *= 0.01;
@@ -186,7 +186,7 @@ const calc_alkali_original = (oils, total, ratios) => {
 const calc_water_original = (total, alkali) => {
     const water_ratio = document.getElementById("water_ratio_val");
     if (!water_ratio || water_ratio <= 0) {
-        alert("水の割合を正しく入力して下さい");
+        showMessage({ message: "水の割合を正しく入力して下さい", type: "error", mode: "alert" });
         return;
     } else {
         return Math.round(total * Number(water_ratio.value) * 0.01 * 10) / 10;
@@ -369,7 +369,7 @@ const calc_result_original = () => {
         }
     }
     if (count == 0) {
-        alert("オイルを選択してください");
+        showMessage({ message: "油脂を選択して下さい", type: "error", mode: "alert" });
         return;
     }
     let options = [];
@@ -387,7 +387,7 @@ const calc_result_original = () => {
     }
     const total = Number(document.getElementById("oil_sum_val").value);
     if (!total || total <= 0) {
-        alert("油脂の合計量を正しく入力して下さい");
+        showMessage({ message: "油脂の合計量を入力して下さい", type: "error", mode: "alert" });
         return;
     }
     const ratios = ratioArray[count];
