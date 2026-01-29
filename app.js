@@ -280,7 +280,7 @@ function showMessage({ message, type = "info", mode = "alert" }) {
     box.className = `msg-box msg-${type}`;
     box.style.padding = "16px 24px";
     box.style.borderRadius = "8px";
-    box.style.background = "#fff3c4";
+    box.style.background = "rgba(220, 225, 235, 1)";
     box.style.color = type === "error" ? "red" : "black";
     box.style.minWidth = "200px";
     box.style.minHeight = "200px"
@@ -330,8 +330,8 @@ function showMessage({ message, type = "info", mode = "alert" }) {
         const cancelBtn = document.createElement("button");
         cancelBtn.textContent = "キャンセル";
 
-        btnContainer.appendChild(okBtn);
         btnContainer.appendChild(cancelBtn);
+        btnContainer.appendChild(okBtn);
 
         return new Promise(resolve => {
             okBtn.onclick = () => { overlay.remove(); activeMessages.delete(overlay); resolve(true); };

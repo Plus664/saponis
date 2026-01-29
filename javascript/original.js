@@ -46,7 +46,7 @@ const optionSuggestions = {
         { name: "ローズウォーター", amount: 15, purpose: "肌の柔らかさUP＋保湿" }
     ],
     "硬め": [
-        { name: "クレイ", amount: 10, purpose: "石鹸の硬さUP" },
+        { name: "クレイ", amount: 10, purpose: "せっけんの硬さUP" },
         { name: "竹炭パウダー", amount: 5, purpose: "硬さ＋吸着力UP" },
         { name: "紫雲膏パウダー", amount: 8, purpose: "保湿＋硬さUP" }
     ],
@@ -395,6 +395,7 @@ const calc_result_original = () => {
     const name = document.getElementById("recipe_name").value;
     const alkali = calc_alkali_original(oils, total, ratios);
     const water = calc_water_original(total, alkali);
+    const pureSoap = calc_pureSoap(alkali, total, water);
     const type = "soda";
     const oil_names = get_oil_names_original(oils, total, ratios);
     const option_names = get_option_names_original(options);
@@ -418,6 +419,7 @@ const calc_result_original = () => {
     sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
     sessionStorage.setItem("optionNames", JSON.stringify(option_names));
     sessionStorage.setItem("waterAmount", "★水の量: " + water + "g");
+    sessionStorage.setItem("pureSoap", `★純せっけん分: ${pureSoap}%`);
     sessionStorage.setItem("additionalInfos", JSON.stringify(features));
     sessionStorage.setItem("conditions", JSON.stringify(conditions));
     sessionStorage.setItem("memo", memo || "");

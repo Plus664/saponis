@@ -249,7 +249,7 @@ const open_qr_overlay = (recipe) => {
 
     //const shareURL = `../html/index.html?data=${encoded}&editable=true`;
     //const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
-    const shareURL = `https://saponis.netlify.app/index.html?data=${encoded}&editable=true`;
+    //const shareURL = `https://saponis.netlify.app/index.html?data=${encoded}&editable=true`;
 
     //const shareURL = `http://127.0.0.1:5500/index.html?data=${encoded}&editable=true`;
 
@@ -301,6 +301,122 @@ const open_qr_overlay = (recipe) => {
         });
     });
 };
+
+// 三点リーダー用：名前変更
+async function change_name(id) {
+    const recipe = preserved_recipes.find(r => r.id === id);
+    if (!recipe) return;
+
+    // オーバーレイ
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.background = "rgba(0,0,0,0.3)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "1000";
+
+    // ボックス
+    const box = document.createElement("div");
+    box.className = "change-name-box";
+    box.style.padding = "16px 24px";
+    box.style.borderRadius = "8px";
+    box.style.background = "rgba(220, 225, 235, 1)";
+    box.style.minWidth = "250px";
+    box.style.height = "200px";
+    box.style.textAlign = "center";
+
+    // 説明文
+    const p = document.createElement("p");
+    p.textContent = "新しいレシピ名を入力して下さい";
+    p.style.marginTop = "20px"
+    p.style.marginBottom = "30px";
+    p.style.fontSize = "20px"
+    p.style.color = "#000";
+    box.appendChild(p);
+
+    // 入力欄
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = recipe.data.recipe_name || "";
+    input.style.width = "80%";
+    input.style.height = "25px";
+    input.style.marginBottom = "30px";
+    input.style.fontSize = "20px";
+    input.style.outline = "none";
+    box.appendChild(input);
+
+    // ボタンコンテナ
+    const btnContainer = document.createElement("div");
+    btnContainer.style.display = "flex";
+    btnContainer.style.justifyContent = "center";
+    btnContainer.style.gap = "8px";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "キャンセル";
+    const okBtn = document.createElement("button");
+    okBtn.textContent = "変更";
+
+    // 左キャンセル、右変更
+    btnContainer.appendChild(cancelBtn);
+    btnContainer.appendChild(okBtn);
+    box.appendChild(btnContainer);
+    overlay.appendChild(box);
+    document.getElementById("overlay-root").appendChild(overlay);
+
+    overlay.addEventListener("click", (e) => {
+        if (!box.contains(e.target)) {
+            overlay.remove();
+        }
+    });
+
+    // キャンセル
+    cancelBtn.onclick = () => overlay.remove();
+
+    // 変更ボタン
+    okBtn.onclick = async () => {
+        const newName = input.value.trim();
+        if (!newName) {
+            showMessage({ message: "名前を入力してください", type: "error", mode: "alert" });
+            return;
+        }
+
+        // Supabase UPDATE（title と data.recipe_name 両方）
+        const { data, error } = await sb
+            .from("recipes")
+            .update({
+                title: newName,
+                data: { ...recipe.data, recipe_name: newName }
+            })
+            .eq("id", id)
+            .eq("user_key", window.userKey)
+            .select();
+
+        if (error) {
+            console.error(error);
+            showMessage({ message: "名前の変更に失敗しました", type: "error", mode: "alert" });
+            return;
+        }
+
+        // preserved_recipes を上書き
+        if (data && data[0]) {
+            recipe.data = data[0].data;
+            recipe.title = data[0].title;
+        }
+
+        // 表示更新
+        update_display();
+
+        showMessage({ message: "名前を変更しました", type: "info", mode: "alert" });
+
+        // オーバーレイ削除
+        overlay.remove();
+    };
+}
 
 function adjustRecipe(recipe) {
     const keysToKeep = [
@@ -369,6 +485,7 @@ const open_centered_overlay = (id) => {
 
     const actions = [
         //{ label: "編集する", handler: () => edit_pres(id) },
+        { label: "名前を変更", handler: () => change_name(id) },
         { label: "QRコードを表示", handler: () => share_pres(id) },
         { label: "カレンダーに登録", handler: () => register_to_calender(id) },
         { label: "このレシピを削除", handler: () => remove_pres(id) }

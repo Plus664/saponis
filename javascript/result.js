@@ -56,6 +56,13 @@ async function display_result() {
         alcohol_amount_result.style.display = "none";
     }
 
+    const pureSoap_result = sessionStorage.getItem("pureSoap");
+    if (type === "soda") {
+        document.getElementById("pureSoap_result").textContent = pureSoap_result;
+    } else if (type === "potash") {
+        document.getElementById("pureSoap_result").style.display = "none";
+    }
+
     display_features();
     display_conditions();
 
@@ -564,6 +571,7 @@ async function pres_result() {
     const oil_amount_sum = document.getElementById("oil_amount_sum_result").textContent;
     const water_amount = document.getElementById("water_amount_result").textContent;
     const alcohol_amount = document.getElementById("alcohol_amount_result").textContent;
+    const pureSoap = document.getElementById("pureSoap_result").textContent;
     const memo = sessionStorage.getItem("memo") || "";
 
     const sapRatio = Number(sessionStorage.getItem("sapRatio"));
@@ -615,6 +623,7 @@ async function pres_result() {
         alcohol,
         water_amount,
         alcohol_amount,
+        pureSoap,
         features,
         conditions,
         memo,

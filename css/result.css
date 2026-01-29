@@ -177,6 +177,11 @@
     font-size: 22px;
 }
 
+#result_sheet-container #pureSoap_result {
+    margin-left: 30px;
+    font-size: 22px;
+}
+
 #result_sheet-container #features {
     margin-left: 30px;
     font-size: 22px;

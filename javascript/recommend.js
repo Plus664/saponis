@@ -7,7 +7,7 @@ let alcohol_ratio_global_recommend = 0;
 const recommend_recipes = {
     oil1: {
         category: "さっぱり洗浄",
-        description: "泡立ちが良く、しっかり洗浄できる石鹸。脂性肌やスポーツ後の使用におすすめ。",
+        description: "泡立ちが良く、しっかり洗浄できるせっけん。脂性肌やスポーツ後の使用におすすめ。",
         oils: [
             { name: "ココナッツ油", percentage: 40 },
             { name: "パーム核油", percentage: 30 },
@@ -41,7 +41,7 @@ const recommend_recipes = {
     },
     oil3: {
         category: "もっちり泡立ち",
-        description: "泡立ちが豊かでクリーミーな石鹸。マイルドな洗浄力で敏感肌にも◎。",
+        description: "泡立ちが豊かでクリーミーなせっけん。マイルドな洗浄力で敏感肌にも◎。",
         oils: [
             { name: "ひまし油", percentage: 30 },
             { name: "パーム核油", percentage: 30 },
@@ -58,7 +58,7 @@ const recommend_recipes = {
     },
     oil4: {
         category: "硬め長持ち",
-        description: "硬く溶けにくい石鹸。しっかりしたフォームで長く使える。",
+        description: "硬く溶けにくいせっけん。しっかりしたフォームで長く使える。",
         oils: [
             { name: "牛脂", percentage: 40 },
             { name: "パーム油", percentage: 30 },
@@ -92,7 +92,7 @@ const recommend_recipes = {
     },
     oil6: {
         category: "和風美容",
-        description: "椿油や米ぬか油を配合した美容石鹸。日本古来のスキンケアを取り入れた処方。",
+        description: "椿油や米ぬか油を配合した美容せっけん。日本古来のスキンケアを取り入れた処方。",
         oils: [
             { name: "椿油", percentage: 40 },
             { name: "米ぬか油", percentage: 30 },
@@ -126,7 +126,7 @@ const recommend_recipes = {
     },
     oil8: {
         category: "美容ケア",
-        description: "美容成分を豊富に含んだ石鹸。肌のハリ・ツヤUPを目指す人向け。",
+        description: "美容成分を豊富に含んだせっけん。肌のハリ・ツヤUPを目指す人向け。",
         oils: [
             { name: "ローズヒップオイル", percentage: 35 },
             { name: "ホホバオイル", percentage: 30 },
@@ -143,7 +143,7 @@ const recommend_recipes = {
     },
     oil9: {
         category: "夏向け",
-        description: "清涼感のある爽やかな石鹸。暑い季節にぴったり。",
+        description: "清涼感のある爽やかなせっけん。暑い季節にぴったり。",
         oils: [
             { name: "ココナッツ油", percentage: 40 },
             { name: "グレープシード油", percentage: 30 },
@@ -160,7 +160,7 @@ const recommend_recipes = {
     },
     oil10: {
         category: "酸化しづらい",
-        description: "長期間品質を保つ、酸化しにくい石鹸。",
+        description: "長期間品質を保つ、酸化しにくいせっけん。",
         oils: [
             { name: "ホホバオイル", percentage: 35 },
             { name: "ラード[豚脂]", percentage: 25 },
@@ -177,7 +177,7 @@ const recommend_recipes = {
     },
     oil11: {
         category: "髪用",
-        description: "髪と頭皮に優しい、泡立ちが良いヘア用石鹸。",
+        description: "髪と頭皮に優しい、泡立ちが良いヘア用せっけん。",
         oils: [
             { name: "ひまし油", percentage: 25 },
             { name: "パーム核油", percentage: 25 },
@@ -385,6 +385,7 @@ function clear_preserveSession_recommend() {
         "oilNames",
         "optionNames",
         "waterAmount",
+        "pureSoap",
         "alcoholAmount",
         "additionalInfos",
         "conditions",
@@ -416,6 +417,7 @@ const calc_result_recommend = (recipe, total) => {
     const water = calc_water_recommend(recipe, total, alkali);
     const name = recipe.category;
     const type = "soda";
+    const pureSoap = calc_pureSoap(alkali, total, water);
     const oil_names = get_oil_names_recommend(recipe, amounts, total);
     const option_names = get_option_names_recommend(recipe);
     const features = get_final_features_recommend(recipe);
@@ -444,6 +446,7 @@ const calc_result_recommend = (recipe, total) => {
     sessionStorage.setItem("oilNames", JSON.stringify(oil_names));
     sessionStorage.setItem("optionNames", JSON.stringify(option_names));
     sessionStorage.setItem("waterAmount", "★水の量: " + water + "g");
+    sessionStorage.setItem("pureSoap", `★純せっけん分: ${pureSoap}%`);
     sessionStorage.setItem("additionalInfos", JSON.stringify(features));
     sessionStorage.setItem("conditions", JSON.stringify(conditions));
     sessionStorage.setItem("memo", memo || "");

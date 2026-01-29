@@ -367,6 +367,12 @@ function calc_water(type, alkali) {
     }
 }
 
+// 純せっけん分（％）を計算
+function calc_pureSoap(alkali, oil_amount_sum, water_amount) {
+    const pureSoap = Math.round((alkali + oil_amount_sum) / (alkali + oil_amount_sum + water_amount) * 1000) / 10;
+    return pureSoap;
+}
+
 //特徴を計算
 function get_additional_info() {
     //入力情報を取得
@@ -585,6 +591,12 @@ function calc_result() {
     }
 
     const water_amount = calc_water(radioNodeList.value, alkali);
+
+    let pureSoap = 0;
+    if (radioNodeList.value === "soda") {
+        pureSoap = calc_pureSoap(alkali, oil_amount_sum, water_amount);
+    }
+
     const additional_info = get_final_characteristics();
     const skin = "・肌適性: " + additional_info[0];
     const clean = "・洗浄力: " + additional_info[1];
@@ -642,6 +654,9 @@ function calc_result() {
 
     const water_amount_text = "★水の量: " + water_amount + "g";
     sessionStorage.setItem("waterAmount", water_amount_text);
+
+    const pureSoap_text = `★純せっけん分: ${pureSoap}%`;
+    sessionStorage.setItem("pureSoap", pureSoap_text);
 
     const additional_infos = [skin, clean, foam, hard, collapse, stability];
     sessionStorage.setItem("additionalInfos", JSON.stringify(additional_infos));

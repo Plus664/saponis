@@ -194,6 +194,7 @@ body.gate-open .hamburger {
 #roomCodeInput {
     width: 240px;
     padding: 10px 14px;
+    margin-top: 5px;
     font-size: 16px;
 
     border: 1px solid #ccc;
@@ -212,6 +213,7 @@ body.gate-open .hamburger {
 #enterButton {
     width: 120px;
     padding: 10px;
+    margin-top: 5px;
     font-size: 15px;
 
     border: none;
@@ -235,7 +237,8 @@ body.gate-open .hamburger {
 }
 
 /* ボタン共通 */
-#overlay-root .msg-box button {
+#overlay-root .msg-box button,
+#overlay-root .change-name-box button {
     border: none;
     color: rgba(148, 170, 255, 1);
     background-color: white;
@@ -249,7 +252,8 @@ body.gate-open .hamburger {
 }
 
 /* ボタンホバー */
-#overlay-root .msg-box button:hover {
+#overlay-root .msg-box button:hover,
+#overlay-root .change-name-box button:hover {
     color: white;
     background-color: rgba(148, 170, 255, 1);
     box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
@@ -257,14 +261,16 @@ body.gate-open .hamburger {
 }
 
 /* ボタンアクティブ時 */
-#overlay-root .msg-box button:active {
+#overlay-root .msg-box button:active,
+#overlay-root .change-name-box button:active {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
     background-color: rgba(120, 140, 230, 1);
 }
 
 /* ボタンコンテナ */
-#overlay-root .msg-box .btn-container {
+#overlay-root .msg-box .btn-container,
+#overlay-root .change-name-box .btn-container {
     margin-top: 12px;
     display: flex;
     justify-content: center;
