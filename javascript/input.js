@@ -10,7 +10,7 @@ let sap_ratio_result;
 let water_amount_result;
 
 function fillOilAndOption(recipe) {
-    recipe.oils.forEach((oil, index) => {
+    recipe.data.oils.forEach((oil, index) => {
         // 例: "・オリーブ油 100g (20%)"
         const match = oil.amount.match(/^・(.+?)\s+(\d+)g\s+\(\d+%\)$/);
         if (match) {
@@ -26,7 +26,7 @@ function fillOilAndOption(recipe) {
         }
     });
 
-    recipe.options.forEach((opt, index) => {
+    recipe.data.options.forEach((opt, index) => {
         // 例: "・ラベンダー精油 10g (2%)"
         const match = opt.amount.match(/^・(.+?)\s+(\d+)g\s+\(\d+%\)$/);
         if (match) {
@@ -44,13 +44,13 @@ function fillOilAndOption(recipe) {
 }
 
 function fillForm(recipe) {
-    document.querySelector("#recipe_name").value = recipe.recipe_name;
+    document.querySelector("#recipe_name").value = recipe.data.recipe_name;
 
-    const type = recipe.type;
+    const type = recipe.data.type;
     if (type === "soda") {
         document.querySelector("#radio_soda").checked = true;
         //document.querySelector("#radio_potash").checked = false;
-        document.querySelector("#water_ratio_val").value = recipe.water_ratio * 100 || 34;
+        document.querySelector("#water_ratio_val").value = recipe.data.water_ratio * 100 || 34;
         document.querySelector("#alcohol_ratio_val").value = 100;
     } else if (type === "potash") {
         document.querySelector("#radio_potash").checked = true;
@@ -58,17 +58,17 @@ function fillForm(recipe) {
         document.querySelector("#water_ratio_val").value = 34;
     }
 
-    document.querySelector("#sap_ratio_val").value = recipe.sap_ratio * 100 || 92;
-    document.querySelector("#alkali_ratio_val").value = recipe.alkali_ratio * 100 || 100;
+    document.querySelector("#sap_ratio_val").value = recipe.data.sap_ratio * 100 || 92;
+    document.querySelector("#alkali_ratio_val").value = recipe.data.alkali_ratio * 100 || 100;
     //document.querySelector("#alcohol_ratio_val").value = recipe.alcohol_ratio || 100;
-    const useAlcohol = recipe.use_alcohol;
+    const useAlcohol = recipe.data.use_alcohol;
     if (useAlcohol) {
         // 「アルコールを使う」を選択
         document.querySelector('input[name="ifUseAlcohol"][value="with"]').checked = true;
         document.querySelector('input[name="ifUseAlcohol"][value="without"]').checked = false;
 
         // アルコール純度を反映
-        document.querySelector("#alcohol_ratio_val").value = recipe.alcohol_ratio * 100 || 100;
+        document.querySelector("#alcohol_ratio_val").value = recipe.data.alcohol_ratio * 100 || 100;
     } else {
         // 「アルコールを使わない」を選択
         document.querySelector('input[name="ifUseAlcohol"][value="without"]').checked = true;
@@ -80,7 +80,7 @@ function fillForm(recipe) {
 
     fillOilAndOption(recipe);
 
-    document.querySelector("#memo").value = recipe.memo || "";
+    document.querySelector("#memo").value = recipe.data.memo || "";
     //document.querySelector("#sap_ratip_val").value = recipe.sap_ratio;
     //document.querySelector("#alkali_ratio_val").value = recipe.;
 }
@@ -808,5 +808,4 @@ function calc_result() {
     sessionStorage.setItem("img", "");
 
     showView("result", true, false);
-
 }
