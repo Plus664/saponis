@@ -271,7 +271,6 @@ function initInputView({ restore } = {}) {
         fillForm(sharedRecipe);
         sessionStorage.removeItem("sharing");
         sessionStorage.removeItem("sharedRecipe");
-        return;
     }
 
     if (restore) restoreInput_input();
@@ -809,4 +808,5 @@ function calc_result() {
     sessionStorage.setItem("img", "");
 
     showView("result", true, false);
+
 }
