@@ -189,7 +189,7 @@ function openGate() {
     }
 }
 
-function openApp() {
+async function openApp() {
     gate.style.display = "none";
     app.style.display = "block";
 
@@ -197,6 +197,7 @@ function openApp() {
 
     /*const initialView = location.hash.replace("#", "") || "input";
     showView(initialView, true, false);*/
+    await afterGate();
 }
 
 async function loadSharedRecipe(shareId) {
@@ -260,7 +261,7 @@ async function initApp() {
     window.userKey = localStorage.getItem("user_key");
 
     openApp();
-    await afterGate();
+    //await afterGate();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
