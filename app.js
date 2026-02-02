@@ -220,12 +220,24 @@ async function loadSharedRecipe(shareId) {
     sessionStorage.setItem("sharing", "true");
 }
 
+function clearShareParam() {
+    const url = new URL(location.href);
+    url.searchParams.delete("share");
+
+    history.replaceState(
+        history.state,
+        "",
+        url.pathname + useLayoutEffect.hash
+    );
+}
+
 async function afterGate() {
     const params = new URLSearchParams(location.search);
     const shareId = params.get("share");
 
     if (shareId) {
         await loadSharedRecipe(shareId);
+        clearShareParam();
         showView("input", true, false);
         return;
     }
