@@ -29,12 +29,45 @@
 }
 
 #list_sheet-container #sort-select,
-#search-box {
+#list_sheet-container #search-box {
     padding: 6px 10px;
     font-size: 18px;
     border-radius: 4px;
     border: 1px solid #ccc;
     outline: none;
+}
+
+#list_sheet-container #qr-actions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#list_sheet-container #read_qr_btn {
+    margin-top: 8px;
+    border: 1px solid rgba(148, 170, 255, 0.6);
+    color: rgba(148, 170, 255, 1);
+    background-color: white;
+    font-size: 18px;
+    width: 220px;
+    padding: 8px 0;
+    border-radius: 999px;
+    /* calc-btnとの差別化 */
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(148, 170, 255, 0.15);
+    cursor: pointer;
+}
+
+#list_sheet-container #read_qr_btn:hover {
+    background-color: rgba(148, 170, 255, 0.1);
+    box-shadow: 0 3px 8px rgba(148, 170, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+#list_sheet-container #read_qr_btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(148, 170, 255, 0.25);
+    background-color: rgba(148, 170, 255, 0.2);
 }
 
 #overlay-root .backdrop {

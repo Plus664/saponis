@@ -49,18 +49,15 @@ function fillForm(recipe) {
     const type = recipe.data.type;
     if (type === "soda") {
         document.querySelector("#radio_soda").checked = true;
-        //document.querySelector("#radio_potash").checked = false;
         document.querySelector("#water_ratio_val").value = recipe.data.water_ratio * 100 || 34;
         document.querySelector("#alcohol_ratio_val").value = 100;
     } else if (type === "potash") {
         document.querySelector("#radio_potash").checked = true;
-        //document.querySelector("#").value = recipe.;
         document.querySelector("#water_ratio_val").value = 34;
     }
 
     document.querySelector("#sap_ratio_val").value = recipe.data.sap_ratio * 100 || 92;
     document.querySelector("#alkali_ratio_val").value = recipe.data.alkali_ratio * 100 || 100;
-    //document.querySelector("#alcohol_ratio_val").value = recipe.alcohol_ratio || 100;
     const useAlcohol = recipe.data.use_alcohol;
     if (useAlcohol) {
         // 「アルコールを使う」を選択
@@ -81,8 +78,8 @@ function fillForm(recipe) {
     fillOilAndOption(recipe);
 
     document.querySelector("#memo").value = recipe.data.memo || "";
-    //document.querySelector("#sap_ratip_val").value = recipe.sap_ratio;
-    //document.querySelector("#alkali_ratio_val").value = recipe.;
+
+    document.querySelector("#scale_from").value = recipe.data.oil_amount_sum || "";
 }
 
 // 分量スケーリング

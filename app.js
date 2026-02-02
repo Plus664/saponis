@@ -227,7 +227,7 @@ function clearShareParam() {
     history.replaceState(
         history.state,
         "",
-        url.pathname + useLayoutEffect.hash
+        url.pathname + url.hash
     );
 }
 
@@ -263,12 +263,6 @@ async function initApp() {
         openGate();
         return;
     }
-
-    /*history.replaceState(
-        { view: "input" },
-        "",
-        "#input"
-    );*/
 
     window.userKey = localStorage.getItem("user_key");
 

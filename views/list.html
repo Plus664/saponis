@@ -11,10 +11,11 @@
             <option value="favorite_first">お気に入り優先</option>
         </select>
 
-        <!--<form autocomplete="off">
-            <input type="text" id="search-box" name="disable-autofill" placeholder="レシピ名で検索">
-        </form>-->
-            <input type="search" id="search-box" placeholder="レシピ名で検索" autocomplete="off">
+        <input type="search" id="search-box" placeholder="レシピ名で検索" autocomplete="off">
+    </div>
+
+    <div id="qr-actions">
+        <button id="read_qr_btn" onclick="openQrScanner()">QRコードを読み取る</button>
     </div>
 
     <div id="list-container"></div>

@@ -45,6 +45,114 @@ const sort_recipes = (method) => {
     update_display();
 };
 
+// QRコード読み取り
+let qrStream = null;
+let scanLoopId = null;
+let qrLocked = false;
+
+function stopQrScan() {
+    if (scanLoopId) cancelAnimationFrame(scanLoopId);
+    scanLoopId = null;
+
+    if (qrStream) {
+        qrStream.getTracks().forEach(track => track.stop());
+        qrStream = null;
+    }
+
+    if (qrLocked) qrLocked = false;
+}
+
+function closeQrScanner() {
+    document.getElementById("qr-overlay").hidden = true;
+    stopQrScan();
+}
+
+async function onQRDetected(data) {
+    try {
+        const url = new URL(data);
+
+        const shareId = url.searchParams.get("share");
+        if (!shareId) {
+            showMessage({
+                message: "レシピが見つかりません",
+                type: "error",
+                mode: "alert"
+            });
+            return;
+        }
+
+        await loadSharedRecipe(shareId);
+        clearShareParam();
+        showView("input", true, false);
+    } catch (e) {
+        showMessage({
+            message: "QRコードの形式が不正です",
+            type: "error",
+            mode: "alert"
+        });
+    }
+}
+
+async function startQrScan() {
+    const video = document.getElementById("qr-video");
+    const canvas = document.getElementById("qr-canvas");
+    const ctx = canvas.getContext("2d", {
+        willReadFrequently: true
+    });
+    const frame = document.querySelector(".scan-frame");
+    const wrap = document.querySelector(".qr-camera-wrap");
+
+    qrStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+    });
+
+    video.srcObject = qrStream;
+    await video.play();
+
+    scanLoopId = requestAnimationFrame(scanLoop);
+
+    function scanLoop() {
+        if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+            scanLoopId = requestAnimationFrame(scanLoop);
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+
+        const frameRect = frame.getBoundingClientRect();
+        const wrapRect = wrap.getBoundingClientRect();
+
+        const scaleX = canvas.width / wrapRect.width;
+        const scaleY = canvas.height / wrapRect.height;
+
+        const sx = (frameRect.left - wrapRect.left) * scaleX;
+        const sy = (frameRect.top - wrapRect.top) * scaleY;
+        const sw = frameRect.width * scaleX;
+        const sh = frameRect.height * scaleY;
+
+        const imageData = ctx.getImageData(sx, sy, sw, sh);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        if (code && !qrLocked) {
+            qrLocked = true;
+            navigator.vibrate?.(100);
+            closeQrScanner();
+            onQRDetected(code.data);
+            return;
+        }
+
+        scanLoopId = requestAnimationFrame(scanLoop);
+    }
+}
+
+function openQrScanner() {
+    document.getElementById("qr-overlay").hidden = false;
+    startQrScan();
+}
+
 // 保存したレシピ一覧をボタンで表示
 const display_list = async () => {
     // user_key を取得

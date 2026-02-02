@@ -25,6 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
 
     <script src="./app.js" defer></script>
     <script src="./javascript/global.js" defer></script>
@@ -53,7 +54,6 @@
             </div>
             <ul>
                 <li data-view="input">レシピ入力</li>
-                <!--<li data-view="result">結果</li>-->
                 <li data-view="list">保存したレシピ</li>
                 <li data-view="original">オリジナルのレシピ作り</li>
                 <li data-view="recommend">特長別のレシピ</li>
@@ -83,6 +83,19 @@
 
         <div id="app" style="display: none;"></div>
         <div id="overlay-root"></div>
+
+        <div id="qr-overlay" hidden onclick="closeQrScanner()">
+            <div class="qr-camera-wrap" onclick="event.stopPropagation()">
+                <video id="qr-video" playsinline muted></video>
+                <canvas id="qr-canvas" hidden></canvas>
+                <div class="scan-frame">
+                    <div class="scan-line"></div>
+                </div>
+                <div class="scan-hint">QRコードを枠内に合わせて下さい</div>
+            </div>
+
+            <button class="qr-close" onclick="closeQrScanner()">✕</button>
+        </div>
     </main>
 
     <footer>
