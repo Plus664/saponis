@@ -152,6 +152,33 @@ async function display_result() {
     }
 
     display_memo();
+
+    const warnings = collectWarnings();
+    if (warnings.length > 0) showAlert(warnings);
+}
+
+// 精油の警告
+function collectEOWarnings(oilSum) {
+    const warnings = [];
+    const options = getOptions();
+
+    let eoAmountSum = 0;
+
+    options.forEach(opt => {
+        if (opt.name.includes("精油") || opt.name.includes("油")) {
+            eoAmountSum += opt.amount;
+        }
+    });
+
+    const eoRatio = oilSum > 0 ? (eoAmountSum / oilSum) * 100 : 0;
+
+    if (eoRatio > 5) {
+        warnings.push(`精油量が多すぎます（推奨: 油脂量の3%以下）`);
+    } else if (eoRatio > 3) {
+        warnings.push(`精油量がやや多めです（推奨: 油脂量の3%以下）`);
+    }
+
+    return warnings;
 }
 
 // 各数値の確認
@@ -168,22 +195,22 @@ function collectWarnings() {
     const waterRatio = Math.floor(Number(waterAmount) / Number(oilSum) * 100);
 
     if (type === "soda" && waterRatio && (waterRatio < 25 || waterRatio > 45)) {
-        warnings.push("水分量が不安定です (推奨25～45%)");
+        warnings.push("水分量が不安定です (推奨: 25～45%)");
     }
     if (oilSum < 50 || oilSum > 1500) {
-        warnings.push("油脂量が極端です (推奨50～1500g)");
+        warnings.push("油脂量が極端です (推奨: 50～1500g)");
     }
     if (type === "potash" && alcoholPurity < 0.9) {
-        warnings.push("アルコールの純度が低すぎます (推奨90%以上)");
+        warnings.push("アルコールの純度が低すぎます (推奨: 90%以上)");
     }
     if (type === "soda" && (sapRatio < 0.8 || sapRatio > 1.0)) {
-        warnings.push("鹸化率が不安定です (固形せっけんの場合は80～100%)");
+        warnings.push("鹸化率が不安定です (推奨: 固形せっけんの場合は80～100%)");
     }
     if (type === "potash" && (sapRatio < 0.95 || sapRatio > 1.1)) {
-        warnings.push("鹸化率が不安定です (液体せっけんの場合は95～110%)");
+        warnings.push("鹸化率が不安定です (推奨: 液体せっけんの場合は95～110%)");
     }
     if (alkaliPurity < 0.85) {
-        warnings.push("アルカリの純度が低すぎます (推奨85%以上)");
+        warnings.push("アルカリの純度が低すぎます (推奨: 85%以上)");
     }
     if (pH > 10.5) {
         warnings.push("pHが高すぎます（刺激が強くなる可能性があります）");
@@ -191,7 +218,13 @@ function collectWarnings() {
         warnings.push("pHが低すぎます（鹸化が不十分になる可能性があります）");
     }
 
-    return warnings;
+    // 精油量の警告
+    const eoWarnings = collectEOWarnings(oilSum);
+
+    // 全体の警告
+    const allWarnings = [...warnings, ...eoWarnings];
+
+    return allWarnings;
 }
 
 // 選択された油脂の抽出
@@ -207,16 +240,41 @@ function getSelectedOilNames() {
         .filter(name => name && name !== "0g"); // nullや空文字を除外
 }
 
-function normalizeOilName(name) {
+function getOptionName(raw) {
+    // 例: "・竹炭パウダー 5g"
+    const match = raw.match(/^・(.+?)\s\d+g$/);
+    if (!match) return null;
+
+    return normalizeName(match[1]);
+}
+
+function getOptionAmount(raw) {
+    const match = raw.match(/\s(\d+(?:\.\d+)?)g$/);
+    return match ? Number(match[1]) : 0;
+}
+
+// 選択されたオプションの名前と量
+function getOptions() {
+    const rawList = JSON.parse(sessionStorage.getItem("optionNames") || "[]");
+
+    return rawList
+        .map(raw => ({
+            name: getOptionName(raw),
+            amount: getOptionAmount(raw)
+        }))
+        .filter(opt => opt.name && opt.amount > 0);
+}
+
+function normalizeName(name) {
     return name
         .replace(/・/g, "")         // 頭の・を除去
         .replace(/\s/g, "")         // 全角・半角スペース除去
-        .replace(/[［\[]/, "[")     // 全角 [
+        .replace(/[［\[]/, "[")      // 全角 [
         .replace(/[］\]]/, "]");    // 全角 ]
 }
 
 // 油脂の組み合わせに関する確認
-function evaluateOilGroups(oilNames) {
+/*function evaluateOilGroups(oilNames) {
     const groupCount = {
         saturated: 0,
         mono: 0,
@@ -226,7 +284,7 @@ function evaluateOilGroups(oilNames) {
     };
 
     oilNames.forEach(name => {
-        const normalized = normalizeOilName(name);
+        const normalized = normalizeName(name);
         for (const group in window.OilGroups) {
             if (window.OilGroups[group].includes(normalized)) {
                 groupCount[group]++;
@@ -258,7 +316,7 @@ function evaluateOilGroups(oilNames) {
     }
 
     return warnings;
-}
+}*/
 
 // 注意の表示
 function showAlert(warnings) {
@@ -655,14 +713,6 @@ function initResultView() {
     if (shouldShowLoader_result()) {
         showLoader_result();
     }
-
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
 
     imgContainer = document.getElementById("image-container");
     imgFile = document.getElementById("img_file");

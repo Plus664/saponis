@@ -10,8 +10,7 @@
             <div id="soap_types_wrapper">
                 <div id="soda-container">
                     <label id="soda_label">
-                        <input type="radio" name="sodaOrPotash" id="radio_soda" value="soda"
-                            checked>固形せっけん（苛性ソーダ）
+                        <input type="radio" name="sodaOrPotash" id="radio_soda" value="soda" checked>固形せっけん（苛性ソーダ）
                     </label>
                     <div id="water_ratio-container">
                         <p style="display: inline">水の割合:　油脂の</p>
@@ -481,7 +480,6 @@
                     <option value="ローズ精油">ローズ精油</option>
                     <option value="芳香蒸留水">芳香蒸留水</option>
                     <option value="レモン精油">レモン精油</option>
-
                 </select>
 
                 <select name="option_select2" class="option_selects">
@@ -514,7 +512,6 @@
                     <option value="ローズ精油">ローズ精油</option>
                     <option value="芳香蒸留水">芳香蒸留水</option>
                     <option value="レモン精油">レモン精油</option>
-
                 </select>
 
                 <select name="option_select3" class="option_selects">
@@ -547,7 +544,6 @@
                     <option value="ローズ精油">ローズ精油</option>
                     <option value="芳香蒸留水">芳香蒸留水</option>
                     <option value="レモン精油">レモン精油</option>
-
                 </select>
 
                 <select name="option_select4" class="option_selects">
@@ -580,7 +576,6 @@
                     <option value="ローズ精油">ローズ精油</option>
                     <option value="芳香蒸留水">芳香蒸留水</option>
                     <option value="レモン精油">レモン精油</option>
-
                 </select>
             </div>
 
@@ -609,6 +604,23 @@
         <p id="alkali_ratio_label" style="display: inline; font-weight: bold;">アルカリの純度:　</p>
         <input id="alkali_ratio_val" type="number" value="100" style="display: inline">
         <p id="alkali_ratio_unit" style="display: inline">%</p>
+    </div>
+
+    <div id="scale-container">
+        <p id="scale_label" style="display: inline; font-weight: bold;">
+            分量スケーリング:
+        </p>
+
+        <div id="scale_input-container">
+            <input id="scale_from" type="number" readonly placeholder="元のバッチ"
+                style="display: inline; width: 105px; outline: none;">
+            <span>g → </span>
+
+            <input id="scale_to" type="number" placeholder="新しいバッチ" style="display: inline; width: 105px;">
+            <span>g</span>
+        </div>
+
+        <button id="scale_btn">変換</button>
     </div>
 
     <input type="button" value="計算" class="calc-btn" onclick="calc_result()">

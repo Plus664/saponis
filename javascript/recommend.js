@@ -15,8 +15,8 @@ const recommend_recipes = {
             { name: "ひまし油", percentage: 10 },
         ],
         options: [
-            { name: "竹炭パウダー", percentage: 5 },
-            { name: "精油", percentage: 3 },
+            { name: "竹炭パウダー", amount: 5 },
+            { name: "精油", amount: 3 },
         ],
         saponification_rate: 0.92,
         alkali_purity: 0.98,
@@ -32,8 +32,8 @@ const recommend_recipes = {
             { name: "ココナッツ油", percentage: 20 },
         ],
         options: [
-            { name: "はちみつ", percentage: 10 },
-            { name: "ミルクプロテイン", percentage: 5 },
+            { name: "はちみつ", amount: 10 },
+            { name: "ミルクプロテイン", amount: 5 },
         ],
         saponification_rate: 0.93,
         alkali_purity: 0.97,
@@ -49,8 +49,8 @@ const recommend_recipes = {
             { name: "オリーブ油", percentage: 20 },
         ],
         options: [
-            { name: "シルクパウダー", percentage: 3 },
-            { name: "精油", percentage: 2 },
+            { name: "シルクパウダー", amount: 3 },
+            { name: "精油", amount: 2 },
         ],
         saponification_rate: 0.91,
         alkali_purity: 0.98,
@@ -66,8 +66,8 @@ const recommend_recipes = {
             { name: "オリーブ油", percentage: 10 },
         ],
         options: [
-            { name: "クレイ", percentage: 8 },
-            { name: "紫雲膏パウダー", percentage: 4 },
+            { name: "クレイ", amount: 5 },
+            { name: "紫雲膏パウダー", amount: 4 },
         ],
         saponification_rate: 0.94,
         alkali_purity: 0.99,
@@ -83,8 +83,8 @@ const recommend_recipes = {
             { name: "ひまわり油", percentage: 20 },
         ],
         options: [
-            { name: "カレンデュラエキス", percentage: 5 },
-            { name: "ローズウォーター", percentage: 7 },
+            { name: "カレンデュラエキス", amount: 5 },
+            { name: "ローズウォーター", amount: 7 },
         ],
         saponification_rate: 0.90,
         alkali_purity: 0.97,
@@ -100,8 +100,8 @@ const recommend_recipes = {
             { name: "ココナッツ油", percentage: 10 },
         ],
         options: [
-            { name: "芳香蒸留水", percentage: 10 },
-            { name: "アロエベラ", percentage: 5 },
+            { name: "芳香蒸留水", amount: 10 },
+            { name: "アロエベラ", amount: 5 },
         ],
         saponification_rate: 0.92,
         alkali_purity: 0.98,
@@ -117,8 +117,8 @@ const recommend_recipes = {
             { name: "米ぬか油", percentage: 20 },
         ],
         options: [
-            { name: "はちみつ", percentage: 12 },
-            { name: "ミルクプロテイン", percentage: 6 },
+            { name: "はちみつ", amount: 10 },
+            { name: "ミルクプロテイン", amount: 6 },
         ],
         saponification_rate: 0.93,
         alkali_purity: 0.98,
@@ -134,8 +134,8 @@ const recommend_recipes = {
             { name: "ココナッツ油", percentage: 15 },
         ],
         options: [
-            { name: "ローズウォーター", percentage: 8 },
-            { name: "精油", percentage: 3 },
+            { name: "ローズウォーター", amount: 8 },
+            { name: "精油", amount: 3 },
         ],
         saponification_rate: 0.91,
         alkali_purity: 0.97,
@@ -151,8 +151,8 @@ const recommend_recipes = {
             { name: "米ぬか油", percentage: 10 },
         ],
         options: [
-            { name: "竹炭パウダー", percentage: 6 },
-            { name: "精油", percentage: 4 },
+            { name: "竹炭パウダー", amount: 6 },
+            { name: "精油", amount: 4 },
         ],
         saponification_rate: 0.93,
         alkali_purity: 0.98,
@@ -168,8 +168,8 @@ const recommend_recipes = {
             { name: "シアバター", percentage: 20 },
         ],
         options: [
-            { name: "クレイ", percentage: 7 },
-            { name: "精油", percentage: 3 },
+            { name: "クレイ", amount: 7 },
+            { name: "精油", amount: 3 },
         ],
         saponification_rate: 0.92,
         alkali_purity: 0.99,
@@ -185,8 +185,8 @@ const recommend_recipes = {
             { name: "紅花油", percentage: 25 },
         ],
         options: [
-            { name: "シルクパウダー", percentage: 10 },
-            { name: "精油", percentage: 5 },
+            { name: "シルクパウダー", amount: 10 },
+            { name: "精油", amount: 3 },
         ],
         saponification_rate: 0.91,
         alkali_purity: 0.97,
@@ -232,10 +232,10 @@ const get_oil_names_recommend = (recipe, amounts, total) => {
     return oil_names;
 };
 
-const get_option_names_recommend = (recipe) => {
+const get_option_names_recommend = (recipe, total) => {
     let option_names = [];
     for (let i = 0; i < recipe.options.length; i++) {
-        option_names.push(`・${recipe.options[i].name} ${recipe.options[i].percentage}g`);
+        option_names.push(`・${recipe.options[i].name} ${recipe.options[i].amount}g`);
     }
     while (option_names.length < 4) {
         option_names.push("");
@@ -297,7 +297,7 @@ const get_option_adjustments_recommend = (recipe) => {
     let stability_adjustment = 0;
     let total_option = 0;
     recipe.options.forEach(option => {
-        total_option += option.percentage;
+        total_option += option.amount;
     });
 
     if (recipe.options) {
@@ -306,7 +306,7 @@ const get_option_adjustments_recommend = (recipe) => {
             const option_data = window.OptionArray[option_name];
 
             if (option_data) {
-                const percentage = Number(recipe.options[i].percentage) / total_option;
+                const percentage = Number(recipe.options[i].amount) / total_option;
                 const factor = Number(option_data.reduction_factor) || 1;
 
                 clean_adjustment += option_data.clean * percentage * factor;
@@ -419,7 +419,7 @@ const calc_result_recommend = (recipe, total) => {
     const type = "soda";
     const pureSoap = calc_pureSoap(alkali, total, water);
     const oil_names = get_oil_names_recommend(recipe, amounts, total);
-    const option_names = get_option_names_recommend(recipe);
+    const option_names = get_option_names_recommend(recipe, total);
     const features = get_final_features_recommend(recipe);
     let selectedOils = [];
     for (let i = 0; i < recipe.oils.length; i++) {
@@ -452,7 +452,7 @@ const calc_result_recommend = (recipe, total) => {
     sessionStorage.setItem("memo", memo || "");
     sessionStorage.setItem("img", "");
 
-    showView("result");
+    showView("result", true, false);
 };
 
 const display_recipes_recommend = () => {
@@ -481,14 +481,6 @@ function initRecommendView() {
     if (shouldShowLoader()) {
         showLoader();
     }
-
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
 
     input_form_container = document.getElementById("input_form-container");
     input_form_container.style.display = "none";

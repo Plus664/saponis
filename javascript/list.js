@@ -171,7 +171,7 @@ function display_pres_list(id) {
 
     sessionStorage.setItem("memo", data.memo || "");
 
-    showView("result", true);
+    showView("result", true, false);
 };
 
 // 保存したレシピを削除
@@ -240,66 +240,6 @@ const toggle_favorite = async (id) => {
     recipe.data.isFavorite = newValue;
 
     sort_recipes(sessionStorage.getItem("sortMethod") || "newest");
-};
-
-// QRオーバーレイ表示（canvas描画 + jsQR対応）
-const open_qr_overlay = (recipe) => {
-    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
-    const encoded = encodeURIComponent(compressed);
-
-    //const shareURL = `../html/index.html?data=${encoded}&editable=true`;
-    //const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(recipe));
-    //const shareURL = `https://saponis.netlify.app/index.html?data=${encoded}&editable=true`;
-
-    //const shareURL = `http://127.0.0.1:5500/index.html?data=${encoded}&editable=true`;
-
-    const backdrop = document.createElement("div");
-    backdrop.style.position = "fixed";
-    backdrop.style.top = "0";
-    backdrop.style.left = "0";
-    backdrop.style.width = "100vw";
-    backdrop.style.height = "100vh";
-    backdrop.style.background = "rgba(0, 0, 0, 0.5)";
-    backdrop.style.zIndex = "999";
-    backdrop.addEventListener("click", () => {
-        if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
-    });
-
-    const box = document.createElement("div");
-    box.style.position = "fixed";
-    box.style.top = "50%";
-    box.style.left = "50%";
-    box.style.transform = "translate(-50%, -50%)";
-    box.style.background = "white";
-    box.style.padding = "24px";
-    box.style.borderRadius = "12px";
-    box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.3)";
-    box.style.textAlign = "center";
-
-    const title = document.createElement("div");
-    title.textContent = "QRコードで共有";
-    title.style.fontSize = "20px";
-    title.style.marginBottom = "12px";
-
-    const qrCanvas = document.createElement("canvas");
-    qrCanvas.width = 384;
-    qrCanvas.height = 384;
-    qrCanvas.style.margin = "0 auto";
-    qrCanvas.id = "qr-canvas";
-
-    box.appendChild(title);
-    box.appendChild(qrCanvas);
-    backdrop.appendChild(box);
-    document.body.appendChild(backdrop);
-
-    requestAnimationFrame(() => {
-        new QRious({
-            element: qrCanvas,
-            value: shareURL,
-            size: 384,
-            level: "M"
-        });
-    });
 };
 
 // 三点リーダー用：名前変更
@@ -418,36 +358,65 @@ async function change_name(id) {
     };
 }
 
-function adjustRecipe(recipe) {
-    const keysToKeep = [
-        "recipe_name",
-        "type",
-        "sap_ratio",
-        "water_ratio",
-        "alkali_ratio",
-        "alcohol_ratio",
-        "use_alcohol",
-        "oils",
-        "options",
-        "memo",
-    ];
+// QRオーバーレイ表示（canvas描画 + jsQR対応）
+const open_qr_overlay = (share_id) => {
+    const shareURL = `${location.origin}/index.html?share=${share_id}`;
 
-    const result = {};
-    for (const key of keysToKeep) {
-        if (key in recipe) {
-            result[key] = recipe[key];
-        }
-    }
+    const backdrop = document.createElement("div");
+    backdrop.style.position = "fixed";
+    backdrop.style.top = "0";
+    backdrop.style.left = "0";
+    backdrop.style.width = "100vw";
+    backdrop.style.height = "100vh";
+    backdrop.style.background = "rgba(0, 0, 0, 0.5)";
+    backdrop.style.zIndex = "999";
+    backdrop.addEventListener("click", () => {
+        if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+    });
 
-    return result;
-}
+    const box = document.createElement("div");
+    box.style.position = "fixed";
+    box.style.top = "50%";
+    box.style.left = "50%";
+    box.style.transform = "translate(-50%, -50%)";
+    box.style.background = "white";
+    box.style.padding = "24px";
+    box.style.borderRadius = "12px";
+    box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.3)";
+    box.style.textAlign = "center";
+
+    const title = document.createElement("div");
+    title.textContent = "QRコードで共有";
+    title.style.fontSize = "20px";
+    title.style.marginBottom = "12px";
+
+    const qrCanvas = document.createElement("canvas");
+    qrCanvas.width = 320;
+    qrCanvas.height = 320;
+    qrCanvas.style.margin = "0 auto";
+    qrCanvas.id = "qr-canvas";
+
+    box.appendChild(title);
+    box.appendChild(qrCanvas);
+    backdrop.appendChild(box);
+    document.body.appendChild(backdrop);
+
+    requestAnimationFrame(() => {
+        new QRious({
+            element: qrCanvas,
+            value: shareURL,
+            size: 320,
+            level: "M"
+        });
+    });
+};
 
 // QRコードで共有
 function share_pres(id) {
     let recipe = preserved_recipes.find(r => r.id == id);
     if (!recipe) return;
-    const adjustedRecipe = adjustRecipe(recipe);
-    open_qr_overlay(adjustedRecipe);
+
+    open_qr_overlay(recipe.share_id);
 }
 
 function closeOverlay() {
@@ -586,14 +555,6 @@ function initListView() {
     if (shouldShowLoader()) {
         showLoader();
     }
-
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
 
     display_list();
 

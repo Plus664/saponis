@@ -425,7 +425,7 @@ const calc_result_original = () => {
     sessionStorage.setItem("memo", memo || "");
     sessionStorage.setItem("img", "");
 
-    showView("result");
+    showView("result", true, false);
 };
 
 const suggestOptions = (features) => {
@@ -550,14 +550,6 @@ function initOriginalView() {
     if (shouldShowLoader()) {
         showLoader();
     }
-
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
 
     initPage();
 

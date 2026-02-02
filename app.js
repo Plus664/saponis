@@ -93,8 +93,35 @@ enterButton.addEventListener("click", async () => {
 // ===============================
 let isNavigating = false;
 
+// historyにviewをpush
+function pushViewHistory(name) {
+    const h = JSON.parse(sessionStorage.getItem("viewHistory") || "[]");
+    h.push(name);
+    sessionStorage.setItem("viewHistory", JSON.stringify(h.slice(-10)));
+}
+
+// inputを復元するか判断
+function shouldRestoreInput(name) {
+    if (!["input", "original"].includes(name)) return false;
+    const h = JSON.parse(sessionStorage.getItem("viewHistory") || "[]");
+    if (h.length < 3) return;
+
+    const prev = h[h.length - 2];
+    const preprev = h[h.length - 3];
+
+    return prev === "result" && preprev === name;
+}
+
+// スクロールするか判断
+function shouldSkipScroll(name) {
+    const h = JSON.parse(sessionStorage.getItem("viewHistory") || "[]");
+
+    if (h.length < 3) return;
+    return h[h.length - 3] === name;
+}
+
 // ビューを読み込んで表示する
-async function showView(name, push = true) {
+async function showView(name, push = true, back = false) {
     if (isNavigating && push) return;
     isNavigating = true;
 
@@ -102,14 +129,29 @@ async function showView(name, push = true) {
         const html = await fetch(`views/${name}.html`).then(r => r.text());
         document.getElementById("app").innerHTML = html;
 
-        initView(name);
-        currentView = name;
-
         // push が true の時だけ履歴を積む
         if (push) {
             history.pushState({ view: name }, "", `#${name}`);
+            pushViewHistory(name);
+        } else if (back) {
+            pushViewHistory(name);
         }
 
+        const restore = back && shouldRestoreInput(name);
+        const skipScroll = shouldSkipScroll(name);
+
+        initView(name, { restore });
+        currentView = name;
+
+        if (!skipScroll) {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "smooth"
+                });
+            }, 0);
+        }
     } catch (e) {
         console.error("ビュー読み込みエラー:", e);
         document.getElementById("app").innerHTML = `<p>読み込みエラー</p>`;
@@ -128,7 +170,7 @@ window.addEventListener("popstate", () => {
         "input";
 
     isNavigating = false;
-    showView(view, false);
+    showView(view, false, true);
 });
 
 // ===============================
@@ -153,8 +195,42 @@ function openApp() {
 
     document.body.classList.remove("gate-locked");
 
+    /*const initialView = location.hash.replace("#", "") || "input";
+    showView(initialView, true, false);*/
+}
+
+async function loadSharedRecipe(shareId) {
+    const { data, error } = await sb
+        .from("recipes")
+        .select("*")
+        .eq("share_id", shareId)
+        .single();
+
+    if (error || !data) {
+        showMessage({
+            message: "レシピが見つかりません",
+            type: "error",
+            mode: "alert"
+        });
+        return;
+    }
+
+    sessionStorage.setItem("sharedRecipe", JSON.stringify(data));
+    sessionStorage.setItem("sharing", "true");
+}
+
+async function afterGate() {
+    const params = new URLSearchParams(location.search);
+    const shareId = params.get("share");
+
+    if (shareId) {
+        await loadSharedRecipe(shareId);
+        showView("input", true, false);
+        return;
+    }
+
     const initialView = location.hash.replace("#", "") || "input";
-    showView(initialView, false);
+    showView(initialView, true, false);
 }
 
 function initMenu() {
@@ -162,7 +238,7 @@ function initMenu() {
         li.addEventListener("click", () => {
             const view = li.dataset.view;
             closeMenu();
-            showView(view);
+            showView(view, true, false);
         });
     });
 }
@@ -175,15 +251,16 @@ async function initApp() {
         return;
     }
 
-    history.replaceState(
+    /*history.replaceState(
         { view: "input" },
         "",
         "#input"
-    );
+    );*/
 
     window.userKey = localStorage.getItem("user_key");
 
     openApp();
+    await afterGate();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -194,10 +271,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===============================
 // ビューごとの初期化
 // ===============================
-function initView(name) {
+function initView(name, options = {}) {
     switch (name) {
         case "input":
-            if (typeof initInputView === "function") initInputView();
+            if (typeof initInputView === "function") initInputView(options);
             break;
 
         case "result":
@@ -339,7 +416,6 @@ function showMessage({ message, type = "info", mode = "alert" }) {
         });
     }
 }
-
 
 // 全メッセージを閉じる
 function closeAllMessages() {

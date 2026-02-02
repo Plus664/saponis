@@ -18,9 +18,10 @@
 
 .overlay-content {
     background: #fff;
-    padding: 2em;
+    padding: 10px;
     border-radius: 8px;
-    max-width: 500px;
+    width: 500px;
+    max-width: 85%;
     max-height: 80vh;
     overflow-y: auto;
     font-size: 20px;

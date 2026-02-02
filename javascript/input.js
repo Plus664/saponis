@@ -9,18 +9,6 @@ let alkali_result;
 let sap_ratio_result;
 let water_amount_result;
 
-function initInputView() {
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
-
-    initInput();
-}
-
 function fillOilAndOption(recipe) {
     recipe.oils.forEach((oil, index) => {
         // 例: "・オリーブ油 100g (20%)"
@@ -97,49 +85,196 @@ function fillForm(recipe) {
     //document.querySelector("#alkali_ratio_val").value = recipe.;
 }
 
-function initInput() {
+// 分量スケーリング
+function scaleRecipe() {
+    const fromElm = document.getElementById("scale_from");
+    const toElm = document.getElementById("scale_to");
+    const fromAmount = Number(fromElm.value);
+    const toAmount = Number(toElm.value);
+
+    if (!fromAmount) {
+        showMessage({
+            message: "油脂が選択されていません",
+            type: "error",
+            mode: "alert"
+        });
+        return;
+    }
+
+    if (!toAmount) {
+        showMessage({
+            message: "新しいバッチを入力して下さい",
+            type: "error",
+            mode: "alert"
+        });
+        return;
+    }
+
+    const scale = Math.round(toAmount / fromAmount * 100) / 100;
+
+    const container = document.getElementById("input_sheet-container");
+    if (!container) return;
+
+    container.querySelectorAll(".oil_amounts").forEach(input => {
+        const val = Number(input.value);
+        if (isNaN(val)) return;
+
+        input.value = Math.round(Number(input.value) * scale * 10) / 10;
+
+        if (val === 0) input.value = "";
+    });
+
+    fromElm.value = fromAmount * scale;
+    toElm.value = "";
+}
+
+// 油脂の量を入れたらスケーリング前の量変える
+function update_scale_from() {
+    const container = document.getElementById("input_sheet-container");
+    if (!container) return;
+
+    const oilInputs = container.querySelectorAll(".oil_amounts");
+
+    let total = 0;
+    oilInputs.forEach(input => {
+        const val = parseFloat(input.value);
+        if (!isNaN(val)) total += val;
+    });
+
+    const scaleFrom = document.getElementById("scale_from");
+    if (scaleFrom) {
+        scaleFrom.value = Math.round(total * 100) / 100; // 小数2桁
+    }
+}
+
+// 分量スケーリング用
+function init_scale_listener() {
+    const container = document.getElementById("input_sheet-container");
+    if (!container) return;
+
+    const oilInputs = container.querySelectorAll(".oil_amounts");
+    if (!oilInputs.length) return;
+
+    oilInputs.forEach(input => {
+        input.addEventListener("input", update_scale_from);
+        input.addEventListener("change", update_scale_from);
+    });
+}
+
+// 油脂の種類、量を切り出す（入力復元用）
+function parseOilString(str) {
+    // ・油脂名 100g (25%)
+    const match = str.match(/^・(.+?)\s(\d+(?:\.\d+)?)g\s\((\d+)%\)$/);
+    if (!match) return null;
+
+    return {
+        name: match[1],
+        amount: Number(match[2]),
+        ratio: Number(match[3]),
+    };
+}
+
+// 油脂の入力復元
+function restoreOil(index, oil) {
+    const select = document.querySelector(`select[name="sel${index}"]`);
+    const input = document.getElementById(`oil_amount${index}`);
+
+    if (select) select.value = oil.name;
+    if (input) input.value = oil.amount;
+}
+
+// オプションの種類、量を切り出す（入力復元用）
+function parseOptionString(str) {
+    const match = str.match(/^・(.+?)\s+(\d+(?:\.\d+)?)g$/);
+    if (!match) return null;
+
+    return {
+        name: match[1],
+        amount: Number(match[2]),
+    }
+}
+
+// オプションの入力復元
+function restoreOption(index, option) {
+    const select = document.querySelector(`select[name="option_select${index}"]`);
+    const input = document.getElementById(`option_amount${index}`);
+
+    if (select) select.value = option.name;
+    if (input) input.value = option.amount;
+}
+
+// sessionStorageから入力復元
+function restoreInput_input() {
+    const recipeName = sessionStorage.getItem("name") || "";
+    document.getElementById("recipe_name").value = recipeName;
+
+    const type = sessionStorage.getItem("type") || "soda";
+    const waterRatio = Number(sessionStorage.getItem("waterRatio")) * 100 || 34;
+    const useAlcohol = sessionStorage.getItem("useAlcohol") === "true";
+    const withOrWithout = useAlcohol ? "with" : "without";
+    const alcoholRatio = Number(sessionStorage.getItem("alcoholRatio")) * 100 || 100;
+    if (type === "soda") {
+        document.getElementById("radio_soda").checked = true;
+        document.getElementById("water_ratio_val").value = waterRatio;
+    } else if (type === "potash") {
+        document.getElementById("radio_potash").checked = true;
+
+        const alcoholRadio = document.querySelector(
+            `input[name="ifUseAlcohol"][value="${withOrWithout}"]`
+        );
+        if (alcoholRadio) alcoholRadio.checked = true;
+
+        document.getElementById("alcohol_ratio_val").value = alcoholRatio;
+    }
+
+    const oils = JSON.parse(sessionStorage.getItem("oilNames") || "[]");
+    oils.forEach((str, i) => {
+        const oil = parseOilString(str);
+        if (!oil) return;
+
+        restoreOil(i + 1, oil);
+    });
+
+    const options = JSON.parse(sessionStorage.getItem("optionNames") || "[]");
+    options.forEach((str, i) => {
+        const option = parseOptionString(str);
+        if (!option) return;
+
+        restoreOption(i + 1, option);
+    });
+
+    const memo = sessionStorage.getItem("memo");
+    document.getElementById("memo").value = memo;
+
+    const sapRatio = Number(sessionStorage.getItem("sapRatio")) * 100 || 92;
+    document.getElementById("sap_ratio_val").value = sapRatio;
+
+    const alkaliRatio = Number(sessionStorage.getItem("alkaliRatio")) * 100 || 100;
+    document.getElementById("alkali_ratio_val").value = alkaliRatio;
+
+    const oilAmountSum = Number(
+        sessionStorage.getItem("oilAmountSum").match(/([\d.]+)\s*g/)[1]
+    ) || 0;
+    document.getElementById("scale_from").value = oilAmountSum;
+}
+
+// view初期化
+function initInputView({ restore } = {}) {
     if (shouldShowLoader()) {
         showLoader();
     }
 
-    setTimeout(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth"
-        });
-    }, 0);
-
-    const params = new URLSearchParams(location.search);
-    const compressed = params.get("data");
-
-    if (compressed !== null && compressed !== "") {
-        try {
-            const decoded = decodeURIComponent(compressed);
-            //const qrRecipe = JSON.parse(LZString.decompressFromEncodedURIComponent(compressed));
-            const qrRecipe = JSON.parse(LZString.decompressFromEncodedURIComponent(decoded));
-            if (compressed === "test") {
-                fillForm({
-                    recipe_name: "テストレシピ",
-                    type: "soda",
-                    water_ratio: 34,
-                    alcohol_ratio: 100,
-                    sap_ratio: 92,
-                    alkali_ratio: 100,
-                    use_alcohol: true,
-                    oils: [],
-                    options: [],
-                    memo: "テストメモ"
-                });
-                return;
-            }
-            else fillForm(qrRecipe);
-        } catch (e) {
-            alert(e.message + "\n表示に失敗しました");
-            showView("input");
-        }
+    const sharing = sessionStorage.getItem("sharing") || "false";
+    const isSharing = sharing === "true" ? true : false;
+    if (isSharing) {
+        const sharedRecipe = JSON.parse(sessionStorage.getItem("sharedRecipe"));
+        fillForm(sharedRecipe);
+        sessionStorage.removeItem("sharing");
+        sessionStorage.removeItem("sharedRecipe");
         return;
     }
+
+    if (restore) restoreInput_input();
 
     oil_amount1 = document.getElementById("oil_amount1");
     oil_amount2 = document.getElementById("oil_amount2");
@@ -152,10 +287,11 @@ function initInput() {
     oil_amount9 = document.getElementById("oil_amount9");
     oil_amount10 = document.getElementById("oil_amount10");
 
+    document.getElementById("scale_btn").addEventListener("click", scaleRecipe);
+    init_scale_listener();
+
     sap_ratio = document.getElementById("sap_ratio_val");
-    sap_ratio_global = Number(sap_ratio.value);
     water_ratio = document.getElementById("water_ratio_val");
-    water_ratio_global = Number(water_ratio.value);
 
     fadeOutLoader();
 }
@@ -553,6 +689,10 @@ function calc_result() {
     // せっけんの名前
     const name = document.getElementById("recipe_name").value;
 
+    // 鹸化率と水の割合（保存用）
+    sap_ratio_global = Number(sap_ratio.value);
+    water_ratio_global = Number(water_ratio.value);
+
     //　せっけんのタイプ
     const radioNodeList = form.elements['sodaOrPotash'];
 
@@ -668,5 +808,5 @@ function calc_result() {
 
     sessionStorage.setItem("img", "");
 
-    showView("result");
+    showView("result", true, false);
 }

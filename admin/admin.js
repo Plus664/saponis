@@ -14,7 +14,8 @@ const panelMsg = document.getElementById("panelMsg");
 document.getElementById("loginBtn").onclick = async (e) => {
   e.preventDefault();
 
-  const code = document.getElementById("adminCode").value;
+  const input = document.getElementById("adminCode");
+  const code = input.value.trim();
   if (!code) return;
 
   const { data, error } = await sb.rpc("check_passcode", {
@@ -22,33 +23,51 @@ document.getElementById("loginBtn").onclick = async (e) => {
     input_passcode: code
   });
 
+  input.value = "";
+
   if (error || data !== true) {
     loginMsg.textContent = "パスコードが違います";
     return;
   }
 
+  loginMsg.textContent = "";
   loginBox.classList.add("hidden");
   panelBox.classList.remove("hidden");
 };
 
-document.getElementById("updateUser").onclick = () =>
+document.getElementById("updateUser").onclick = (e) => {
+  e.preventDefault();
   confirmAndUpdate("user");
+};
 
-document.getElementById("updateAdmin").onclick = () =>
+document.getElementById("updateAdmin").onclick = (e) => {
+  e.preventDefault();
   confirmAndUpdate("admin");
+};
 
 async function confirmAndUpdate(role) {
   const inputId = role === "admin" ? "adminPass" : "userPass";
-  const pass = document.getElementById(inputId).value;
+  const input = document.getElementById(inputId);
+  const pass = input.value.trim();
 
-  if (!pass) return;
+  panelMsg.textContent = "処理中...";
 
   const label = role === "admin"
     ? "管理者パスコード"
     : "ユーザーパスコード";
 
-  if (!confirm(`${label}を変更します。よろしいですか？`)) return;
+  if (!pass) {
+    alert(`新しい${label}を入力して下さい`);
+    panelMsg = "";
+    return;
+  }
 
+  if (!confirm(`${label}を変更します。よろしいですか？`)) {
+    panelMsg = "";
+    return;
+  }
+
+  input.value = "";
   panelMsg.textContent = "";
 
   const { error } = await sb.rpc("update_passcode", {
@@ -57,8 +76,6 @@ async function confirmAndUpdate(role) {
   });
 
   panelMsg.textContent = error
-    ? "変更に失敗しました"
-    : "変更しました";
-
-  document.getElementById(inputId).value = "";
+    ? `${label}の変更に失敗しました`
+    : `${label}を変更しました`;
 }
