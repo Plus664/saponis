@@ -488,7 +488,7 @@ const open_qr_overlay = (share_id) => {
     box.style.left = "50%";
     box.style.transform = "translate(-50%, -50%)";
     box.style.background = "white";
-    box.style.padding = "24px";
+    box.style.padding = "5px";
     box.style.borderRadius = "12px";
     box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.3)";
     box.style.textAlign = "center";
@@ -499,10 +499,16 @@ const open_qr_overlay = (share_id) => {
     title.style.marginBottom = "12px";
 
     const qrCanvas = document.createElement("canvas");
-    qrCanvas.width = 320;
-    qrCanvas.height = 320;
+    qrCanvas.width = 280;
+    qrCanvas.height = 280;
+    qrCanvas.style.width = "260px";
+    qrCanvas.style.height = "260px";
     qrCanvas.style.margin = "0 auto";
-    qrCanvas.id = "qr-canvas";
+    qrCanvas.style.background = "white";
+    qrCanvas.style.padding = "5px";
+    qrCanvas.style.boxSizing = "content-box";
+    qrCanvas.style.borderRadius = "8px";
+    //qrCanvas.id = "qr-canvas";
 
     box.appendChild(title);
     box.appendChild(qrCanvas);
@@ -513,7 +519,7 @@ const open_qr_overlay = (share_id) => {
         new QRious({
             element: qrCanvas,
             value: shareURL,
-            size: 320,
+            size: 280,
             level: "M"
         });
     });
