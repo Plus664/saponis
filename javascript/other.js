@@ -30,7 +30,9 @@ async function startSender() {
   console.log("OFFER:", JSON.stringify(offer));
 }
 
-async function startReceiver(offerJson) {
+async function startReceiver(offer) {
+  const offerJson = JSON.parse(offer);
+
   pc = new RTCPeerConnection(rtcConfig);
 
   pc.ondatachannel = e => {
@@ -67,4 +69,3 @@ function sendHello() {
   }));
   log("sent code:", code);
 }
-
