@@ -27,6 +27,8 @@ async function startSender() {
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
 
+  window.offerObj = offer;
+
   console.log("OFFER:", JSON.stringify(offer));
 }
 
