@@ -45,7 +45,7 @@ async function startReceiver(offerJson) {
     }
   };
 
-  const offer = JSON.strin(offerJson);
+  const offer = JSON.stringify(offerJson);
   await pc.setRemoteDescription(offer);
 
   const answer = await pc.createAnswer();
@@ -67,3 +67,4 @@ function sendHello() {
   }));
   log("sent code:", code);
 }
+
