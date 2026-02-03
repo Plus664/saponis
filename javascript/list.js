@@ -492,6 +492,7 @@ const open_qr_overlay = (share_id) => {
     box.style.borderRadius = "12px";
     box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.3)";
     box.style.textAlign = "center";
+    box.addEventListener("click", (e) => { e.stopPropagation(); });
 
     const title = document.createElement("div");
     title.textContent = "QRコードで共有";
@@ -508,7 +509,6 @@ const open_qr_overlay = (share_id) => {
     qrCanvas.style.padding = "5px";
     qrCanvas.style.boxSizing = "content-box";
     qrCanvas.style.borderRadius = "8px";
-    //qrCanvas.id = "qr-canvas";
 
     box.appendChild(title);
     box.appendChild(qrCanvas);
