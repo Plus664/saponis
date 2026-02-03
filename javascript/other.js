@@ -1,6 +1,6 @@
 const rtcConfig = {
   iceServers: [
-    { urls: "stun:stun.l.google.com.19302" }
+    { urls: "stun:stun.l.google.com:19302" }
   ]
 };
 
@@ -15,62 +15,71 @@ async function startSender() {
   pc = new RTCPeerConnection(rtcConfig);
 
   dc = pc.createDataChannel("data");
-  dc.onopen = () => log("DataChannel open");
+
+  dc.onopen = () => log("DataChannel open (sender)");
   dc.onmessage = e => log("recv:", e.data);
 
   pc.onicecandidate = e => {
     if (e.candidate) {
-      console.log("ICE:", JSON.stringify(e.candidate));
+      console.log("ICE(sender):", e.candidate);
     }
   };
 
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
 
-  window.offerObj = offer;
+  // 🔑 必ず localDescription を使う
+  window.offerObj = pc.localDescription;
 
-  console.log("OFFER:", JSON.stringify(offer));
+  log("offer ready", window.offerObj);
 }
 
-async function startReceiver(offerText) {
-  // すでに object ならそのまま使う
-  const offer =
-    typeof offerText === "string"
-      ? JSON.parse(offerText)
-      : offerText;
+async function startReceiver(offer) {
+  if (!offer || !offer.type || !offer.sdp) {
+    throw new Error("invalid offer object");
+  }
 
   pc = new RTCPeerConnection(rtcConfig);
 
   pc.ondatachannel = e => {
     dc = e.channel;
-    dc.onopen = () => log("DataChannel open");
+    dc.onopen = () => log("DataChannel open (receiver)");
     dc.onmessage = e => log("recv:", e.data);
   };
 
   pc.onicecandidate = e => {
     if (e.candidate) {
-      console.log("ICE:", JSON.stringify(e.candidate));
+      console.log("ICE(receiver):", e.candidate);
     }
   };
 
-  await pc.setRemoteDescription(offer); // ← object のまま
+  // ✅ プレーンオブジェクトとして渡す
+  await pc.setRemoteDescription({
+    type: offer.type,
+    sdp: offer.sdp
+  });
 
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
 
-  console.log("ANSWER:", JSON.stringify(answer));
+  window.answerObj = pc.localDescription;
+
+  log("answer ready", window.answerObj);
 }
 
-async function applyAnswer(answerJson) {
-  const answer = JSON.parse(answerJson);
-  await pc.setRemoteDescription(answer);
+async function applyAnswer(answer) {
+  if (!answer || !answer.type || !answer.sdp) {
+    throw new Error("invalid answer object");
+  }
+
+  await pc.setRemoteDescription({
+    type: answer.type,
+    sdp: answer.sdp
+  });
+
+  log("answer applied");
 }
 
 function sendHello() {
-  const code = Math.floor(1000 + Math.random() * 9000);
-  dc.send(JSON.stringify({
-    type: "hello",
-    code
-  }));
-  log("sent code:", code);
+  dc.send("hello from sender");
 }
