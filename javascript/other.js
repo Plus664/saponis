@@ -30,8 +30,12 @@ async function startSender() {
   console.log("OFFER:", JSON.stringify(offer));
 }
 
-async function startReceiver(offe) {
-  const offerJson = JSON.parse(offe);
+async function startReceiver(offerText) {
+  // すでに object ならそのまま使う
+  const offer =
+    typeof offerText === "string"
+      ? JSON.parse(offerText)
+      : offerText;
 
   pc = new RTCPeerConnection(rtcConfig);
 
@@ -47,8 +51,7 @@ async function startReceiver(offe) {
     }
   };
 
-  const offer = JSON.stringify(offerJson);
-  await pc.setRemoteDescription(offer);
+  await pc.setRemoteDescription(offer); // ← object のまま
 
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
@@ -69,4 +72,3 @@ function sendHello() {
   }));
   log("sent code:", code);
 }
-
