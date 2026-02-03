@@ -15,27 +15,29 @@ async function startSender() {
   pc = new RTCPeerConnection(rtcConfig);
 
   dc = pc.createDataChannel("data");
-
-  dc.onopen = () => log("DataChannel open (sender)");
+  dc.onopen = () => log("DataChannel open");
   dc.onmessage = e => log("recv:", e.data);
 
   pc.onicecandidate = e => {
     if (e.candidate) {
-      console.log("ICE(sender):", e.candidate);
+      console.log("ICE:", JSON.stringify(e.candidate));
     }
   };
 
   const offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
 
-  // 🔑 必ず localDescription を使う
-  window.offerObj = pc.localDescription;
+  // ★ここが重要
+  window.offerObj = {
+    type: offer.type,
+    sdp: offer.sdp
+  };
 
-  log("offer ready", window.offerObj);
+  console.log("OFFER:", window.offerObj);
 }
 
-async function startReceiver(offer) {
-  if (!offer || !offer.type || !offer.sdp) {
+async function startReceiver(offerObj) {
+  if (!offerObj?.type || !offerObj?.sdp) {
     throw new Error("invalid offer object");
   }
 
@@ -43,38 +45,36 @@ async function startReceiver(offer) {
 
   pc.ondatachannel = e => {
     dc = e.channel;
-    dc.onopen = () => log("DataChannel open (receiver)");
+    dc.onopen = () => log("DataChannel open");
     dc.onmessage = e => log("recv:", e.data);
   };
 
   pc.onicecandidate = e => {
     if (e.candidate) {
-      console.log("ICE(receiver):", e.candidate);
+      console.log("ICE:", JSON.stringify(e.candidate));
     }
   };
 
-  // ✅ プレーンオブジェクトとして渡す
   await pc.setRemoteDescription({
-    type: offer.type,
-    sdp: offer.sdp
+    type: offerObj.type,
+    sdp: offerObj.sdp
   });
 
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
 
-  window.answerObj = pc.localDescription;
-
-  log("answer ready", window.answerObj);
-}
-
-async function applyAnswer(answer) {
-  if (!answer || !answer.type || !answer.sdp) {
-    throw new Error("invalid answer object");
-  }
-
-  await pc.setRemoteDescription({
+  window.answerObj = {
     type: answer.type,
     sdp: answer.sdp
+  };
+
+  console.log("ANSWER:", window.answerObj);
+}
+
+async function applyAnswer(answerObj) {
+  await pc.setRemoteDescription({
+    type: answerObj.type,
+    sdp: answerObj.sdp
   });
 
   log("answer applied");
