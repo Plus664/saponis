@@ -1,85 +1,68 @@
-const rtcConfig = {
-  iceServers: [
-    { urls: "stun:stun.l.google.com:19302" }
-  ]
-};
+function toICSDate(date) {
+  const pad = n => String(n).padStart(2, "0");
 
-let pc;
-let dc;
-
-function log(...args) {
-  console.log("[P2P]", ...args);
+  return (
+    date.getFullYear() +
+    pad(date.getMonth() + 1) +
+    pad(date.getDate()) +
+    "T090000"
+  );
 }
 
-async function startSender() {
-  pc = new RTCPeerConnection(rtcConfig);
+function createCureICS({
+  title,
+  releaseDate,
+  memo = ""
+}) {
+  const uid = crypto.randomUUID();
 
-  dc = pc.createDataChannel("data");
-  dc.onopen = () => log("DataChannel open");
-  dc.onmessage = e => log("recv:", e.data);
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Saponis//Cure Calendar//JP",
+    "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTAMP:${toICSDate(new Date())}`,
+    `DTSTART:${toICSDate(releaseDate)}`,
+    `DTEND:${toICSDate(releaseDate)}`,
+    `SUMMARY:🧼 石けん解禁：${title}`,
+    `DESCRIPTION:${memo}`,
+    "BEGIN:VALARM",
+    "TRIGGER:-P1D",
+    "ACTION:DISPLAY",
+    "DESCRIPTION:石けんが明日解禁されます",
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
 
-  pc.onicecandidate = e => {
-    if (e.candidate) {
-      console.log("ICE:", JSON.stringify(e.candidate));
-    }
-  };
-
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-
-  // ★ここが重要
-  window.offerObj = {
-    type: offer.type,
-    sdp: offer.sdp
-  };
-
-  console.log("OFFER:", window.offerObj);
+  return ics;
 }
 
-async function startReceiver(offerObj) {
-  if (!offerObj?.type || !offerObj?.sdp) {
-    throw new Error("invalid offer object");
-  }
+function downloadICS(icsText, filename = "soap_cure.ics") {
+  const blob = new Blob([icsText], { type: "text/calender" });
+  const url = URL.createObjectURL(blob);
 
-  pc = new RTCPeerConnection(rtcConfig);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
 
-  pc.ondatachannel = e => {
-    dc = e.channel;
-    dc.onopen = () => log("DataChannel open");
-    dc.onmessage = e => log("recv:", e.data);
-  };
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
-  pc.onicecandidate = e => {
-    if (e.candidate) {
-      console.log("ICE:", JSON.stringify(e.candidate));
-    }
-  };
+function testICS() {
+  const releaseDate = new Date();
+  releaseDate.setDate(releaseDate.getDate() + 40);
 
-  await pc.setRemoteDescription({
-    type: offerObj.type,
-    sdp: offerObj.sdp
+  const ics = createCureICS({
+    title: "テストせっけん",
+    releaseDate,
+    memo: "熟成40日"
   });
 
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
-
-  window.answerObj = {
-    type: answer.type,
-    sdp: answer.sdp
-  };
-
-  console.log("ANSWER:", window.answerObj);
-}
-
-async function applyAnswer(answerObj) {
-  await pc.setRemoteDescription({
-    type: answerObj.type,
-    sdp: answerObj.sdp
-  });
-
-  log("answer applied");
-}
-
-function sendHello() {
-  dc.send("hello from sender");
+  downloadICS(ics, "test_cure.ics");
 }
