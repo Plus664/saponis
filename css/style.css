@@ -4,12 +4,24 @@
     font-display: swap;
 }
 
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 body {
     font-family: "cinecaption";
     background-image: url("../assets/image/betty_to_aozora_background.jpg");
     background-size: 30px;
     background-repeat: repeat;
     margin-bottom: 30px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 header {
@@ -103,6 +115,11 @@ body.gate-open .hamburger {
 
 .menu.open {
     right: 0;
+}
+
+.hamburger,
+.menu li {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .hamburger {

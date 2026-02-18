@@ -22,17 +22,17 @@ const sb = supabase.createClient(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtYmJzcmZzdG1uZnhiYnR0YXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDc0OTgsImV4cCI6MjA4NDcyMzQ5OH0.ELoVUxFgbWxaUJDg1DziRp0Y4cSo5MX2zEUDO2bIEzk'
 );
 
-function getUserKey() {
+/*function getUserKey() {
     let key = localStorage.getItem("user_key");
     if (!key) {
         key = "uk_" + crypto.randomUUID();
         localStorage.setItem("user_key", key);
     }
     return key;
-}
+}*/
 
 async function loginAfterGate() {
-    const { data, error } = await sb.auth.signInAnonymously();
+    /*const { data, error } = await sb.auth.signInAnonymously();
     if (error) {
         console.error("匿名ログイン失敗", error);
         return null;
@@ -43,7 +43,20 @@ async function loginAfterGate() {
     return {
         authUser: data.user,
         userKey: userKey,
+    }*/
+    const { data: existing } = await sb.auth.getUser();
+
+    if (existing?.user) {
+        return existing.user;
     }
+
+    const { data, error } = await sb.auth.signInAnonymously();
+    if (error) {
+        console.error("匿名ログイン失敗", error);
+        return null;
+    }
+
+    return data.user;
 }
 
 // 入室コード認証
@@ -97,8 +110,8 @@ enterButton.addEventListener("click", async () => {
         return;
     }
 
-    window.currentUser = login.authUser;
-    window.userKey = login.userKey;
+    window.currentUser = login;
+    window.userKey = login.id;
 
     openApp();
     fadeOutLoader();

@@ -28,7 +28,7 @@ function fillOilAndOption(recipe) {
 
     recipe.data.options.forEach((opt, index) => {
         // 例: "・ラベンダー精油 10g (2%)"
-        const match = opt.amount.match(/^・(.+?)\s+([\d.]+)g\s+\([\d.]+%\)$/);
+        const match = opt.amount.match(/^・(.+?)\s+([\d.]+)g$/);
         if (match) {
             const optionName = match[1];   // ラベンダー精油
             const optionAmount = match[2]; // 10
@@ -79,8 +79,8 @@ function fillForm(recipe) {
 
     document.querySelector("#memo").value = recipe.data.memo || "";
 
-    document.querySelector("#scale_from").value =
-        recipe.data.oil_amount_sum ?? "";
+    const sumMatch = recipe.data.oil_amount_sum.match(/([\d.]+)/);
+    document.querySelector("#scale_from").value = sumMatch ? sumMatch[1] : "";
 }
 
 // 分量スケーリング
@@ -806,5 +806,4 @@ function calc_result() {
     sessionStorage.setItem("img", "");
 
     showView("result", true, false);
-
 }

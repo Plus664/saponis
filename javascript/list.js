@@ -337,7 +337,8 @@ const toggle_favorite = async (id) => {
     const { error } = await sb
         .from("recipes")
         .update({ data: { ...recipe.data, isFavorite: newValue } })
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_key", window.userKey);
 
     if (error) {
         showMessage({ message: "お気に入りに登録できませんでした", type: "error", mode: "alert" });
