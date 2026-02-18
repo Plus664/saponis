@@ -688,6 +688,10 @@ async function pres_result() {
         isFavorite: false
     };
 
+    const { dta } = await sb.auth.getUser();
+    console.log("auth uid:", data.user?.id)
+    console.log("window:", window.userKey)
+
     const { error } = await sb.from("recipes").insert({
         title: recipe_name,
         data,

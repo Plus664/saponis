@@ -55,6 +55,7 @@ async function loginAfterGate() {
         console.error("匿名ログイン失敗", error);
         return null;
     }
+    console.log("login res:", data?.user)
 
     return data.user;
 }
@@ -293,7 +294,9 @@ async function initApp() {
         return;
     }
 
-    window.userKey = localStorage.getItem("user_key");
+    const user = await loginAfterGate();
+    if (!user) return;
+    window.userKey = user.id;
 
     openApp();
     //await afterGate();
