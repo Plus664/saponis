@@ -302,7 +302,7 @@ async function checkAgingAndExpireNotifications() {
         parts.push(`熟成が終了したせっけんが${agingEndingCount}件`);
     }
     if (aging10daysCount > 0) {
-        parts.push(`熟成期間が近いせっけんが${aging10daysCount}件`);
+        parts.push(`熟成終了が近いせっけんが${aging10daysCount}件`);
     }
     if (expire10daysCount > 0) {
         parts.push(`消費期限が近いせっけんが${expire10daysCount}件`);
@@ -464,11 +464,9 @@ function showMessage({ message, type = "info", mode = "alert" }) {
     box.style.background = "rgba(220, 225, 235, 1)";
     box.style.color = type === "error" ? "red" : "black";
     box.style.minWidth = "200px";
-    box.style.width = "90vw";
+    box.style.width = "90%";
     box.style.maxWidth = "500px";
     box.style.minHeight = "200px";
-    box.style.wordBreak = "break-word";
-    box.style.overflowWrap = "break-word";
     box.style.textAlign = "center";
     box.style.display = "flex";
     box.style.flexDirection = "column";
@@ -477,6 +475,8 @@ function showMessage({ message, type = "info", mode = "alert" }) {
 
     const text = document.createElement("p");
     text.textContent = message;
+    text.style.wordBreak = "break-word";
+    text.style.overflowWrap = "break-word";
     box.appendChild(text);
 
     const btnContainer = document.createElement("div");

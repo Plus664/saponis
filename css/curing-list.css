@@ -35,6 +35,7 @@
 
 #curing-list_sheet-container #curingList {
   width: 95%;
+  max-width: 600px;
   margin: 0 auto 40px auto;
 }
 
@@ -121,4 +122,10 @@
   transform: translateY(1px);
   box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
   background-color: rgba(120, 140, 230, 1);
+}
+
+@media (min-width: 1024px) {
+  #curing-list_sheet-container {
+    margin-top: 260px;
+  }
 }

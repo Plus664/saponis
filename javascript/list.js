@@ -653,7 +653,7 @@ function start_curing(id) {
     notifyCheckbox.checked = true;
 
     notifyLabel.appendChild(notifyCheckbox);
-    notifyLabel.append(" 消費期限前に通知する");
+    notifyLabel.append(" 消費期限の前に通知する");
     box.appendChild(notifyLabel);
 
     // ボタン
