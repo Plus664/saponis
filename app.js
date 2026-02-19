@@ -6,7 +6,7 @@ if ("serviceWorker" in navigator) {
         navigator.serviceWorker
             .register("/service-worker.js")
             .then((registration) => {
-                console.log("SW registered", registration);
+                //console.log("SW registered", registration);
             })
             .catch((error) => {
                 console.error("SW registration failed:", error);
@@ -22,28 +22,7 @@ const sb = supabase.createClient(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtYmJzcmZzdG1uZnhiYnR0YXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDc0OTgsImV4cCI6MjA4NDcyMzQ5OH0.ELoVUxFgbWxaUJDg1DziRp0Y4cSo5MX2zEUDO2bIEzk'
 );
 
-/*function getUserKey() {
-    let key = localStorage.getItem("user_key");
-    if (!key) {
-        key = "uk_" + crypto.randomUUID();
-        localStorage.setItem("user_key", key);
-    }
-    return key;
-}*/
-
 async function loginAfterGate() {
-    /*const { data, error } = await sb.auth.signInAnonymously();
-    if (error) {
-        console.error("匿名ログイン失敗", error);
-        return null;
-    }
-
-    const userKey = getUserKey();
-
-    return {
-        authUser: data.user,
-        userKey: userKey,
-    }*/
     const { data: existing } = await sb.auth.getUser();
 
     if (existing?.user) {
@@ -225,8 +204,6 @@ async function openApp() {
 
     document.body.classList.remove("gate-locked");
 
-    /*const initialView = location.hash.replace("#", "") || "input";
-    showView(initialView, true, false);*/
     await afterGate();
 }
 
@@ -261,6 +238,87 @@ function clearShareParam() {
     );
 }
 
+async function checkAgingAndExpireNotifications() {
+    // DBからこのユーザーのせっけん一覧取得
+    const { data: soaps, error } = await sb
+        .from("curing_batches")
+        .select("*")
+        .eq("user_key", window.userKey);
+
+    if (error || !soaps) return;
+
+    const today = new Date();
+
+    let agingEndingCount = 0;
+    let aging10daysCount = 0;
+    let expire10daysCount = 0;
+
+    const updates = []; // DB更新用配列
+
+    soaps.forEach(soap => {
+        const releaseDate = new Date(soap.release_date);
+        const expireDate = new Date(soap.expire_date);
+
+        const tenDaysBeforeRelease = new Date(releaseDate);
+        tenDaysBeforeRelease.setDate(releaseDate.getDate() - 10);
+
+        const tenDaysBeforeExpire = new Date(expireDate);
+        tenDaysBeforeExpire.setDate(expireDate.getDate() - 10);
+
+        const updateObj = { id: soap.id }; // 更新対象
+
+        // 熟成終了日が過ぎて通知してない
+        if (today >= releaseDate && !soap.notified_release) {
+            agingEndingCount++;
+            updateObj.notified_release = true;
+            updates.push(updateObj);
+        }
+        // 熟成終了10日前～当日
+        else if (today >= tenDaysBeforeRelease && today <= releaseDate && !soap.notified_10days) {
+            aging10daysCount++;
+            updateObj.notified_10days = true;
+            updates.push(updateObj);
+        }
+        // 消費期限10日前～当日 & notifyオン
+        if (soap.expire_notify && today >= tenDaysBeforeExpire && today <= expireDate && !soap.notified_expire) {
+            expire10daysCount++;
+            updateObj.notified_expire = true;
+            updates.push(updateObj);
+        }
+    });
+
+    // DB更新
+    for (const u of updates) {
+        await sb
+            .from("curing_batches")
+            .update(u)
+            .eq("id", u.id);
+    }
+
+    // トースト通知
+    const parts = [];
+
+    if (agingEndingCount > 0) {
+        parts.push(`熟成が終了したせっけんが${agingEndingCount}件`);
+    }
+    if (aging10daysCount > 0) {
+        parts.push(`熟成期間が近いせっけんが${aging10daysCount}件`);
+    }
+    if (expire10daysCount > 0) {
+        parts.push(`消費期限が近いせっけんが${expire10daysCount}件`);
+    }
+
+    if (parts.length > 0) {
+        const message = parts.join("、") + "あります。メニューの「熟成中/使用中のせっけん」から詳細を確認できます";
+
+        showMessage({
+            message,
+            type: "info",
+            mode: "alert"
+        });
+    }
+}
+
 async function afterGate() {
     const params = new URLSearchParams(location.search);
     const shareId = params.get("share");
@@ -274,6 +332,8 @@ async function afterGate() {
 
     const initialView = location.hash.replace("#", "") || "input";
     showView(initialView, true, false);
+
+    await checkAgingAndExpireNotifications();
 }
 
 function initMenu() {
@@ -294,12 +354,13 @@ async function initApp() {
         return;
     }
 
+    //await sb.auth.getSession();
+
     const user = await loginAfterGate();
     if (!user) return;
     window.userKey = user.id;
 
     openApp();
-    //await afterGate();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -322,6 +383,10 @@ function initView(name, options = {}) {
 
         case "list":
             if (typeof initListView === "function") initListView();
+            break;
+
+        case "curing-list":
+            if (typeof initCuringListView === "function") initCuringListView();
             break;
 
         case "original":
@@ -399,7 +464,11 @@ function showMessage({ message, type = "info", mode = "alert" }) {
     box.style.background = "rgba(220, 225, 235, 1)";
     box.style.color = type === "error" ? "red" : "black";
     box.style.minWidth = "200px";
-    box.style.minHeight = "200px"
+    box.style.width = "90vw";
+    box.style.maxWidth = "500px";
+    box.style.minHeight = "200px";
+    box.style.wordBreak = "break-word";
+    box.style.overflowWrap = "break-word";
     box.style.textAlign = "center";
     box.style.display = "flex";
     box.style.flexDirection = "column";

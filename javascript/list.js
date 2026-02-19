@@ -410,7 +410,6 @@ async function change_name(id) {
     const okBtn = document.createElement("button");
     okBtn.textContent = "変更";
 
-    // 左キャンセル、右変更
     btnContainer.appendChild(cancelBtn);
     btnContainer.appendChild(okBtn);
     box.appendChild(btnContainer);
@@ -540,6 +539,252 @@ function closeOverlay() {
     overlayRoot.innerHTML = "";
 }
 
+function start_curing(id) {
+    const recipe = preserved_recipes.find(r => r.id == id);
+    if (!recipe) return;
+
+    const overlayRoot = document.getElementById("overlay-root");
+    overlayRoot.innerHTML = "";
+
+    // 背景
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.background = "rgba(0,0,0,0.3)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "1000";
+
+    // ボックス
+    const box = document.createElement("div");
+    box.style.background = "rgba(220,225,235,1)";
+    box.style.padding = "24px";
+    box.style.borderRadius = "8px";
+    box.style.minWidth = "280px";
+    box.style.textAlign = "center";
+    box.style.justifyContent = "center";
+
+    // 開始日
+    const startLabel = document.createElement("label");
+    startLabel.textContent = "★熟成開始日";
+    startLabel.style.display = "block";
+    startLabel.style.marginTop = "16px";
+    startLabel.style.fontSize = "24px";
+
+    const startInput = document.createElement("input");
+    startInput.type = "date";
+    startInput.value = new Date().toISOString().split("T")[0];
+    startInput.style.marginTop = "8px";
+    startInput.style.height = "22px";
+    startInput.style.fontSize = "20px";
+
+    box.appendChild(startLabel);
+    box.appendChild(startInput);
+
+    // 期間ラジオ
+    const periodLabel = document.createElement("p");
+    periodLabel.textContent = "★熟成期間";
+    periodLabel.style.marginTop = "16px";
+    periodLabel.style.fontSize = "24px";
+    box.appendChild(periodLabel);
+
+    const periodWrapper = document.createElement("div");
+    periodWrapper.style.justifySelf = "center";
+    periodWrapper.style.width = "60%";
+    periodWrapper.style.marginTop = "8px";
+    periodWrapper.style.textAlign = "left";
+    periodWrapper.style.display = "flex";
+    periodWrapper.style.flexDirection = "column";
+    periodWrapper.style.gap = "8px";
+
+    const periods = [
+        { label: "30日", value: 30 },
+        { label: "40日（推奨）", value: 40, checked: true },
+        { label: "カスタム", value: "custom" }
+    ];
+
+    periods.forEach(p => {
+        const label = document.createElement("label");
+        label.style.display = "block";
+        label.style.marginTop = "5px";
+        label.style.fontSize = "22px";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "curingPeriod";
+        radio.value = p.value;
+        if (p.checked) radio.checked = true;
+
+        label.appendChild(radio);
+        label.append(" " + p.label);
+        periodWrapper.appendChild(label);
+    });
+
+    const customInput = document.createElement("input");
+    customInput.type = "number";
+    customInput.placeholder = "日数を入力";
+    customInput.disabled = true;
+    customInput.style.marginTop = "8px";
+    customInput.style.width = "90%";
+    customInput.style.height = "24px";
+    customInput.style.fontSize = "20px";
+
+    periodWrapper.appendChild(customInput);
+    box.appendChild(periodWrapper);
+
+    // 終了日表示
+    const endPreview = document.createElement("p");
+    endPreview.style.marginTop = "12px";
+    endPreview.style.fontSize = "24px";
+    box.appendChild(endPreview);
+
+    // 通知チェック
+    const notifyLabel = document.createElement("label");
+    notifyLabel.style.display = "block";
+    notifyLabel.style.marginTop = "12px";
+    notifyLabel.style.fontSize = "24px";
+
+    const notifyCheckbox = document.createElement("input");
+    notifyCheckbox.type = "checkbox";
+    notifyCheckbox.checked = true;
+
+    notifyLabel.appendChild(notifyCheckbox);
+    notifyLabel.append(" 消費期限前に通知する");
+    box.appendChild(notifyLabel);
+
+    // ボタン
+    const btnWrap = document.createElement("div");
+    btnWrap.className = "curing-btn-wrap";
+    btnWrap.style.marginTop = "16px";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "curing-btn-cancel";
+    cancelBtn.textContent = "キャンセル";
+
+    const okBtn = document.createElement("button");
+    okBtn.className = "curing-btn-ok";
+    okBtn.textContent = "開始";
+    okBtn.style.marginLeft = "8px";
+
+    btnWrap.append(cancelBtn, okBtn);
+    box.appendChild(btnWrap);
+
+    overlay.appendChild(box);
+    overlayRoot.appendChild(overlay);
+
+    // --- ロジック ---
+
+    function calculateEndDate() {
+        const selected = document.querySelector("input[name='curingPeriod']:checked").value;
+
+        let days;
+
+        if (selected === "custom") {
+            days = parseInt(customInput.value, 10);
+        } else {
+            days = parseInt(selected, 10);
+        }
+
+        if (!days || days <= 0) {
+            endPreview.textContent = "★熟成終了日: -";
+            return null;
+        }
+
+        const startDate = new Date(startInput.value);
+        startDate.setDate(startDate.getDate() + days);
+
+        const endStr = startDate.toISOString().split("T")[0];
+        endPreview.textContent = "★熟成終了日: " + endStr;
+
+        return endStr;
+    }
+
+    document.querySelectorAll("input[name='curingPeriod']").forEach(r => {
+        r.addEventListener("change", () => {
+            const selected = document.querySelector("input[name='curingPeriod']:checked").value;
+            if (selected === "custom") {
+                customInput.disabled = false;
+                customInput.focus();
+            } else {
+                customInput.disabled = true;
+            }
+
+            calculateEndDate();
+        });
+    });
+
+    customInput.addEventListener("input", calculateEndDate);
+    startInput.addEventListener("change", calculateEndDate);
+
+    calculateEndDate();
+
+    // キャンセル
+    cancelBtn.onclick = () => overlay.remove();
+
+    overlay.addEventListener("click", e => {
+        if (!box.contains(e.target)) overlay.remove();
+    });
+
+    // 開始処理
+    okBtn.onclick = async () => {
+        const endDate = calculateEndDate();
+        if (!endDate) {
+            showMessage({ message: "熟成期間を入力してください", type: "error", mode: "alert" });
+            return;
+        }
+
+        const selected = document.querySelector("input[name='curingPeriod']:checked").value;
+
+        let cureDays;
+
+        if (selected === "custom") {
+            cureDays = parseInt(customInput.value, 10);
+        } else {
+            cureDays = parseInt(selected, 10);
+        }
+
+        if (!cureDays || cureDays <= 0) {
+            showMessage({ message: "熟成期間を入力してください", type: "error", mode: "alert" });
+            return;
+        }
+
+        // 消費期限 = 熟成終了 + 365日
+        const expireDateObj = new Date(endDate);
+        expireDateObj.setFullYear(expireDateObj.getFullYear() + 1);
+        const expireDate = expireDateObj.toISOString().split("T")[0];
+
+        const payload = {
+            user_key: window.userKey,
+            recipe_name: recipe.data.recipe_name,
+            memo: recipe.data.memo,
+            start_date: startInput.value,
+            cure_days: cureDays,
+            release_date: endDate,
+            expire_date: expireDate,
+            status: 0,
+            expire_notify: notifyCheckbox.checked,
+            notified_10days: false,
+            notified_release: false,
+            notified_expire: false,
+        };
+
+        const { error } = await sb.from("curing_batches").insert(payload);
+
+        if (error) {
+            console.error(error);
+            showMessage({ message: "熟成開始に失敗しました", type: "error", mode: "alert" });
+            return;
+        }
+
+        showMessage({ message: "熟成を開始しました", type: "info", mode: "alert" });
+        overlay.remove();
+    };
+}
+
 // メニューのオーバーレイ表示
 const open_centered_overlay = (id) => {
     const recipe = preserved_recipes.find(r => r.id == id);
@@ -571,7 +816,7 @@ const open_centered_overlay = (id) => {
         //{ label: "編集する", handler: () => edit_pres(id) },
         { label: "名前を変更", handler: () => change_name(id) },
         { label: "QRコードを表示", handler: () => share_pres(id) },
-        { label: "カレンダーに登録", handler: () => register_to_calender(id) },
+        { label: "熟成開始", handler: () => start_curing(id) },
         { label: "このレシピを削除", handler: () => remove_pres(id) }
     ];
 
@@ -588,14 +833,6 @@ const open_centered_overlay = (id) => {
 
     overlayRoot.append(backdrop, menu);
 };
-
-function register_to_calender(id) {
-    let recipe = preserved_recipes.find(r => r.id == id);
-    if (!recipe) {
-        showMessage({ message: "レシピが見つかりません", type: "error", mode: "alert" });
-        return;
-    }
-}
 
 // ボタンを生成＆表示
 const display_buttons = (id) => {

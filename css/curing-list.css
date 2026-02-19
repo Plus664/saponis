@@ -1,0 +1,124 @@
+#curing-list_sheet-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-top: 230px;
+  width: 100%;
+}
+
+#curing-list_sheet-container #curing-list_sheet_label {
+  position: static;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 25px;
+  white-space: nowrap;
+}
+
+#curing-list_sheet-container .curing-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px 0;
+  gap: 8px;
+  font-size: 16px;
+}
+
+#curing-list_sheet-container #curingFilter {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  font-size: 15px;
+}
+
+#curing-list_sheet-container #curingList {
+  width: 95%;
+  margin: 0 auto 40px auto;
+}
+
+#curing-list_sheet-container .batch-card {
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+#curing-list_sheet-container .batch-header {
+  padding: 14px 10px 10px;
+  cursor: pointer;
+}
+
+#curing-list_sheet-container .batch-header:hover {
+  background: rgba(148, 170, 255, 0.85);
+  color: white;
+}
+
+#curing-list_sheet-container .batch-header:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#curing-list_sheet-container .batch-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+#curing-list_sheet-container .batch-body {
+  max-height: 0;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  padding: 0 16px;
+  font-size: 20px;
+  line-height: 1.6;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+#curing-list_sheet-container .batch-card.open .batch-body {
+  max-height: 300px;
+  padding: 10px 16px 10px 16px;
+}
+
+#curing-list_sheet-container .batch-card.expired {
+  border-left: 4px solid #e57373;
+}
+
+#curing-list_sheet-container .batch-card.warning {
+  border-left: 4px solid #ffb74d;
+}
+
+#curing-list_sheet-container .delete-batch-btn {
+  justify-self: center;
+  border: none;
+  color: rgba(148, 170, 255, 1);
+  background-color: white;
+  font-size: 22px;
+  width: 200px;
+  padding: 10px 0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
+  cursor: pointer;
+  display: block;
+  margin: 12px auto;
+}
+
+#curing-list_sheet-container .delete-batch-btn:hover {
+  color: white;
+  background-color: rgba(148, 170, 255, 1);
+  box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+#curing-list_sheet-container .delete-batch-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
+  background-color: rgba(120, 140, 230, 1);
+}

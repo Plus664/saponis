@@ -79,7 +79,9 @@
     z-index: 1000;
 }
 
-#overlay-root .overlay-buttons {
+#overlay-root .overlay-buttons,
+#overlay-root .curing-btn-cancel,
+#overlay-root .curing-btn-ok {
     justify-self: center;
     border: none;
     color: rgba(148, 170, 255, 1);
@@ -95,14 +97,28 @@
     margin: 12px auto;
 }
 
-#overlay-root .overlay-buttons:hover {
+#overlay-root .curing-btn-wrap {
+    display: flex;
+    flex-direction: row;
+}
+
+#overlay-root .curing-btn-cancel,
+#overlay-root .curing-btn-ok {
+    width: 120px;
+}
+
+#overlay-root .overlay-buttons:hover,
+#overlay-root .curing-btn-cancel:hover,
+#overlay-root .curing-btn-ok:hover {
     color: white;
     background-color: rgba(148, 170, 255, 1);
     box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
     transform: translateY(-2px);
 }
 
-#overlay-root .overlay-buttons:active {
+#overlay-root .overlay-buttons:active,
+#overlay-root .curing-btn-cancel:active,
+#overlay-root .curing-btn-ok:active {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
     background-color: rgba(120, 140, 230, 1);
