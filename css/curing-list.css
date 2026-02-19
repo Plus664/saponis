@@ -41,7 +41,8 @@
 
 #curing-list_sheet-container .batch-card {
   backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.45);
+  /*background: rgba(255, 255, 255, 0.45);*/
+  background: rgba(148, 170, 255, 0.5);
   border-radius: 14px;
   margin-bottom: 14px;
   overflow: hidden;
@@ -98,7 +99,7 @@
 #curing-list_sheet-container .delete-batch-btn {
   justify-self: center;
   border: none;
-  color: rgba(148, 170, 255, 1);
+  color: red;
   background-color: white;
   font-size: 22px;
   width: 200px;

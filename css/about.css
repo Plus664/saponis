@@ -1,0 +1,73 @@
+#about_sheet-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-top: 230px;
+  width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+#about_sheet-container #about_sheet_label {
+  justify-self: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#about_sheet-container .info-section {
+  justify-self: center;
+  margin-bottom: 2rem;
+  padding: 10px;
+  background: #fff;
+  border-radius: 8px;
+  width: 85%;
+}
+
+#about_sheet-container .info-section h3 {
+  font-size: 24px;
+}
+
+#about_sheet-container .info-section h4 {
+  font-size: 22px;
+}
+
+#about_sheet-container .info-section p,
+ul {
+  font-size: 20px;
+}
+
+#about_sheet-container .standard-values {
+  list-style: none;
+  padding: 0;
+}
+
+#about_sheet-container .standard-values li {
+  margin-bottom: 1.2rem;
+  border-bottom: 1px dashed #eee;
+  padding-bottom: 0.8rem;
+  font-size: 20px;
+}
+
+#about_sheet-container .standard-values strong {
+  display: block;
+  color: #2c3e50;
+  font-size: 22px;
+}
+
+#about_sheet-container .standard-values span {
+  font-size: 18px;
+  color: #e67e22;
+  /* 強調したい補足の色 */
+}
+
+#about_sheet-container .standard-values p {
+  margin: 0.3rem 0 0;
+  font-size: 20px;
+  color: #666;
+}
+
+#about_sheet-container .about-footer {
+  justify-self: center;
+  color: gray;
+}
