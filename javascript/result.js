@@ -658,7 +658,18 @@ async function pres_result() {
 
 function drawChart_share(clone) {
     return new Promise(resolve => {
+        /*const clonedContainer = clone.querySelector("#chart_canvas-container");
+        clonedContainer.style.width = "420px";
+        clonedContainer.style.height = "420px";*/
         const clonedCanvas = clone.querySelector("canvas");
+        const ctx = clonedCanvas.getContext("2d");
+        clonedCanvas.width = 420;
+        clonedCanvas.height = 420;
+        clonedCanvas.style.width = "420px";
+        clonedCanvas.style.height = "420px";
+
+        const oldChart = Chart.getChart(clonedCanvas);
+        if (oldChart) oldChart.destroy();
 
         const additional_infos = JSON.parse(sessionStorage.getItem("additionalInfos"));
         const sk = additional_infos[0];
@@ -669,14 +680,14 @@ function drawChart_share(clone) {
         const st = additional_infos[5];
 
         const toNum = v => Number(v.replace(/[^\d.]/g, ""));
-        const skin = toNum(sk);
-        const clean = toNum(cl);
-        const foam = toNum(fo);
-        const hard = toNum(ha);
-        const collapse = toNum(co);
-        const stability = toNum(st);
+        const skin = toNum(sk) * 2.8;
+        const clean = toNum(cl) * 2.8;
+        const foam = toNum(fo) * 2.8;
+        const hard = toNum(ha) * 2.8;
+        const collapse = toNum(co) * 2.8;
+        const stability = toNum(st) * 2.8;
 
-        new Chart(clonedCanvas, {
+        new Chart(ctx, {
             type: 'radar',
 
             data: {
@@ -694,6 +705,7 @@ function drawChart_share(clone) {
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                devicePixelRatio: 1,
                 plugins: {
                     legend: { display: false },
                     title: {
@@ -715,12 +727,7 @@ function drawChart_share(clone) {
                             font: { size: 20 }
                         }
                     }
-                },
-                /*animation: {
-                    onComplete: () => {
-                        resolve();
-                    }
-                }*/
+                }
             }
         });
 
@@ -733,14 +740,16 @@ async function generateShareImage() {
 
     const original = document.getElementById("result_sheet-container");
     const clone = original.cloneNode(true);
+    clone.style.margin = "30px";
+    clone.style.padding = "0";
 
     const shareCard = document.querySelector(".share-card");
     shareCard.innerHTML = "";
     shareCard.appendChild(clone);
 
-    /*await new Promise(r => requestAnimationFrame(r));
+    await new Promise(r => requestAnimationFrame(r));
 
-    //await drawChart_share(clone);
+    await drawChart_share(clone);
 
     //await new Promise(r => requestAnimationFrame(r));
 
@@ -758,13 +767,18 @@ async function generateShareImage() {
     const watermarkImg = document.createElement("img");
     watermarkImg.src = "../assets/image/logo.png";
     watermark.appendChild(watermarkImg);
-    shareCard.appendChild(watermark);*/
+    shareCard.appendChild(watermark);
 
     const canvas = await html2canvas(shareCard, {
         scale: 2,
-        //backgroundColor: "#ffffff",
+        backgroundColor: "#ffffff",
         useCORS: true,
-        logging: true
+        logging: false,
+        y: 0,
+        scrollY: 0,
+        screenX: 0,
+        width: shareCard.offsetWidth,
+        height: shareCard.offsetHeight
     });
 
     return canvas;

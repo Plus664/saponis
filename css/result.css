@@ -400,8 +400,7 @@
 .share-card {
     position: fixed;
     top: 0;
-    left: 0;
-    opacity: 0;
+    left: -9999px;
     pointer-events: none;
     width: 1080px;
     height: 1080px;
@@ -431,16 +430,28 @@
 }
 
 .share-card #logo-watermark img {
-    width: 800px;
+    width: 900px;
     opacity: 0.2;
 }
 
 .share-card #chart_canvas-container {
     position: absolute;
     top: 400px;
-    left: 380px;
-    width: 400px;
-    height: 400px;
+    left: 240px;
+    width: 420px;
+    /* ここでサイズを固定 */
+    height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 中のCanvasをコンテナいっぱいに広げる */
+.share-card #chart_canvas-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 420px;
+    max-height: 420px;
 }
 
 .share-card .memo {
