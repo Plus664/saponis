@@ -670,7 +670,13 @@ async function generateShareImage() {
     copyright.style.justifySelf = "center";
     copyright.style.color = "gray";
 
-    shareCard.appendChild(copyright);
+    //shareCard.appendChild(copyright);
+
+    const watermark = document.createElement("div");
+    const watermarkImg = document.createElement("img");
+    watermarkImg.src = "../assets/image/logo.png";
+    watermark.appendChild(watermarkImg);
+    shareCard.appendChild(watermark);
 
     const canvas = await html2canvas(shareCard, {
         scale: 2,

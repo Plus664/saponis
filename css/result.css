@@ -442,7 +442,7 @@
     opacity: 0.2;
 }
 
-.share-card #result_sheet-container #chart_canvas-container {
+.share-card #chart_canvas-container {
     position: absolute;
     top: 50mm;
     left: 90mm;
