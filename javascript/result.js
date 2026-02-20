@@ -190,7 +190,8 @@ function collectWarnings() {
     const conditions = sessionStorage.getItem("conditions").split(",");
     const pH = Number(conditions[3]);
 
-    console.log(sapRatio, alcoholPurity, alkaliPurity, waterRatio)
+    const waterRatio = Math.floor(Number(waterAmount) / Number(oilSum) * 100);
+
     if (type === "soda" && waterRatio && (waterRatio < 25 || waterRatio > 45)) {
         warnings.push("水分量が不安定です (推奨: 25～45%)");
     }
@@ -655,6 +656,78 @@ async function pres_result() {
     fadeOutLoader_result();
 }
 
+function drawChart_share(clone) {
+    return new Promise(resolve => {
+        const clonedCanvas = clone.querySelector("canvas");
+
+        const additional_infos = JSON.parse(sessionStorage.getItem("additionalInfos"));
+        const sk = additional_infos[0];
+        const cl = additional_infos[1];
+        const fo = additional_infos[2];
+        const ha = additional_infos[3];
+        const co = additional_infos[4];
+        const st = additional_infos[5];
+
+        const toNum = v => Number(v.replace(/[^\d.]/g, ""));
+        const skin = toNum(sk);
+        const clean = toNum(cl);
+        const foam = toNum(fo);
+        const hard = toNum(ha);
+        const collapse = toNum(co);
+        const stability = toNum(st);
+
+        new Chart(clonedCanvas, {
+            type: 'radar',
+
+            data: {
+                labels: ["肌適正", "洗浄力", "起泡力", "硬さ", "崩れにくさ", "安定性"],
+                datasets: [{
+                    label: "結果",
+                    data: [skin, clean, foam, hard, collapse, stability],
+                    backgroundColor: "rgba(236, 12, 161, 0.5)",
+                    borderColor: "black",
+                    borderWidth: 2,
+                    pointRadius: 0,
+                }],
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: "特徴",
+                        font: { size: 20 }
+                    }
+                },
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 15,
+                        ticks: {
+                            stepSize: 3,
+                            font: { size: 18 },
+                            backdropColor: "rgba(0,0,0,0)"
+                        },
+                        pointLabels: {
+                            font: { size: 20 }
+                        }
+                    }
+                },
+                /*animation: {
+                    onComplete: () => {
+                        resolve();
+                    }
+                }*/
+            }
+        });
+
+        setTimeout(resolve, 50)
+    });
+}
+
 async function generateShareImage() {
     await document.fonts.ready;
 
@@ -665,6 +738,14 @@ async function generateShareImage() {
     shareCard.innerHTML = "";
     shareCard.appendChild(clone);
 
+    /*await new Promise(r => requestAnimationFrame(r));
+
+    //await drawChart_share(clone);
+
+    //await new Promise(r => requestAnimationFrame(r));
+
+    await new Promise(r => setTimeout(r, 50))
+
     const copyright = document.createElement("p");
     copyright.textContent = "© 2026 ベティーとあおぞら";
     copyright.style.justifySelf = "center";
@@ -673,15 +754,17 @@ async function generateShareImage() {
     //shareCard.appendChild(copyright);
 
     const watermark = document.createElement("div");
+    watermark.id = "logo-watermark";
     const watermarkImg = document.createElement("img");
     watermarkImg.src = "../assets/image/logo.png";
     watermark.appendChild(watermarkImg);
-    shareCard.appendChild(watermark);
+    shareCard.appendChild(watermark);*/
 
     const canvas = await html2canvas(shareCard, {
         scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true
+        //backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: true
     });
 
     return canvas;

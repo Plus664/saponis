@@ -397,24 +397,15 @@
     }
 }
 
-#share-preview {
-    position: fixed;
-    left: -9999px;
-    top: 0;
-}
-
 .share-card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
     width: 1080px;
     height: 1080px;
-    background: white;
-    padding: 80px;
     box-sizing: border-box;
-}
-
-.share-card #result_sheet-container {
-    margin-top: 60mm;
-    font-size: 20pt;
-    margin: 10mm;
 }
 
 /* 非表示にする要素 */
@@ -435,24 +426,21 @@
     pointer-events: none;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+    width: 1080px;
+    height: 1080px;
 }
 
 .share-card #logo-watermark img {
-    width: 90%;
+    width: 800px;
     opacity: 0.2;
 }
 
 .share-card #chart_canvas-container {
     position: absolute;
-    top: 50mm;
-    left: 90mm;
-    width: 120mm;
-    height: 120mm;
-}
-
-.share-card img {
-    max-width: 60mm;
-    height: auto;
+    top: 400px;
+    left: 380px;
+    width: 400px;
+    height: 400px;
 }
 
 .share-card .memo {
