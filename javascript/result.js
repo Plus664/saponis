@@ -270,51 +270,6 @@ function normalizeName(name) {
         .replace(/[］\]]/, "]");    // 全角 ]
 }
 
-// 油脂の組み合わせに関する確認
-/*function evaluateOilGroups(oilNames) {
-    const groupCount = {
-        saturated: 0,
-        mono: 0,
-        poly: 0,
-        special: 0,
-        neutral: 0
-    };
-
-    oilNames.forEach(name => {
-        const normalized = normalizeName(name);
-        for (const group in window.OilGroups) {
-            if (window.OilGroups[group].includes(normalized)) {
-                groupCount[group]++;
-                break;
-            }
-        }
-    });
-
-    const warnings = [];
-
-    // 不飽和脂肪酸が多く、飽和脂肪酸がゼロ
-    if (groupCount.poly >= 3 && groupCount.saturated === 0) {
-        warnings.push("不飽和脂肪酸が多く、酸化しやすい構成です（飽和脂肪酸が不足）");
-    }
-
-    // 飽和脂肪酸がゼロ
-    if (groupCount.saturated === 0) {
-        warnings.push("泡立ちが弱くなる可能性があります（飽和脂肪酸が含まれていません）");
-    }
-
-    // 特殊油脂が多すぎる
-    if (groupCount.special >= 2) {
-        warnings.push("特殊油脂が多く、泡立ちや硬さが不安定になる可能性があります");
-    }
-
-    // 飽和脂肪酸が多すぎる（硬すぎる石けんになる可能性）
-    if (groupCount.saturated >= 4 && groupCount.poly === 0 && groupCount.mono === 0) {
-        warnings.push("飽和脂肪酸が多すぎるため、硬くて乾燥しやすい石けんになる可能性があります");
-    }
-
-    return warnings;
-}*/
-
 // 注意の表示
 function showAlert(warnings) {
     const warningList = document.getElementById("warningList");
@@ -700,6 +655,64 @@ async function pres_result() {
     fadeOutLoader_result();
 }
 
+async function generateShareImage() {
+    await document.fonts.ready;
+
+    const original = document.getElementById("result_sheet-container");
+    const clone = original.cloneNode(true);
+
+    const shareCard = document.querySelector(".share-card");
+    shareCard.innerHTML = "";
+    shareCard.appendChild(clone);
+
+    const canvas = await html2canvas(shareCard, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true
+    });
+
+    return canvas;
+}
+
+function fallbackDownload(canvas) {
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "soap-recipe.png";
+    a.click();
+}
+
+async function shareToSNS() {
+    try {
+        const canvas = await generateShareImage();
+
+        const blob = await new Promise(resolve =>
+            canvas.toBlob(resolve, "image/png")
+        );
+
+        const file = new File([blob], "soap-recipe.png", {
+            type: "image/png"
+        });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: "せっけんレシピ",
+                text: "自作せっけんレシピです🫧"
+            });
+        } else {
+            fallbackDownload(canvas);
+        }
+    } catch (err) {
+        showMessage({
+            message: "投稿できませんでした",
+            type: "error",
+            mode: "alert"
+        });
+        showView("list", false, false);
+    }
+}
+
 // 初期化
 function initResultView() {
     if (shouldShowLoader_result()) {
@@ -733,6 +746,15 @@ function initResultView() {
 
         setTimeout(() => {
             window.print();
+        }, 100);
+    }
+
+    const share_to_SNS = sessionStorage.getItem("shareToSNS");
+    if (share_to_SNS === "1") {
+        sessionStorage.removeItem("shareToSNS");
+
+        setTimeout(() => {
+            shareToSNS();
         }, 100);
     }
 }
