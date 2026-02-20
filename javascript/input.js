@@ -421,7 +421,7 @@ function calc_potash(sap_value1, sap_value2, sap_value3, sap_value4, sap_value5,
     const discount = Number(sap_ratio.value) / 100;
     const alkali_ratio_val = document.getElementById("alkali_ratio_val");
     const alkali_ratio = Number(alkali_ratio_val.value) / 100;
-    alkali_ratio_global = alkali_ratio;
+    alkali_ratio_global = alkali_ratio / 100;
 
     alkali_result = Math.round(oil_sum * discount / alkali_ratio * 10) / 10;
 

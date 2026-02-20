@@ -207,7 +207,7 @@ function clear_preserveSession() {
 }
 
 // 保存したレシピの表示
-function display_pres_list(id) {
+function display_pres_list(id, autoPrint = false) {
     // sessionStorageで保存、resultのページで表示
     clear_preserveSession();
 
@@ -278,6 +278,10 @@ function display_pres_list(id) {
     sessionStorage.setItem("conditions", JSON.stringify(conditions));
 
     sessionStorage.setItem("memo", data.memo || "");
+
+    if (autoPrint) {
+        sessionStorage.setItem("autoPrint", "1");
+    }
 
     showView("result", true, false);
 };
@@ -815,9 +819,10 @@ const open_centered_overlay = (id) => {
     const actions = [
         //{ label: "編集する", handler: () => edit_pres(id) },
         { label: "名前を変更", handler: () => change_name(id) },
+        { label: "レシピを印刷", handler: () => display_pres_list(id, true) },
         { label: "QRコードを表示", handler: () => share_pres(id) },
-        { label: "熟成開始", handler: () => start_curing(id) },
-        { label: "このレシピを削除", handler: () => remove_pres(id) }
+        { label: "熟成を開始", handler: () => start_curing(id) },
+        { label: "レシピを削除", handler: () => remove_pres(id) }
     ];
 
     actions.forEach(action => {

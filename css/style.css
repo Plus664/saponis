@@ -19,9 +19,16 @@ body {
     background-image: url("../assets/image/betty_to_aozora_background.jpg");
     background-size: 30px;
     background-repeat: repeat;
-    margin-bottom: 30px;
+    margin: 0;
     -webkit-user-select: none;
     user-select: none;
+    height: 100%;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -400,6 +407,13 @@ body.gate-open .hamburger {
 
 .qr-close:active {
     transform: scale(0.95);
+}
+
+footer {
+    justify-self: center;
+    color: gray;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 @media screen and (min-width: 960px) {

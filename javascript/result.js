@@ -8,7 +8,7 @@ let chartInstance = null;
 let imgContainer;
 let imgFile;
 let imgPreview;
-let pres_button, print_button;
+let pres_button;
 
 //結果を表示
 async function display_result() {
@@ -68,12 +68,10 @@ async function display_result() {
 
     if (scene == "result") {
         pres_button.style.display = "block";
-        print_button.style.display = "none";
         imgContainer.style.display = "none";
     }
     else if (scene == "preserve") {
         pres_button.style.display = "none";
-        print_button.style.display = "block";
         imgContainer.style.display = "block";
 
         const recipeId = sessionStorage.getItem("id");
@@ -192,8 +190,7 @@ function collectWarnings() {
     const conditions = sessionStorage.getItem("conditions").split(",");
     const pH = Number(conditions[3]);
 
-    const waterRatio = Math.floor(Number(waterAmount) / Number(oilSum) * 100);
-
+    console.log(sapRatio, alcoholPurity, alkaliPurity, waterRatio)
     if (type === "soda" && waterRatio && (waterRatio < 25 || waterRatio > 45)) {
         warnings.push("水分量が不安定です (推奨: 25～45%)");
     }
@@ -703,11 +700,6 @@ async function pres_result() {
     fadeOutLoader_result();
 }
 
-// 印刷
-const print_result = () => {
-    window.print();
-};
-
 // 初期化
 function initResultView() {
     if (shouldShowLoader_result()) {
@@ -718,7 +710,6 @@ function initResultView() {
     imgFile = document.getElementById("img_file");
     imgPreview = document.getElementById("preview");
     pres_button = document.getElementById("pres-btn");
-    print_button = document.getElementById("print-btn");
 
     document.getElementById("closeWarning").onclick = () => {
         document.getElementById("warningOverlay").classList.add("hidden");
@@ -731,8 +722,19 @@ function initResultView() {
     };
 
     scene = sessionStorage.getItem("scene") || "result";
-    display_result();
+    requestAnimationFrame(() => {
+        display_result();
+    });
     fadeOutLoader_result();
+
+    const shoudPrint = sessionStorage.getItem("autoPrint");
+    if (shoudPrint === "1") {
+        sessionStorage.removeItem("autoPrint");
+
+        setTimeout(() => {
+            window.print();
+        }, 100);
+    }
 }
 
 const shouldShowLoader_result = () => {

@@ -285,34 +285,6 @@
     /* 少し濃いめで押した感 */
 }
 
-#result_sheet-container #print-btn {
-    justify-self: center;
-    border: none;
-    color: rgba(148, 170, 255, 1);
-    background-color: white;
-    font-size: 22px;
-    width: 120px;
-    padding: 10px 0;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(148, 170, 255, 0.2);
-    cursor: pointer;
-}
-
-#result_sheet-container #print-btn:hover {
-    color: white;
-    background-color: rgba(148, 170, 255, 1);
-    box-shadow: 0 4px 12px rgba(148, 170, 255, 0.4);
-    transform: translateY(-2px);
-}
-
-#result_sheet-container #print-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 4px rgba(148, 170, 255, 0.3);
-    background-color: rgba(120, 140, 230, 1);
-    /* 少し濃いめで押した感 */
-}
-
 @media (min-width: 1024px) {
     #result_sheet-container {
         max-width: 700px;
@@ -358,8 +330,7 @@
         width: 100%;
     }
 
-    #result_sheet-container #pres-btn,
-    #result_sheet-container #print-btn {
+    #result_sheet-container #pres-btn {
         margin: 0 auto;
     }
 }
@@ -382,24 +353,24 @@
     #result_sheet-container #image-container,
     #result_sheet-container #result_sheet_label,
     #result_sheet-container #pres-btn,
-    #result_sheet-container #print-btn {
+    footer #version {
         display: none !important;
     }
 
     #logo-watermark {
-        display: block;
+        display: flex;
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("../assets/image/logo.png");
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: 90%;
-        opacity: 0.2;
+        inset: 0;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
+    }
+
+    #logo-watermark img {
+        width: 90%;
+        opacity: 0.2;
     }
 
     #result_sheet-container #chart_canvas-container {
@@ -417,5 +388,11 @@
 
     #result_sheet-container .memo {
         page-break-before: always;
+    }
+
+    footer {
+        position: absolute;
+        bottom: 1mm;
+        text-align: center;
     }
 }
