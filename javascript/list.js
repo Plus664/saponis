@@ -284,7 +284,7 @@ function display_pres_list(id, autoPrint = false, share = false) {
     }
 
     if (share) {
-        if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+        if (!navigator.canShare) {
             showMessage({
                 message: "この機能はスマホ専用です",
                 type: "info",

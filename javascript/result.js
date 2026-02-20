@@ -665,6 +665,13 @@ async function generateShareImage() {
     shareCard.innerHTML = "";
     shareCard.appendChild(clone);
 
+    const copyright = document.createElement("p");
+    copyright.textContent = "© 2026 ベティーとあおぞら";
+    copyright.style.justifySelf = "center";
+    copyright.style.color = "gray";
+
+    shareCard.appendChild(copyright);
+
     const canvas = await html2canvas(shareCard, {
         scale: 2,
         backgroundColor: "#ffffff",
