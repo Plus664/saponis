@@ -41,6 +41,19 @@ header {
     z-index: 4;
 }
 
+#backBtn {
+    position: absolute;
+    left: 16px;
+    top: 20px;
+    transform: scale(1, -1);
+    font-size: 22px;
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
 .loader-wrapper {
     position: fixed;
     inset: 0;
@@ -131,7 +144,7 @@ body.gate-open .hamburger {
 
 .hamburger {
     position: fixed;
-    top: 20px;
+    top: 25px;
     right: 20px;
     width: 30px;
     cursor: pointer;

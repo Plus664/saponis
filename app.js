@@ -360,6 +360,11 @@ async function initApp() {
     if (!user) return;
     window.userKey = user.id;
 
+    const backBtn = document.getElementById("backBtn");
+    backBtn.addEventListener("click", () => {
+        history.back();
+    });
+
     openApp();
 }
 

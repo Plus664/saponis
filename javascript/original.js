@@ -145,6 +145,20 @@ const ratioArray = {
     5: [0.35, 0.25, 0.2, 0.15, 0.05]
 };
 
+// 計算用のレシピデータ生成
+const buildRecipeFromRatios = (oils, total, ratios) => {
+    let recipe = [];
+
+    for (let i = 0; i < oils.length; i++) {
+        recipe.push({
+            name: oils[i],
+            amount: total * ratios[i]
+        });
+    }
+
+    return recipe;
+};
+
 const calc_soda_original = (oils, total, ratios, discount, alkali_rate) => {
     let alkali = 0;
 
@@ -385,12 +399,15 @@ const calc_result_original = () => {
             }
         }
     }
+
     const total = Number(document.getElementById("oil_sum_val").value);
     if (!total || total <= 0) {
         showMessage({ message: "油脂の合計量を入力して下さい", type: "error", mode: "alert" });
         return;
     }
     const ratios = ratioArray[count];
+
+    const recipeForConditions_original = buildRecipeFromRatios(oils, total, ratios);
 
     const name = document.getElementById("recipe_name").value;
     const alkali = calc_alkali_original(oils, total, ratios);
@@ -400,7 +417,7 @@ const calc_result_original = () => {
     const oil_names = get_oil_names_original(oils, total, ratios);
     const option_names = get_option_names_original(options);
     const features = get_final_features_original(oils, total, ratios, options);
-    const condition = calculateRecipeConditions_original(oils);
+    const condition = calculateRecipeConditions(recipeForConditions_original, options);
     const mix_temp = `・混合時の推奨温度: ${condition.optimal_mix_temp}℃`;
     const cure_temp = `・熟成時の推奨温度: ${condition.optimal_cure_temp}℃`;
     const cure_humidity = `・熟成時の推奨湿度: ${condition.optimal_humidity}％`;

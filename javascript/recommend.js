@@ -194,6 +194,13 @@ const recommend_recipes = {
     },
 };
 
+const buildRecipeFromPercentage = (oils, total) => {
+    return oils.map(oil => ({
+        name: oil.name,
+        amount: total * (oil.percentage / 100)
+    }));
+};
+
 const calc_soda_recommend = (sap_values, amounts, discount, alkali_rate) => {
     let alkali = 0;
     sap_values.forEach((val, i) => {
@@ -413,6 +420,8 @@ const calc_result_recommend = (recipe, total) => {
         }
     }
 
+    const recipeForConditions_recommend = buildRecipeFromPercentage(recipe.oils, total);
+
     const alkali = calc_alkali_recommend(recipe, sap_values, amounts); // 固形せっけん
     const water = calc_water_recommend(recipe, total, alkali);
     const name = recipe.category;
@@ -425,7 +434,7 @@ const calc_result_recommend = (recipe, total) => {
     for (let i = 0; i < recipe.oils.length; i++) {
         selectedOils.push(recipe.oils[i].name);
     }
-    const condition = calculateRecipeConditions_recommend(selectedOils);
+    const condition = calculateRecipeConditions(recipeForConditions_recommend, recipe.options);
     const mix_temp = `・混合時の推奨温度: ${condition.optimal_mix_temp}℃`;
     const cure_temp = `・熟成時の推奨温度: ${condition.optimal_cure_temp}℃`;
     const cure_humidity = `・熟成時の推奨湿度: ${condition.optimal_humidity}％`;

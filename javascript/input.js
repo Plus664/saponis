@@ -293,6 +293,26 @@ function initInputView({ restore } = {}) {
     fadeOutLoader();
 }
 
+// 計算用のレシピデータ生成
+function buildRecipeData() {
+    const oil_infos = getInputInfo();
+    const recipe = [];
+
+    for (let i = 0; i < 10; i++) {
+        const name = oil_infos[i].name;
+        const amount = Number(window[`oil_amount${i + 1}`].value);
+
+        if (name && amount > 0) {
+            recipe.push({
+                name: name,
+                amount: amount
+            });
+        }
+    }
+
+    return recipe;
+}
+
 // 情報取得
 function getInputInfo() {
     const sel1 = document.form.sel1;
@@ -615,35 +635,124 @@ function get_final_characteristics() {
     ];
 }
 
-// 適切な温度・湿度、予想されるpH
-const calculateRecipeConditions = (selectedOils) => {
-    let totalTemp = 0, totalCureTemp = 0, totalHumidity = 0, totalPHInitial = 0, totalPHFinal = 0;
-    let totalWeightTemp = 0, totalWeightHumidity = 0, totalWeightPH = 0;
-    let count = selectedOils.length;
+// 適切な温度
+function calculateMixTemp(recipe, options) {
 
-    selectedOils.forEach(oilName => {
-        let oilData = Object.values(window.OilArray).find(oil => oil.name === oilName);
-        let conditionData = window.OilConditions[oilName];
+    const solidOils = [
+        "牛脂",
+        "ラード[豚脂]",
+        "パーム油",
+        "パーム核油",
+        "ココナッツ油",
+        "ココアバター",
+        "シアバター",
+        "みつろう",
+        "ステアリン酸"
+    ];
 
-        if (!oilData || !conditionData) return; // データがないオイルはスキップ
+    const accelerateOptions = [
+        "はちみつ",
+        "シーソルト",
+        "クレイ",
+        "ピンククレイ",
+        "ベントナイトクレイ",
+        "竹炭パウダー",
+        "精油",
+        "カモミール精油",
+        "サンダルウッド精油",
+        "ジャスミン精油",
+        "ゼラニウム精油",
+        "ティーツリー精油",
+        "ハッカ油",
+        "ペパーミント精油",
+        "ラベンダー精油",
+        "ローズ精油",
+        "レモン精油",
+        "ヤギミルク",
+        "ミルクプロテイン"
+    ];
+
+    const waterOptions = [
+        "ローズウォーター",
+        "芳香蒸留水",
+        "アロエベラ"
+    ];
+
+    let totalAmount = 0;
+    let solidAmount = 0;
+
+    recipe.forEach(oil => {
+        totalAmount += oil.amount;
+        if (solidOils.includes(oil.name)) {
+            solidAmount += oil.amount;
+        }
+    });
+
+    const solidRatio = solidAmount / totalAmount;
+
+    let temp = 40; // 基本温度
+
+    // 固形割合
+    if (solidRatio > 0.5) temp += 3;
+    else if (solidRatio > 0.4) temp += 2;
+    else if (solidRatio < 0.25) temp -= 1;
+
+    // オプション影響
+    options.forEach(opt => {
+        if (accelerateOptions.includes(opt.name)) temp += 1;
+        if (waterOptions.includes(opt.name)) temp -= 1;
+    });
+
+    // 安全範囲制限
+    if (temp < 35) temp = 35;
+    if (temp > 45) temp = 45;
+
+    return temp;
+}
+
+// 適切な温度・湿度、予想されるpHなど
+const calculateRecipeConditions = (recipe, options) => {
+
+    let totalCureTemp = 0;
+    let totalHumidity = 0;
+    let totalPHInitial = 0;
+    let totalPHFinal = 0;
+
+    let totalWeightTemp = 0;
+    let totalWeightHumidity = 0;
+    let totalWeightPH = 0;
+
+    recipe.forEach(oil => {
+
+        let oilData = Object.values(window.OilArray)
+            .find(o => o.name === oil.name);
+
+        let conditionData = window.OilConditions[oil.name];
+
+        if (!oilData || !conditionData) return;
+
+        // 🔥 量ベースに変更
+        const ratio = oil.amount;
 
         let weightTemp = oilData.hard || 5;
         let weightHumidity = oilData.skin || 5;
         let weightPH = (oilData.foam || 5) * 1.1;
 
-        totalWeightTemp += weightTemp;
-        totalWeightHumidity += weightHumidity;
-        totalWeightPH += weightPH;
+        totalWeightTemp += weightTemp * ratio;
+        totalWeightHumidity += weightHumidity * ratio;
+        totalWeightPH += weightPH * ratio;
 
-        totalTemp += (conditionData.mix_temp || 50) * weightTemp;
-        totalCureTemp += (conditionData.cure_temp || 20) * weightTemp;
-        totalHumidity += (Math.min(conditionData.humidity - 5, 50) || 50) * weightHumidity;
-        totalPHInitial += (conditionData.initialPH || 11.5) * weightPH;
-        totalPHFinal += (conditionData.finalPH || 9.5) * weightPH;
+        totalCureTemp += (conditionData.cure_temp || 20) * weightTemp * ratio;
+        totalHumidity += (Math.min(conditionData.humidity - 5, 50) || 50) * weightHumidity * ratio;
+        totalPHInitial += (conditionData.initialPH || 11.5) * weightPH * ratio;
+        totalPHFinal += (conditionData.finalPH || 9.5) * weightPH * ratio;
     });
 
+    // 🔥 ここが変更点：mix_tempは別計算
+    const optimal_mix_temp = calculateMixTemp(recipe, options);
+
     return {
-        optimal_mix_temp: Math.round(totalTemp / totalWeightTemp),
+        optimal_mix_temp,
         optimal_cure_temp: Math.round(totalCureTemp / totalWeightTemp),
         optimal_humidity: Math.min(Math.round(totalHumidity / totalWeightHumidity) - 5, 50),
         estimated_pH_initial: (totalPHInitial / totalWeightPH).toFixed(1),
@@ -746,7 +855,9 @@ function calc_result() {
     for (let i = 0; i < 10; i++) {
         if (oil_amount_info[i] != "") selectedOils.push(oil_amount_info[i]);
     }
-    const condition = calculateRecipeConditions(selectedOils);
+    const recipeForConditions = buildRecipeData();
+    const optionsForConditions = getOptionInputInfo();
+    const condition = calculateRecipeConditions(recipeForConditions, optionsForConditions);
     const mix_temp = `・混合時の推奨温度: ${condition.optimal_mix_temp}℃`;
     const cure_temp = `・熟成時の推奨温度: ${condition.optimal_cure_temp}℃`;
     const cure_humidity = `・熟成時の推奨湿度: ${condition.optimal_humidity}％`;
