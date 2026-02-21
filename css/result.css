@@ -386,7 +386,7 @@
         height: auto;
     }
 
-    #result_sheet-container .memo {
+    #result_sheet-container #memo_result {
         page-break-before: always;
     }
 
@@ -405,6 +405,7 @@
     width: 1080px;
     height: 1080px;
     box-sizing: border-box;
+    overflow: visible;
 }
 
 /* 非表示にする要素 */
@@ -454,6 +455,6 @@
     max-height: 420px;
 }
 
-.share-card .memo {
+.share-card #memo_result {
     page-break-before: always;
 }

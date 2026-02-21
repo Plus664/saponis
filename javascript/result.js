@@ -751,7 +751,7 @@ async function generateShareImage() {
 
     await drawChart_share(clone);
 
-    //await new Promise(r => requestAnimationFrame(r));
+    await new Promise(r => requestAnimationFrame(r));
 
     await new Promise(r => setTimeout(r, 50))
 
@@ -794,6 +794,8 @@ function fallbackDownload(canvas) {
 
 async function shareToSNS() {
     try {
+        showLoader();
+
         const canvas = await generateShareImage();
 
         const blob = await new Promise(resolve =>
@@ -820,6 +822,8 @@ async function shareToSNS() {
             mode: "alert"
         });
         showView("list", false, false);
+    } finally {
+        fadeOutLoader();
     }
 }
 
@@ -865,7 +869,7 @@ function initResultView() {
 
         setTimeout(() => {
             shareToSNS();
-        }, 100);
+        }, 300);
     }
 }
 
